@@ -34,7 +34,7 @@ const Button = ({
       disabled={disabled}
       onClick={onClick}
       className={`${sizes[size]} ${disabled ? variants['disabled'] : variants[variant]} 
-      font-bold rounded-lg shadow-md transition-all duration-200 ease-in-out ${className}`}
+      font-bold rounded-[16px] shadow-md transition-all duration-200 ease-in-out ${className}`} // Set rounded-[16px] here
     >
       {children}
     </button>

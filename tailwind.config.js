@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: colors.surface,
-        emphasis: colors.emphasis,
+        surface: colors.Surface.Light,
+        emphasis: colors.Emphasis.Light,
         solid: colors.Solid,
         custom: {
           red: colors.Solid.Basic.Red,
@@ -20,16 +20,16 @@ module.exports = {
           Error: colors.Solid.Basic.Error,
         }
       },
-      fontFamily: {
-        'poppins': ['Poppins', 'sans-serif'],
-      },
+      // fontFamily: {
+      //   'poppins': ['Poppins', 'sans-serif'],
+      // },
       fontSize: {
         // Headline Styles
         'H1': ['3.5rem', { lineHeight: '4rem', fontWeight: '700' }], // 56px
         'H2': ['3rem', { lineHeight: '3.5rem', fontWeight: '700' }], // 48px
         'H3': ['2.5rem', { lineHeight: '3rem', fontWeight: '700' }], // 40px
         'H4': ['2rem', { lineHeight: '2.5rem', fontWeight: '700' }], // 32px
-        'H5': ['1.5rem', { lineHeight: '2rem', fontWeight: '900' }], // 24px
+        'H5': ['1.5rem', { lineHeight: '2rem', fontWeight: '700' }], // 24px
         'H6': ['1rem', { lineHeight: '1.5rem', fontWeight: '700' }], // 16px
 
         // Body Styles

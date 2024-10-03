@@ -54,10 +54,10 @@ const Login = () => {
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 font-poppins">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
         {/* Title */}
-        <h5 className="text-H5">Selamat Datang di Katalog HSPW</h5>
+        <h5 className="text-H5 text-colors-emphasis-Light-On_Surface-High">Selamat Datang di Katalog HSPW</h5>
 
         {/* Subtitle */}
-        <p className="text-B1">
+        <p className="text-B1 text-colors-emphasis-Light-On_Surface-Medium">
           Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga Kerja Konstruksi per Wilayah
         </p>
 
@@ -78,8 +78,8 @@ const Login = () => {
         />
 
         {/* Login Button */}
-        <Button onClick={handleLogin} variant="enabled" size="Medium">
-          Login
+        <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
+          Masuk
         </Button>
       </div>
     </div>
