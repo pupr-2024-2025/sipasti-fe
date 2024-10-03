@@ -1,5 +1,5 @@
 import React from 'react';
-import colors from '../styles/colors'; // Import colors.js
+import colors from '../styles/colors';
 
 const Button = ({
   children,
@@ -20,7 +20,7 @@ const Button = ({
 
   // Define button states (enabled, hovered, pressed, focused, disabled)
   const variants = {
-    enabled: `bg-[${colors.Solid.Basic.Blue[500]}] text-white`, // Set color directly from colors.js
+    enabled: `bg-custom-blue-500 text-white`, // Set color directly from colors.js
     disabled: `bg-gray-400 text-white opacity-60 cursor-not-allowed`, // Disable button styling
     hovered: `bg-[${colors.Solid.Basic.Blue[600]}] text-white`, // Use Tailwind for hover
     pressed: `bg-[${colors.Solid.Basic.Blue[700]}] text-white`,
