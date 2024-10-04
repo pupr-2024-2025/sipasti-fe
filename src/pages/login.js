@@ -53,34 +53,47 @@ const Login = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 font-poppins">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
+        {/*Logos*/}
+        <div className="flex justify-between items-center mb-4 w-full">
+          <img src="./images/pu-logo.svg" alt="PUPR Logo" className="w-20 h-20 mx-2" />
+          <img src="/images/sipasti-logo.svg" alt="SIPASTI Logo" className="w-20 h-20 mx-2" />
+        </div>
+        
         {/* Title */}
-        <h5 className="text-H5 text-colors-emphasis-Light-On_Surface-High">Selamat Datang di Katalog HSPW</h5>
+        {/* <h5 className="text-H5 text-emphasis-surface-high text-center font-black">Selamat Datang di Katalog HSPW!</h5> */}
+        <h5 className="text-H5 text-emphasis-surface-high text-center ">Selamat Datang di Katalog HSPW!</h5>
 
         {/* Subtitle */}
-        <p className="text-B1 text-colors-emphasis-Light-On_Surface-Medium">
+        <p className="text-B1 text-emphasis-surface-medium text-center">
           Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga Kerja Konstruksi per Wilayah
         </p>
+        {/*Login Container*/}
+        <div>
+          {/* Input fields */}
+          <InputField
+            label="Email"
+            placeholder="Enter your email"
+            state="enabled"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <InputField
+            label="Password"
+            placeholder="Enter your password"
+            state="enabled"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
 
-        {/* Input fields */}
-        <InputField
-          label="Email"
-          placeholder="Enter your email"
-          state="enabled"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <InputField
-          label="Password"
-          placeholder="Enter your password"
-          state="enabled"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        {/* Login Button */}
-        <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
-          Masuk
-        </Button>
+          {/* Login Button */}
+          <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
+            Masuk
+          </Button>
+          <div class="line"></div>
+          <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
+            Masuk dengan SSO
+          </Button>
+        </div>
       </div>
     </div>
   );

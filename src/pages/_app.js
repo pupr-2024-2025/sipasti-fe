@@ -6,7 +6,7 @@ import localFont from "next/font/local";
 const poppins = localFont({
   src: "../styles/Poppins-Regular.woff",
   variable: "--font-poppins-r",
-  weight: "300 400 500 700",
+  weight: "100 200 300 400 500 600 700 800 900",
 });
 
 // function MyApp({ Component, pageProps }) {

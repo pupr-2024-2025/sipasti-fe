@@ -2,21 +2,21 @@ const colors = {
     Surface: {
       Light: {
         Background: '#ffffff',
-        Background_Overlay: 'rgb(0, 0, 0, 8)',
-        Outline: 'rgb(255, 255, 255, 12)',
+        Background_Overlay: 'rgb(0, 0, 0, 0.08)',
+        Outline: 'rgb(255, 255, 255, 0.12)',
       },
     },
     Emphasis: {
       Light:  {
         On_Surface: {
-            High: 'rgb(0, 0, 0, 88)',
-            Medium: 'rgb(0, 0, 0, 64)',
-            Small: 'rgb(0, 0, 0, 40)',
+            High: 'rgb(0, 0, 0, 0.88)',
+            Medium: 'rgb(0, 0, 0, 0.64)',
+            Small: 'rgb(0, 0, 0, 0.40)',
         },
         On_Color: {
             High: '#FFFFFF',
-            Medium: 'rgb(255, 255, 255, 72)',
-            Small: 'rgb(255, 255, 255, 72)',
+            Medium: 'rgb(255, 255, 255, 0.72)',
+            Small: 'rgb(255, 255, 255, 0.72)',
         }
       }
   

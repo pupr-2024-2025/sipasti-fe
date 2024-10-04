@@ -9,7 +9,18 @@ module.exports = {
     extend: {
       colors: {
         surface: colors.Surface.Light,
-        emphasis: colors.Emphasis.Light,
+        emphasis: {
+          surface: {
+            high: colors.Emphasis.Light.On_Surface.High,
+            medium: colors.Emphasis.Light.On_Surface.Medium,
+            small: colors.Emphasis.Light.On_Surface.Small,
+          },
+          color: {
+            high: colors.Emphasis.Light.On_Color.High,
+            medium: colors.Emphasis.Light.On_Color.Medium,
+            small: colors.Emphasis.Light.On_Color.Small,
+          }
+        },
         solid: colors.Solid,
         custom: {
           red: colors.Solid.Basic.Red,
@@ -29,7 +40,7 @@ module.exports = {
         'H2': ['3rem', { lineHeight: '3.5rem', fontWeight: '700' }], // 48px
         'H3': ['2.5rem', { lineHeight: '3rem', fontWeight: '700' }], // 40px
         'H4': ['2rem', { lineHeight: '2.5rem', fontWeight: '700' }], // 32px
-        'H5': ['1.5rem', { lineHeight: '2rem', fontWeight: '700' }], // 24px
+        'H5': ['1.5rem', { lineHeight: '2rem', fontWeight: '800' }], // 24px
         'H6': ['1rem', { lineHeight: '1.5rem', fontWeight: '700' }], // 16px
 
         // Body Styles
