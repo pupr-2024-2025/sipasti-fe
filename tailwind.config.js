@@ -8,7 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: colors.Surface.Light,
+        light:{
+          background: colors.Surface.Light.Background,
+          overlay: colors.Surface.Light.Background_Overlay,
+          outline: colors.Surface.Light.Outline,
+        },
         emphasis: {
           surface: {
             high: colors.Emphasis.Light.On_Surface.High,
@@ -50,7 +54,7 @@ module.exports = {
         // Button Styles
         'ExtraLarge': ['1.5rem', { lineHeight: '2rem', fontWeight: '400' }], // 24px
         'Large': ['1.313rem', { lineHeight: '1.75rem', fontWeight: '400' }], // 21px
-        'Medium': ['1.125rem', { lineHeight: '2.625rem', fontWeight: '400' }], // 18px
+        'Medium': ['1.125rem', {fontWeight: '400' }], // 18px
         'Small': ['0.938rem', { lineHeight: '1.25rem', fontWeight: '400' }], // 15px
         'ExtraSmall': ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }], // 12px
 

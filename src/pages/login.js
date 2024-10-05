@@ -80,9 +80,10 @@ const Login = () => {
           <InputField
             label="Password"
             placeholder="Enter your password"
-            state="enabled"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            state="enabled"
           />
 
           {/* Login Button */}
@@ -90,9 +91,9 @@ const Login = () => {
             Masuk
           </Button>
           <div class="line"></div>
-          <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
+          {/* <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
             Masuk dengan SSO
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

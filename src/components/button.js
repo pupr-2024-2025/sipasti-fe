@@ -13,7 +13,7 @@ const Button = ({
   const sizes = {
     ExtraSmall: 'px-2 py-1 text-ExtraSmall',
     Small: 'px-3 py-1.5 text-Small',
-    Medium: 'px-4 py-2 text-Medium',
+    Medium: 'px-6 py-3 text-Medium',
     Large: 'px-5 py-2.5 text-Large',
     ExtraLarge: 'px-6 py-3 text-ExtraLarge',
   };
