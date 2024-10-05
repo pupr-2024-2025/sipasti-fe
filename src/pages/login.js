@@ -1,100 +1,106 @@
-import React, { useState } from 'react';
-import Button from '../components/button'; // Assuming you have a button component
-import colors from '../styles/colors'; // Import your color configuration
+import { useState } from "react";
+import Image from "next/image";
 
-const InputField = ({ label, placeholder, state, value, onChange }) => {
-  const baseClasses = "p-2 w-full border rounded-lg text-Small";
-  let stateClasses = "";
+import PuprLogo from "../../public/images/pu-logo.svg";
+import SipastiLogo from "../../public/images/sipasti-logo.svg";
+import LoginImage from "../../public/images/login-asset.png";
 
-  switch (state) {
-    case "enabled":
-      stateClasses = "border-gray-300";
-      break;
-    case "hovered":
-      stateClasses = "border-blue-500";
-      break;
-    case "pressed":
-      stateClasses = "border-blue-700";
-      break;
-    case "focused":
-      stateClasses = "border-blue-500 ring-2 ring-blue-300";
-      break;
-    case "disabled":
-      stateClasses = "border-gray-200 bg-gray-100 cursor-not-allowed";
-      break;
-    default:
-      stateClasses = "border-gray-300";
-  }
-
-  return (
-    <div className="mb-4">
-      <label className="text-B2">{label}</label>
-      <input
-        type="text"
-        placeholder={placeholder}
-        className={`${baseClasses} ${stateClasses}`}
-        value={value}
-        onChange={onChange}
-        disabled={state === "disabled"}
-      />
-    </div>
-  );
-};
+import InputField from "../components/Input";
+import Button from "../components/button";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleLogin = () => {
     // Handle login logic here
-    console.log('Logging in with', email, password);
+    console.log("Logging in with", email, password);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 font-poppins">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-sm">
-        {/*Logos*/}
-        <div className="flex justify-between items-center mb-4 w-full">
-          <img src="./images/pu-logo.svg" alt="PUPR Logo" className="w-20 h-20 mx-2" />
-          <img src="/images/sipasti-logo.svg" alt="SIPASTI Logo" className="w-20 h-20 mx-2" />
+    <div className="flex justify-between items-center h-screen">
+      <div className="flex flex-col justify-between h-screen min-w-[41rem] mx-8 py-8">
+        {/* Card Header */}
+        <div className="flex justify-between">
+          <Image src={PuprLogo} alt="PUPR Logo" className="w-20 h-20" />
+          <Image src={SipastiLogo} alt="Sipasti Logo" className="w-20 h-20" />
         </div>
-        
-        {/* Title */}
-        {/* <h5 className="text-H5 text-emphasis-surface-high text-center font-black">Selamat Datang di Katalog HSPW!</h5> */}
-        <h5 className="text-H5 text-emphasis-surface-high text-center ">Selamat Datang di Katalog HSPW!</h5>
+        {/* End of Card Header */}
 
-        {/* Subtitle */}
-        <p className="text-B1 text-emphasis-surface-medium text-center">
-          Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga Kerja Konstruksi per Wilayah
-        </p>
-        {/*Login Container*/}
-        <div>
+        {/* Login card */}
+        <div className="flex flex-col items-center justify-center flex-grow mx-28">
+          {/* Login Title and Subtitle */}
+          <div>
+            <h5 className="text-H5 text-emphasis-surface-high text-center ">
+              Selamat Datang di Katalog HSPW!
+            </h5>
+            <p className="text-B1 text-emphasis-surface-medium text-center">
+              Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga
+              Kerja Konstruksi per Wilayah
+            </p>
+          </div>
+
           {/* Input fields */}
-          <InputField
-            label="Email"
-            placeholder="Enter your email"
-            state="enabled"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <InputField
-            label="Password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            state="enabled"
-          />
+          <div className="py-4 w-full my-6">
+            <InputField
+              label="Email"
+              placeholder="Enter your email"
+              state="enabled"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <InputField
+              label="Password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              type="password"
+              state="enabled"
+            />
 
-          {/* Login Button */}
-          <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
-            Masuk
-          </Button>
-          <div class="line"></div>
-          {/* <Button onClick={handleLogin} variant="enabled" size="Medium" className="w-full">
-            Masuk dengan SSO
-          </Button> */}
+            {/* Login Button */}
+            <Button
+              onClick={handleLogin}
+              variant="enabled"
+              size="Medium"
+              className="w-full">
+              Masuk
+            </Button>
+          </div>
         </div>
+        {/* End of Login Card */}
+
+        {/* Footer */}
+        <div className="flex justify-between">
+          {/* Credit */}
+          <p className="text-B2 text-neutral-500 text-center">
+            2024© SIPASTI V.3.0 All Reserved by PUPR
+          </p>
+          {/* Top Text Container */}
+          <div className="gap-x-2 flex items-center">
+            {/* Kebijakan Privasi */}
+            <p className="text-B2 text-blue-500 text-center">
+              Kebijakan Privasi
+            </p>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="4"
+              height="4"
+              viewBox="0 0 4 4"
+              fill="none">
+              <circle cx="2" cy="2" r="2" fill="#B3B3B3" />
+            </svg>
+            {/* Syarat dan Ketentuan */}
+            <p className="text-B2 text-blue-500 text-center">
+              Syarat dan Ketentuan
+            </p>
+          </div>
+        </div>
+        {/* End of Footer */}
+      </div>
+
+      <div>
+        <Image src={LoginImage} alt="Login Image" className="h-screen" />
       </div>
     </div>
   );
