@@ -1,5 +1,6 @@
 const InputField = ({ label, placeholder, state, value, onChange }) => {
-  const baseClasses = "p-3 min-h-12 w-full border rounded-[16px] text-Small"; // Rounded border with 16px
+  const baseClasses =
+    "p-3 min-h-12 w-full border-[1.5px] rounded-[16px] text-Small"; // Rounded border with 16px
   let stateClasses = "";
 
   switch (state) {
@@ -13,7 +14,7 @@ const InputField = ({ label, placeholder, state, value, onChange }) => {
       stateClasses = "border-blue-700";
       break;
     case "focused":
-      stateClasses = "border-blue-500 ring-2 ring-blue-300";
+      stateClasses = "border-custom-blue-500 ring-2 ring-blue-300";
       break;
     case "disabled":
       stateClasses = "border-gray-200 bg-gray-100 cursor-not-allowed";

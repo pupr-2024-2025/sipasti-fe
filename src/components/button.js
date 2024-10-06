@@ -20,13 +20,15 @@ const Button = ({
 
   // Define button states (enabled, hovered, pressed, focused, disabled)
   const variants = {
-    enabled: `bg-custom-blue-500 text-white`, // Set color directly from colors.js
-    disabled: `bg-gray-400 text-white opacity-60 cursor-not-allowed`, // Disable button styling
-    hovered: `bg-[${colors.Solid.Basic.Blue[600]}] text-white`, // Use Tailwind for hover
-    pressed: `bg-[${colors.Solid.Basic.Blue[700]}] text-white`,
+    default:
+      "bg-schemesColors-light-primary text-schemesColors-light-onPrimary hover:bg-schemesColors-light-primary/90",
+    enabled: `bg-custom-blue-500 text-emphasis-on_color-high`, // Set color directly from colors.js
+    disabled: `bg-gray-400 text-emphasis-on_color-high opacity-60 cursor-not-allowed`, // Disable button styling
+    hovered: `bg-custom-blue-600 text-emphasis-on_color-high`, // Use Tailwind for hover
+    pressed: `bg-custom-blue-700 text-emphasis-on_color-high`,
     focused:
       "focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50",
-    outlined: "border border-blue-950 text-white",
+    outlined: "border border-blue-950 text-emphasis-on_color-high",
   };
 
   return (
