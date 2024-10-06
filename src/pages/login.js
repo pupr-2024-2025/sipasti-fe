@@ -18,17 +18,25 @@ const Login = () => {
   };
 
   return (
-    <div className="flex justify-between items-center h-screen">
-      <div className="flex flex-col justify-between h-screen min-w-[41rem] mx-8 py-8">
+    <div className="flex justify-between items-center h-screen gap-x-8  mx-8 py-8">
+      <div className="flex flex-col justify-between h-screen min-w-[656px] min-h-[960px] mx-8 py-8">
         {/* Card Header */}
         <div className="flex justify-between">
-          <Image src={PuprLogo} alt="PUPR Logo" className="w-20 h-20" />
-          <Image src={SipastiLogo} alt="Sipasti Logo" className="w-20 h-20" />
+          <Image
+            src={PuprLogo}
+            alt="PUPR Logo"
+            className="min-h-[54.37px] min-w-[156px]"
+          />
+          <Image
+            src={SipastiLogo}
+            alt="Sipasti Logo"
+            className="min-h-[201px] min-w-[34px]"
+          />
         </div>
         {/* End of Card Header */}
 
         {/* Login card */}
-        <div className="flex flex-col items-center justify-center flex-grow mx-28">
+        <div className="pt-14 flex-col items-center justify-center flex-grow mx-28">
           {/* Login Title and Subtitle */}
           <div>
             <h5 className="text-H5 text-emphasis-on_surface-high text-center ">
@@ -41,7 +49,7 @@ const Login = () => {
           </div>
 
           {/* Input fields */}
-          <div className="w-full">
+          <div className="min-w-[336px] py-4 ">
             <InputField
               label="Email"
               placeholder="Enter your email"
@@ -71,7 +79,7 @@ const Login = () => {
         {/* End of Login Card */}
 
         {/* Footer */}
-        <div className="flex justify-between">
+        <div className="flex flex-wrap justify-between">
           {/* Credit */}
           <p className="text-B2 text-neutral-500 text-center">
             2024© SIPASTI V.3.0 All Reserved by PUPR
@@ -99,7 +107,7 @@ const Login = () => {
         {/* End of Footer */}
       </div>
 
-      <div>
+      <div className="min-h-[960px] min-w-[688px]">
         <Image src={LoginImage} alt="Login Image" className="h-screen" />
       </div>
     </div>
