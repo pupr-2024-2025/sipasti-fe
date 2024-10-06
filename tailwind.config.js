@@ -19,7 +19,7 @@ module.exports = {
             medium: colors.Emphasis.Light.On_Surface.Medium,
             small: colors.Emphasis.Light.On_Surface.Small,
           },
-          color: {
+          on_color: {
             high: colors.Emphasis.Light.On_Color.High,
             medium: colors.Emphasis.Light.On_Color.Medium,
             small: colors.Emphasis.Light.On_Color.Small,

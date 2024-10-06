@@ -74,6 +74,13 @@ const Login = () => {
               className="w-full">
               Masuk
             </Button>
+            <div class="relative flex py-5 items-center">
+              <div class="flex-grow border-t-2 border-emphasis-on_surface-small rounded-full"></div>
+              <span class="flex-shrink mx-4 text-custom-neutral-500 text-Overline">
+                ATAU
+              </span>
+              <div class="flex-grow border-t-2 border-emphasis-on_surface-small rounded-full"></div>
+            </div>
           </div>
         </div>
         {/* End of Login Card */}
