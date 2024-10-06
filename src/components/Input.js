@@ -1,10 +1,10 @@
 const InputField = ({ label, placeholder, state, value, onChange }) => {
-  const baseClasses = "p-2 w-full border rounded-[16px] text-Small"; // Rounded border with 16px
+  const baseClasses = "p-3 min-h-12 w-full border rounded-[16px] text-Small"; // Rounded border with 16px
   let stateClasses = "";
 
   switch (state) {
     case "enabled":
-      stateClasses = "border-outline";
+      stateClasses = "border-surface-light-outline";
       break;
     case "hovered":
       stateClasses = "border-blue-500";
@@ -19,12 +19,12 @@ const InputField = ({ label, placeholder, state, value, onChange }) => {
       stateClasses = "border-gray-200 bg-gray-100 cursor-not-allowed";
       break;
     default:
-      stateClasses = "border-outline";
+      stateClasses = "border-2 border-surface-light-outline";
   }
 
   return (
     <div className="mb-4">
-      <label className="text-B2">{label}</label>
+      <label className="text-B2 text-emphasis-on_surface-high">{label}</label>
       <input
         type="text"
         placeholder={placeholder}

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import PuprLogo from "../../public/images/pu-logo.svg";
 import SipastiLogo from "../../public/images/sipasti-logo.svg";
-import LoginImage from "../../public/images/login-asset.png";
+import LoginImage from "../../public/images/login-asset.svg";
 
 import InputField from "../components/Input";
 import Button from "../components/button";
@@ -31,17 +31,17 @@ const Login = () => {
         <div className="flex flex-col items-center justify-center flex-grow mx-28">
           {/* Login Title and Subtitle */}
           <div>
-            <h5 className="text-H5 text-emphasis-surface-high text-center ">
+            <h5 className="text-H5 text-emphasis-on_surface-high text-center ">
               Selamat Datang di Katalog HSPW!
             </h5>
-            <p className="text-B1 text-emphasis-surface-medium text-center">
+            <p className="text-B1 text-emphasis-on_surface-medium text-center">
               Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga
               Kerja Konstruksi per Wilayah
             </p>
           </div>
 
           {/* Input fields */}
-          <div className="py-4 w-full my-6">
+          <div className="w-full">
             <InputField
               label="Email"
               placeholder="Enter your email"
