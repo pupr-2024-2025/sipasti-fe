@@ -5,7 +5,7 @@ import PuprLogo from "../../public/images/pu-logo.svg";
 import SipastiLogo from "../../public/images/sipasti-logo.svg";
 import LoginImage from "../../public/images/login-asset.svg";
 
-import InputField from "../components/Input";
+import TextInput from "../components/input";
 import Button from "../components/button";
 
 const Login = () => {
@@ -13,7 +13,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    // Handle login logic here
     console.log("Logging in with", email, password);
   };
 
@@ -50,20 +49,20 @@ const Login = () => {
 
           {/* Input fields */}
           <div className="min-w-[336px] py-4 ">
-            <InputField
+            <TextInput
               label="Email"
-              placeholder="Enter your email"
-              state="enabled"
+              placeholder="Masukkan Email"
+              state="border"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <InputField
+            <TextInput
               label="Password"
-              placeholder="Enter your password"
+              placeholder="Masukkan Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               type="password"
-              state="enabled"
+              state="border"
             />
 
             {/* Login Button */}
@@ -91,9 +90,20 @@ const Login = () => {
                 className="w-full">
                 Masuk menggunakan SSO
               </Button>
-              <p className="text-B2 text-neutral-500 text-center">
-                Belum punya akun? Daftar
-              </p>
+              <div className="gap-x-1 flex items-center justify-center">
+                <p className="text-B2 text-neutral-500 text-center">
+                  Belum punya akun?
+                </p>
+                <div class="grid justify-end">
+                  <Button
+                    onClick={handleLogin}
+                    variant="blue_text"
+                    size="Extra_Small"
+                    className="w-full">
+                    Daftar
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
