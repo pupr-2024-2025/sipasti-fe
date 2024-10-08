@@ -40,7 +40,7 @@ const TextInput = ({
   };
 
   return (
-    <div className={`flex flex-col mb-4 ${className}`}>
+    <div className={`relative flex flex-col mb-4 ${className}`}>
       {label && (
         <label className="text-B2 text-emphasis-on_surface-high mb-1">
           {label}
@@ -60,7 +60,7 @@ const TextInput = ({
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-sm text-custom-blue-500">
+          className="absolute right-3 top-1/2 transform -translate-y-1/2">
           {isPasswordVisible ? "Hide" : "Show"}
         </button>
       )}
