@@ -1,21 +1,32 @@
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 import PuprLogo from "../../public/images/pu-logo.svg";
 import SipastiLogo from "../../public/images/sipasti-logo.svg";
 import LoginImage from "../../public/images/login-asset.svg";
 
+import Register from "./register";
 import TextInput from "../components/input";
 import Button from "../components/button";
+import Modal from "../components/modal";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
 
   const handleLogin = () => {
     console.log("Logging in with", email, password);
   };
 
+  const openRegisterModal = () => {
+    setIsRegisterModalOpen(true); // Open register modal
+  };
+
+  const closeRegisterModal = () => {
+    setIsRegisterModalOpen(false); // Close register modal
+  };
   return (
     <div className="flex justify-between items-center h-screen gap-x-8  mx-8 py-8">
       <div className="flex flex-col justify-between h-screen min-w-[656px] min-h-[960px] mx-8 py-8">
@@ -91,12 +102,12 @@ const Login = () => {
                 Masuk menggunakan SSO
               </Button>
               <div className="gap-x-1 flex items-center justify-center">
-                <p className="text-B2 text-neutral-500 text-center">
+                <p className="text-Small text-neutral-500 text-center">
                   Belum punya akun?
                 </p>
                 <div class="grid justify-end">
                   <Button
-                    onClick={handleLogin}
+                    onClick={openRegisterModal} // Open register modal
                     variant="blue_text"
                     size="Extra_Small"
                     className="w-full">
@@ -118,9 +129,16 @@ const Login = () => {
           {/* Top Text Container */}
           <div className="gap-x-2 flex items-center">
             {/* Kebijakan Privasi */}
-            <p className="text-B2 text-blue-500 text-center">
+            {/* <p className="text-B2 text-blue-500 text-center">
               Kebijakan Privasi
-            </p>
+            </p> */}
+            <Button
+              onClick={handleLogin}
+              variant="blue_text"
+              size="Extra_Small"
+              className="w-center">
+              Kebijakan Privasi
+            </Button>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="4"
@@ -133,6 +151,13 @@ const Login = () => {
             <p className="text-B2 text-blue-500 text-center">
               Syarat dan Ketentuan
             </p>
+            <Button
+              onClick={handleLogin}
+              variant="blue_text"
+              size="Extra_Small"
+              className="w-center">
+              Syarat dan Ketentuan
+            </Button>
           </div>
         </div>
         {/* End of Footer */}
@@ -141,6 +166,10 @@ const Login = () => {
       <div className="min-h-[960px] min-w-[688px]">
         <Image src={LoginImage} alt="Login Image" className="h-screen" />
       </div>
+      {/* Register Modal */}
+      <Modal isOpen={isRegisterModalOpen} onClose={closeRegisterModal}>
+        <Register onClose={closeRegisterModal} />
+      </Modal>
     </div>
   );
 };
