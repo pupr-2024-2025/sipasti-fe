@@ -12,7 +12,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 
       {/* Modal content */}
       <div className="fixed inset-0 flex justify-center items-center z-50">
-        <div className="bg-surface-light-background p-8 rounded-[16px] shadow-lg relative max-w-[784px] w-full ">
+        <div className="bg-surface-light-background p-8 rounded-[16px] shadow-lg relative max-w-[784px] w-full">
           <button
             className="absolute top-2 right-2 text-gray-600"
             onClick={onClose}>

@@ -4,14 +4,14 @@ import colors from "../styles/colors";
 const Button = ({
   children,
   size = "Medium", // Default size sesuai dengan custom font di tailwind.config.js
-  variant = "enabled", // Default state
+  variant = "solid_blue", // Default state
   onClick,
   disabled = false,
   className = "",
 }) => {
   // Define size class from Tailwind custom configuration
   const sizes = {
-    ExtraSmall: "px-2 py-1 text-ExtraSmall",
+    ExtraSmall: "text-ExtraSmall",
     Small: "px-3 py-1.5 text-Small",
     Medium: "py-3 text-Medium",
     Large: "px-5 py-2.5 text-Large",
@@ -30,6 +30,8 @@ const Button = ({
       "ring-2 ring-custom-yellow-500 shadow-md text-custom-yellow-500 hover:bg-custom-yellow-600/10 text-custom-yellow-600 active:bg-custom-yellow-700/1 text-custom-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-700",
     blue_text:
       "text-custom-blue-500 hover: text-custom-blue-600 active: text-custom-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:ring-opacity-50",
+    red_text:
+      "text-custom-red-500 hover: text-custom-red-600 active: text-custom-red-700 focus:outline-none focus:ring-2 focus:ring-red-700 focus:ring-opacity-50",
   };
 
   return (
