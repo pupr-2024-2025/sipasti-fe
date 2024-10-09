@@ -59,7 +59,7 @@ const Login = () => {
           </div>
 
           {/* Input fields */}
-          <div className="min-w-[336px] py-4 ">
+          <div className="min-w-[336px] space-y-4">
             <TextInput
               label="Email"
               placeholder="Masukkan Email"
@@ -67,14 +67,19 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextInput
-              label="Password"
-              placeholder="Masukkan Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              state="border"
-            />
+            <div className="space-y-1">
+              <TextInput
+                label="Password"
+                placeholder="Masukkan Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                state="border"
+              />
+              <Button variant="blue_text" size="Extra_Small" className="w-left">
+                Lupa Password
+              </Button>
+            </div>
 
             {/* Login Button */}
             <div className="space-y-2" s>
@@ -107,7 +112,7 @@ const Login = () => {
                 </p>
                 <div class="grid justify-end">
                   <Button
-                    onClick={openRegisterModal} // Open register modal
+                    onClick={openRegisterModal}
                     variant="blue_text"
                     size="Extra_Small"
                     className="w-full">

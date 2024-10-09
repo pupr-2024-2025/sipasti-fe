@@ -10,6 +10,7 @@
     "clean": "rmdir /S /Q .next"
   },
   "dependencies": {
+    "iconsax-react": "^0.0.8",
     "next": "^14.2.14",
     "react": "^18",
     "react-dom": "^18"

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import colors from "../styles/colors";
+import { EyeSlash, Eye } from "iconsax-react";
 
 const TextInput = ({
   label,
@@ -40,7 +41,7 @@ const TextInput = ({
   };
 
   return (
-    <div className={`relative flex flex-col mb-4 ${className}`}>
+    <div className={`relative flex flex-col${className}`}>
       {label && (
         <label className="text-B2 text-emphasis-on_surface-high mb-1">
           {label}
@@ -60,8 +61,20 @@ const TextInput = ({
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          className="absolute right-3 top-1/2 transform -translate-y-1/2">
-          {isPasswordVisible ? "Hide" : "Show"}
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 my-3">
+          {isPasswordVisible ? (
+            <EyeSlash
+              color={colors.Emphasis.Light.On_Surface.Medium}
+              variant="Linear"
+              size={24}
+            />
+          ) : (
+            <Eye
+              color={colors.Emphasis.Light.On_Surface.Medium}
+              variant="Linear"
+              size={24}
+            />
+          )}
         </button>
       )}
     </div>
