@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Button from "./button";
-import { DocumentText1 } from "iconsax-react";
+import { DocumentText1, Trash } from "iconsax-react";
 import colors from "../styles/colors";
 
 const FileInput = ({
@@ -17,6 +17,7 @@ const FileInput = ({
   progress = 0,
   onCancel,
   selectedFile,
+  totalProcessingTime = 30, // Total waktu pemrosesan dalam detik
 }) => {
   const fileInputRef = useRef(null);
   const [startTime, setStartTime] = useState(null);
@@ -37,12 +38,12 @@ const FileInput = ({
     if (state === "processing") {
       setStartTime(Date.now());
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // Calculate elapsed time in seconds
-      }, 1000); // Update every second
+        setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // Menghitung waktu berlalu dalam detik
+      }, 1000); // Memperbarui setiap detik
 
-      return () => clearInterval(interval); // Clean up the interval on unmount
+      return () => clearInterval(interval); // Membersihkan interval saat komponen tidak lagi digunakan
     }
-  }, [state]);
+  }, [state, startTime]);
 
   return (
     <div className={className}>
@@ -81,26 +82,6 @@ const FileInput = ({
 
         {state === "processing" && selectedFile && (
           <div className="border-2 border-dashed border-yellow-500 px-3 py-2 rounded-[16px] flex flex-col space-y-2">
-            <div className="flex items-center justify-between w-full">
-              <Button
-                variant="solid_blue"
-                size="Small"
-                disabled // Disable button during processing
-              >
-                Memproses... {progress}%
-              </Button>
-              <p className="text-Small text-yellow-600 text-left">
-                Harap tunggu, kami sedang memproses berkas Anda.
-              </p>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="relative w-full h-2 bg-gray-200 rounded-full">
-              <div
-                className="absolute h-full bg-yellow-500 rounded-full"
-                style={{ width: `${progress}%` }}></div>
-            </div>
-
             {/* Additional File Information */}
             <div className="mt-2 flex items-center">
               <div className="flex-shrink-0">
@@ -109,52 +90,81 @@ const FileInput = ({
               </div>
               <div className="ml-2">
                 <p className="text-Small font-semibold">{selectedFile?.name}</p>
-                <p className="text-Small">
-                  Size:{" "}
-                  {selectedFile
-                    ? (selectedFile.size / (1024 * 1024)).toFixed(2)
-                    : "0.00"}{" "}
-                  MB
-                </p>
-                <p className="text-Small">Waktu berlalu: {elapsedTime} detik</p>
+                <div className="flex flex-row justify-between items-center custom-padding">
+                  <p className="text-Small items-center gap-1 inline-flex">
+                    <p className="text-Small">
+                      {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                    <div className="Ellipse1 w-0.5 h-0.5 bg-black/40 rounded-full" />
+                    <p className="text-Small">
+                      {totalProcessingTime - elapsedTime} Detik Tersisa
+                    </p>
+                  </p>
+                  <div className="flex items-center justify-between w-full">
+                    <Button
+                      variant="solid_blue"
+                      size="Small"
+                      disabled // Disable button during processing
+                    >
+                      {progress}%
+                    </Button>
+                  </div>
+                </div>
               </div>
+            </div>
+            {/* Progress Bar */}
+            <div className="relative w-full h-2 bg-gray-200 rounded-full">
+              <div
+                className="absolute h-full bg-yellow-500 rounded-full"
+                style={{ width: `${progress}%` }}></div>
             </div>
           </div>
         )}
 
         {state === "done" && (
-          <div className="border-2 border-solid border-green-500 px-3 py-2 rounded-[16px] flex justify-left items-center space-x-3">
-            <Button variant="solid_blue" size="Small" disabled>
-              <div className="mt-2 flex items-top content-start space-x-3">
+          <div className="border-2 border-solid border-green-500 px-3 py-4 rounded-[16px] flex justify-self-stretch items-left space-x-3">
+            <Button
+              variant="solid_blue"
+              size="Small"
+              className="items-start w-full custom-padding"
+              disabled>
+              <div className="flex items-start content-start space-x-3 w-full">
                 <div className="flex-shrink-0">
                   <DocumentText1
                     size="32"
                     color={colors.Emphasis.Light.On_Surface.High}
                   />
                 </div>
-                <div className="space-y-1 flex justify-left flex-col">
-                  <p className="text-Small font-semibold">
-                    {selectedFile?.name}
-                  </p>
-                  <p className="text-Small">
-                    Size: {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
-                  <p className="text-Small text-green-600 text-left">
-                    Berkas berhasil diunggah.
-                  </p>
+                <div className="space-y-1 flex flex-col text-left w-full">
+                  <div className="justify-between items-center inline-flex">
+                    <p className="text-Medium w-full">{selectedFile?.name}</p>
+                    {onCancel && (
+                      <Button
+                        variant="solid_red"
+                        size="Small"
+                        className="custom-padding"
+                        onClick={onCancel}
+                        iconLeft={null}
+                        iconRight={null}>
+                        <Trash
+                          size="32"
+                          color={colors.Emphasis.Light.On_Surface.High}
+                        />
+                      </Button>
+                    )}
+                  </div>
+                  <div className="items-center gap-1 inline-flex">
+                    <p className="text-Small">
+                      {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                    </p>
+                    <div className="Ellipse1 w-0.5 h-0.5 bg-black/40 rounded-full" />
+                    <p className="text-Small text-green-600">
+                      Berkas berhasil diunggah.
+                    </p>
+                  </div>
                 </div>
               </div>
             </Button>
-            {onCancel && (
-              <Button
-                variant="solid_red"
-                size="Small"
-                onClick={onCancel}
-                iconLeft={null}
-                iconRight={null}>
-                X
-              </Button>
-            )}
           </div>
         )}
 

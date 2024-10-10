@@ -11,12 +11,23 @@ const Button = ({
   iconLeft = null,
   iconRight = null,
 }) => {
+  // Define sizes and conditionally remove padding for custom-padding
   const sizes = {
-    ExtraSmall: "text-ExtraSmall",
-    Small: "px-5 py-1.5 text-Small rounded-[12px]",
-    Medium: "py-3 text-Medium rounded-[16px]",
-    Large: "px-5 py-2.5 text-Large",
-    ExtraLarge: "px-6 py-3 text-ExtraLarge",
+    ExtraSmall: className?.includes("custom-padding")
+      ? "text-ExtraSmall rounded-[8px]" // No padding if custom-padding
+      : "px-3 py-1 text-ExtraSmall rounded-[8px]", // Default with padding
+    Small: className?.includes("custom-padding")
+      ? "text-Small rounded-[12px]"
+      : "px-5 py-1.5 text-Small rounded-[12px]",
+    Medium: className?.includes("custom-padding")
+      ? "text-Medium rounded-[16px]"
+      : "py-3 text-Medium rounded-[16px]",
+    Large: className?.includes("custom-padding")
+      ? "text-Large rounded-[20px]"
+      : "px-5 py-2.5 text-Large rounded-[20px]",
+    ExtraLarge: className?.includes("custom-padding")
+      ? "text-ExtraLarge rounded-[24px]"
+      : "px-6 py-3 text-ExtraLarge rounded-[24px]",
   };
 
   const variants = {
@@ -42,13 +53,9 @@ const Button = ({
       className={`${sizes[size]} ${
         disabled ? variants["disabled"] : variants[variant]
       } 
-      flex justify-center items-center gap-2 transition-all duration-200 ease-in-out ${className}`} // Added flex & gap for icon alignment
-    >
-      {iconLeft && <span className="mr-2">{iconLeft}</span>}{" "}
-      {/* Left icon if provided */}
-      {children}
+      flex justify-center items-center gap-2 transition-all duration-200 ease-in-out ${className}`}>
+      {iconLeft && <span className="mr-2">{iconLeft}</span>} {children}
       {iconRight && <span className="ml-2">{iconRight}</span>}{" "}
-      {/* Right icon if provided */}
     </button>
   );
 };
