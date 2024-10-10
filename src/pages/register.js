@@ -1,7 +1,20 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
 import Button from "../components/button";
+import { Paperclip } from "iconsax-react";
+import colors from "../styles/colors";
+import FileInput from "../components/fileinput"; //
 
+const handleSubmit = () => {
+  // Handle form submission
+  console.log("Selected Files:", selectedFiles);
+  // You can add your form submission logic here
+
+  // Optionally clear the selected files after submission
+  setSelectedFiles([]);
+  // Close the modal or perform other actions as needed
+  onClose();
+};
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [namalengkap, setNamaLengkap] = useState("");
@@ -10,6 +23,36 @@ const Register = ({ onClose }) => {
   const [balai, setBalai] = useState("");
   const [satuankerja, setSatuanKerja] = useState("");
   const [nomortelepon, setNomorTelepon] = useState("");
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [uploadState, setUploadState] = useState("default");
+  const [progress, setProgress] = useState(0);
+
+  const handleFileSelect = (files) => {
+    setSelectedFiles(files);
+    console.log("Selected files:", files);
+    setUploadState("processing");
+    //   setTimeout(() => {
+    //     setUploadState("done");
+    //   }, 2000);
+    // };
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setUploadState("done"); // Change state to done after processing
+          return 100;
+        }
+        return prev + 10; // Increment progress by 10%
+      });
+    }, 200); // Simulate progress every 200 ms
+  };
+
+  const handleCancel = () => {
+    // Handle cancellation logic here
+    setUploadState("default"); // Reset to default state
+    setProgress(0); // Reset progress
+    setSelectedFiles(null); // Reset selected files
+  };
 
   const handleRegister = () => {
     console.log(
@@ -111,6 +154,17 @@ const Register = ({ onClose }) => {
           </div>
         </div>
       </div>
+
+      <FileInput
+        Label="Upload SK/Surat Penugasan"
+        onFileSelect={handleFileSelect}
+        buttonText="Pilih Berkas"
+        accept=".jpg,.jpeg,.png"
+        HelperText="Format .JPG, .PNG dan maksimal 512Kb."
+        state={uploadState}
+        progress={progress}
+        onCancel={handleCancel}
+      />
 
       <Button
         onClick={handleRegister}
