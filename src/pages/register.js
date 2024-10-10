@@ -3,16 +3,11 @@ import TextInput from "../components/input";
 import Button from "../components/button";
 import { Paperclip } from "iconsax-react";
 import colors from "../styles/colors";
-import FileInput from "../components/fileinput"; //
+import FileInput from "../components/fileinput";
 
 const handleSubmit = () => {
-  // Handle form submission
   console.log("Selected Files:", selectedFiles);
-  // You can add your form submission logic here
-
-  // Optionally clear the selected files after submission
   setSelectedFiles([]);
-  // Close the modal or perform other actions as needed
   onClose();
 };
 const Register = ({ onClose }) => {
@@ -23,35 +18,32 @@ const Register = ({ onClose }) => {
   const [balai, setBalai] = useState("");
   const [satuankerja, setSatuanKerja] = useState("");
   const [nomortelepon, setNomorTelepon] = useState("");
-  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [uploadState, setUploadState] = useState("default");
   const [progress, setProgress] = useState(0);
 
   const handleFileSelect = (files) => {
-    setSelectedFiles(files);
-    console.log("Selected files:", files);
+    const file = files[0];
+    setSelectedFile(file);
+    console.log("Selected file:", file);
     setUploadState("processing");
-    //   setTimeout(() => {
-    //     setUploadState("done");
-    //   }, 2000);
-    // };
+
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setUploadState("done"); // Change state to done after processing
+          setUploadState("done");
           return 100;
         }
-        return prev + 10; // Increment progress by 10%
+        return prev + 10;
       });
-    }, 200); // Simulate progress every 200 ms
+    }, 200);
   };
 
   const handleCancel = () => {
-    // Handle cancellation logic here
-    setUploadState("default"); // Reset to default state
-    setProgress(0); // Reset progress
-    setSelectedFiles(null); // Reset selected files
+    setUploadState("default");
+    setSelectedFile(null);
+    setProgress(0);
   };
 
   const handleRegister = () => {
@@ -65,7 +57,7 @@ const Register = ({ onClose }) => {
       satuankerja,
       nomortelepon
     );
-    onClose(); // Close modal after registration
+    onClose();
   };
 
   return (
@@ -156,14 +148,13 @@ const Register = ({ onClose }) => {
       </div>
 
       <FileInput
-        Label="Upload SK/Surat Penugasan"
         onFileSelect={handleFileSelect}
-        buttonText="Pilih Berkas"
-        accept=".jpg,.jpeg,.png"
-        HelperText="Format .JPG, .PNG dan maksimal 512Kb."
+        selectedFile={selectedFile}
         state={uploadState}
         progress={progress}
         onCancel={handleCancel}
+        Label="Upload SK/Surat Penugasan"
+        HelperText="Format .JPG, .PNG dan maksimal 512Kb"
       />
 
       <Button
