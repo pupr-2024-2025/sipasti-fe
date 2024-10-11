@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import Button from "./button";
-import { DocumentText1, Trash } from "iconsax-react";
+import { DocumentText1, Trash, CloseCircle } from "iconsax-react";
 import colors from "../styles/colors";
 
 const FileInput = ({
@@ -22,6 +22,9 @@ const FileInput = ({
   const fileInputRef = useRef(null);
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Menambahkan console.log di sini untuk memeriksa onCancel
+  console.log("onCancel function:", onCancel);
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
@@ -81,90 +84,95 @@ const FileInput = ({
         )}
 
         {state === "processing" && selectedFile && (
-          <div className="border-2 border-dashed border-yellow-500 px-3 py-2 rounded-[16px] flex flex-col space-y-2">
+          <div className="bg-custom-neutral-100 px-3 py-2 rounded-[16px] flex flex-col space-y-2">
             {/* Additional File Information */}
-            <div className="mt-2 flex items-center">
+            <div className="flex items-start content-start space-x-3 w-full">
               <div className="flex-shrink-0">
-                {/* File Icon instead of Preview */}
-                <DocumentText1 size="32" color="#FFC107" />
+                <DocumentText1
+                  size="32"
+                  color={colors.Emphasis.Light.On_Surface.High}
+                />
               </div>
-              <div className="ml-2">
-                <p className="text-Small font-semibold">{selectedFile?.name}</p>
-                <div className="flex flex-row justify-between items-center custom-padding">
-                  <p className="text-Small items-center gap-1 inline-flex">
-                    <p className="text-Small">
+              <div className="space-y-1 flex flex-col text-left w-full">
+                <div className="justify-between items-center inline-flex">
+                  <p className="text-Medium">{selectedFile?.name}</p>
+                  {onCancel && (
+                    <div
+                      className="custom-padding cursor-pointer"
+                      onClick={onCancel}>
+                      <CloseCircle
+                        size="32"
+                        color={colors.Emphasis.Light.On_Surface.High}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-between items-center w-full custom-padding">
+                  {/* Bagian teks yang hug */}
+                  <div className="inline-flex items-center gap-1">
+                    <p className="text-Small text-emphasis-on_surface-small">
                       {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                     </p>
-                    <div className="Ellipse1 w-0.5 h-0.5 bg-black/40 rounded-full" />
-                    <p className="text-Small">
+                    <div className="Ellipse1 w-0.5 h-0.5 bg-emphasis-on_surface-small rounded-full mx-1" />
+                    <p className="text-Small text-emphasis-on_surface-small">
                       {totalProcessingTime - elapsedTime} Detik Tersisa
                     </p>
-                  </p>
-                  <div className="flex items-center justify-between w-full">
-                    <Button
-                      variant="solid_blue"
-                      size="Small"
-                      disabled // Disable button during processing
-                    >
+                  </div>
+
+                  {/* Bagian progress */}
+                  <div className="ml-auto flex items-center">
+                    <div className="text-Small text-emphasis-on_surface-medium rounded-md py-1 px-3">
                       {progress}%
-                    </Button>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             {/* Progress Bar */}
-            <div className="relative w-full h-2 bg-gray-200 rounded-full">
+            <div className="relative w-full h-1 bg-custom-neutral-0 rounded-full">
               <div
-                className="absolute h-full bg-yellow-500 rounded-full"
+                className="absolute h-full bg-custom-blue-500 rounded-full transition-all duration-300 ease-in-out"
                 style={{ width: `${progress}%` }}></div>
             </div>
           </div>
         )}
-
         {state === "done" && (
-          <div className="border-2 border-solid border-green-500 px-3 py-4 rounded-[16px] flex justify-self-stretch items-left space-x-3">
-            <Button
-              variant="solid_blue"
-              size="Small"
-              className="items-start w-full custom-padding"
-              disabled>
-              <div className="flex items-start content-start space-x-3 w-full">
-                <div className="flex-shrink-0">
-                  <DocumentText1
-                    size="32"
-                    color={colors.Emphasis.Light.On_Surface.High}
-                  />
+          <div className="border-2 border-solid border-custom-blue-500 px-3 py-4 rounded-[16px] flex justify-self-stretch items-left space-x-3">
+            {/* Menggunakan div untuk menampilkan informasi file tanpa kursor klik */}
+            <div className="flex items-start content-start space-x-3 w-full cursor-default">
+              <div className="flex-shrink-0">
+                <DocumentText1
+                  size="32"
+                  color={colors.Emphasis.Light.On_Surface.High}
+                />
+              </div>
+              <div className="space-y-1 flex flex-col text-left w-full">
+                <div className="justify-between items-center inline-flex">
+                  <p className="text-Medium w-full">{selectedFile?.name}</p>
+                  <Button
+                    variant="solid_red"
+                    size="Small"
+                    className="custom-padding relative z-10"
+                    onClick={onCancel}
+                    iconLeft={null}
+                    iconRight={null}>
+                    <Trash
+                      size="32"
+                      color={colors.Emphasis.Light.On_Surface.High}
+                    />
+                  </Button>
                 </div>
-                <div className="space-y-1 flex flex-col text-left w-full">
-                  <div className="justify-between items-center inline-flex">
-                    <p className="text-Medium w-full">{selectedFile?.name}</p>
-                    {onCancel && (
-                      <Button
-                        variant="solid_red"
-                        size="Small"
-                        className="custom-padding"
-                        onClick={onCancel}
-                        iconLeft={null}
-                        iconRight={null}>
-                        <Trash
-                          size="32"
-                          color={colors.Emphasis.Light.On_Surface.High}
-                        />
-                      </Button>
-                    )}
-                  </div>
-                  <div className="items-center gap-1 inline-flex">
-                    <p className="text-Small">
-                      {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                    </p>
-                    <div className="Ellipse1 w-0.5 h-0.5 bg-black/40 rounded-full" />
-                    <p className="text-Small text-green-600">
-                      Berkas berhasil diunggah.
-                    </p>
-                  </div>
+                <div className="items-center gap-1 inline-flex">
+                  <p className="text-Small">
+                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                  </p>
+                  <div className="Ellipse1 w-0.5 h-0.5 bg-emphasis-on_surface-small rounded-full" />
+                  <p className="text-Small text-custom-blue-500">
+                    Berkas berhasil diunggah.
+                  </p>
                 </div>
               </div>
-            </Button>
+            </div>
           </div>
         )}
 

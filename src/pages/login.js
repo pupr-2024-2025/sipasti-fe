@@ -10,47 +10,32 @@ import Register from "./register";
 import TextInput from "../components/input";
 import Button from "../components/button";
 import Modal from "../components/modal";
+import ForgotPassword from "./forgotpassword";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const [errors, setErrors] = useState({ email: "", password: "" });
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
+    useState(false);
+  const router = useRouter();
 
   const handleLogin = () => {
-    console.log("Logging in with", email, password);
-    if (!email) {
-      setErrors((prev) => ({ ...prev, email: "Email is required." }));
-    } else {
-      setErrors((prev) => ({ ...prev, email: "" }));
-    }
-
-    if (!password) {
-      setErrors((prev) => ({ ...prev, password: "Password is required." }));
-    } else {
-      setErrors((prev) => ({ ...prev, password: "" }));
-    }
-
-    // Add actual login logic here
-    if (email && password) {
-      // Proceed with login, e.g., API call
-      console.log("Logged in successfully");
-      // Reset errors if login is successful
-      setErrors({ email: "", password: "" });
-    }
+    // Implementasikan logika login di sini
+    // Misalnya, validasi dan navigasi setelah login
   };
 
-  const openRegisterModal = () => {
-    setIsRegisterModalOpen(true); // Open register modal
-  };
+  const openRegisterModal = () => setIsRegisterModalOpen(true);
+  const closeRegisterModal = () => setIsRegisterModalOpen(false);
 
-  const closeRegisterModal = () => {
-    setIsRegisterModalOpen(false); // Close register modal
-  };
+  const openForgotPasswordModal = () => setIsForgotPasswordModalOpen(true);
+  const closeForgotPasswordModal = () => setIsForgotPasswordModalOpen(false);
+
   return (
-    <div className="relative flex justify-center items-center h-screen gap-x-8 mx-8 py-8">
+    <div className="relative flex justify-center items-center h-screen gap-8 mx-4 md:gap-12 lg:gap-16">
       {/* Container untuk form login */}
-      <div className="flex flex-col justify-between h-full w-[900px] max-h-[960px] mx-8 py-8">
+      <div className="flex flex-col justify-between w-full max-w-[900px] h-full p-8 mx-auto">
         {/* Card Header */}
         <div className="flex justify-between">
           <Image
@@ -71,14 +56,14 @@ const Login = () => {
             <h5 className="text-H5 text-emphasis-on_surface-high">
               Selamat Datang di Katalog HSPW!
             </h5>
-            <p className="text-B1 text-emphasis-on_surface-medium w-[384px]">
+            <p className="text-B1 text-emphasis-on_surface-medium w-full max-w-[384px]">
               Katalog Informasi Harga Satuan Pokok Material Peralatan Tenaga
               Kerja Konstruksi per Wilayah
             </p>
           </div>
 
           {/* Input fields */}
-          <div className="min-w-[336px] space-y-4">
+          <div className="min-w-[336px] space-y-4 w-full max-w-[336px]">
             <TextInput
               label="Email"
               placeholder="Masukkan Email"
@@ -95,12 +80,15 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 state="border"
-              />{" "}
+              />
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
-              )}{" "}
-              {/* Error message for password */}
-              <Button variant="red_text" size="Extra_Small">
+              )}
+              {/* Tombol untuk membuka modal Forgot Password */}
+              <Button
+                onClick={openForgotPasswordModal}
+                variant="red_text"
+                size="Extra_Small">
                 Lupa Password
               </Button>
             </div>
@@ -178,13 +166,20 @@ const Login = () => {
       </div>
 
       {/* Login Image */}
-      <div className="max-h-[960px] max-w-[688px]">
+      <div className="hidden md:block max-h-[960px] max-w-[688px]">
         <Image src={LoginImage} alt="Login Image" className="object-cover" />
       </div>
 
       {/* Register Modal */}
       <Modal isOpen={isRegisterModalOpen} onClose={closeRegisterModal}>
         <Register onClose={closeRegisterModal} />
+      </Modal>
+
+      {/* Forgot Password Modal */}
+      <Modal
+        isOpen={isForgotPasswordModalOpen}
+        onClose={closeForgotPasswordModal}>
+        <ForgotPassword onClose={closeForgotPasswordModal} />
       </Modal>
     </div>
   );

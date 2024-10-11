@@ -1,15 +1,9 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
 import Button from "../components/button";
-import { Paperclip } from "iconsax-react";
-import colors from "../styles/colors";
 import FileInput from "../components/fileinput";
+import IconCheckbox from "../components/checkbox";
 
-const handleSubmit = () => {
-  console.log("Selected Files:", selectedFiles);
-  setSelectedFiles([]);
-  onClose();
-};
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [namalengkap, setNamaLengkap] = useState("");
@@ -21,11 +15,15 @@ const Register = ({ onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadState, setUploadState] = useState("default");
   const [progress, setProgress] = useState(0);
+  const [isChecked, setIsChecked] = useState(false); // State untuk checkbox
+
+  const handleCheckboxChange = () => {
+    setIsChecked((prev) => !prev); // Toggle isChecked
+  };
 
   const handleFileSelect = (files) => {
     const file = files[0];
     setSelectedFile(file);
-    console.log("Selected file:", file);
     setUploadState("processing");
 
     const interval = setInterval(() => {
@@ -91,58 +89,46 @@ const Register = ({ onClose }) => {
         <div className="flex gap-x-8 w-full max-w-5xl">
           {/* Left Column */}
           <div className="flex-1 space-y-4">
-            <div className="w-full">
-              <TextInput
-                label="NIK"
-                placeholder="Masukkan NIK"
-                value={nik}
-                onChange={(e) => setNIK(e.target.value)}
-              />
-            </div>
-            <div className="w-full">
-              <TextInput
-                label="NRP"
-                placeholder="Masukkan NRP"
-                value={nrp}
-                onChange={(e) => setNRP(e.target.value)}
-              />
-            </div>
-            <div className="w-full">
-              <TextInput
-                label="Balai"
-                placeholder="Masukkan Balai"
-                value={balai}
-                onChange={(e) => setBalai(e.target.value)}
-              />
-            </div>
+            <TextInput
+              label="NIK"
+              placeholder="Masukkan NIK"
+              value={nik}
+              onChange={(e) => setNIK(e.target.value)}
+            />
+            <TextInput
+              label="NRP"
+              placeholder="Masukkan NRP"
+              value={nrp}
+              onChange={(e) => setNRP(e.target.value)}
+            />
+            <TextInput
+              label="Balai"
+              placeholder="Masukkan Balai"
+              value={balai}
+              onChange={(e) => setBalai(e.target.value)}
+            />
           </div>
 
           {/* Right Column */}
           <div className="flex-1 space-y-4">
-            <div className="w-full">
-              <TextInput
-                label="Email"
-                placeholder="Masukkan Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="w-full">
-              <TextInput
-                label="Satuan Kerja"
-                placeholder="Pilih Satuan Kerja"
-                value={satuankerja}
-                onChange={(e) => setSatuanKerja(e.target.value)}
-              />
-            </div>
-            <div className="w-full">
-              <TextInput
-                label="Nomor Telepon"
-                placeholder="Masukkan Nomor Telepon"
-                value={nomortelepon}
-                onChange={(e) => setNomorTelepon(e.target.value)}
-              />
-            </div>
+            <TextInput
+              label="Email"
+              placeholder="Masukkan Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextInput
+              label="Satuan Kerja"
+              placeholder="Pilih Satuan Kerja"
+              value={satuankerja}
+              onChange={(e) => setSatuanKerja(e.target.value)}
+            />
+            <TextInput
+              label="Nomor Telepon"
+              placeholder="Masukkan Nomor Telepon"
+              value={nomortelepon}
+              onChange={(e) => setNomorTelepon(e.target.value)}
+            />
           </div>
         </div>
       </div>
@@ -157,13 +143,30 @@ const Register = ({ onClose }) => {
         HelperText="Format .JPG, .PNG dan maksimal 512Kb"
       />
 
-      <Button
-        onClick={handleRegister}
-        variant="solid_blue"
-        size="Medium"
-        className="w-full">
-        Daftar
-      </Button>
+      <div>
+        <IconCheckbox
+          label="Saya setuju dengan syarat dan ketentuan berlaku."
+          onChange={handleCheckboxChange}
+        />
+      </div>
+
+      <div className="flex flex-row justify-end items-right space-x-4">
+        <Button
+          onClick={handleRegister}
+          variant="outlined_yellow"
+          size="Medium">
+          Batal
+        </Button>
+
+        <Button
+          onClick={handleRegister}
+          variant="solid_blue"
+          size="Medium"
+          disabled={!isChecked} // Disable tombol jika checkbox tidak dicentang
+        >
+          Buat Akun
+        </Button>
+      </div>
     </div>
   );
 };

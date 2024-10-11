@@ -21,7 +21,7 @@ const Button = ({
       : "px-5 py-1.5 text-Small rounded-[12px]",
     Medium: className?.includes("custom-padding")
       ? "text-Medium rounded-[16px]"
-      : "py-3 text-Medium rounded-[16px]",
+      : "px-6 py-3 text-Medium rounded-[16px]",
     Large: className?.includes("custom-padding")
       ? "text-Large rounded-[20px]"
       : "px-5 py-2.5 text-Large rounded-[20px]",
@@ -43,6 +43,7 @@ const Button = ({
       "text-custom-blue-500 hover:text-custom-blue-600 active:text-custom-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700",
     red_text:
       "text-custom-red-500 hover:text-custom-red-600 active:text-custom-red-700 focus:outline-none focus:ring-2 focus:ring-red-700",
+    disabled: "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50", // Style untuk tombol disabled
   };
 
   return (
