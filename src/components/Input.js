@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import colors from "../styles/colors";
-import { EyeSlash, Eye } from "iconsax-react";
+import { EyeSlash, Eye, CloseCircle } from "iconsax-react"; // Import ikon CloseCircle
 
 const TextInput = ({
   label,
@@ -13,8 +13,11 @@ const TextInput = ({
   disabled = false,
   className = "",
   type = "text",
+  isRequired = false, // Prop untuk required
+  errorMessage = "This field is required", // Default pesan error
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState(""); // State untuk pesan error
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -28,33 +31,37 @@ const TextInput = ({
     ExtraLarge: "text-ExtraLarge px-6 py-5",
   };
 
-  // Define input states (enabled, focused, disabled)
   const variants = {
     border:
       "border border-surface-light-outline focus:outline-none focus:border-2 focus:border-custom-blue-500",
-    // enabled:
-    //   "border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500",
-    // focused:
-    //   "border border-blue-500 focus:ring-2 focus:ring-blue-300 focus:outline-none",
-    // disabled:
-    //   "border border-gray-300 bg-gray-100 cursor-not-allowed text-gray-500",
+  };
+
+  // Fungsi untuk validasi
+  const handleBlur = () => {
+    if (isRequired && !value) {
+      setError(errorMessage); // Set pesan error jika input required tapi kosong
+    } else {
+      setError(""); // Hapus error jika valid
+    }
   };
 
   return (
-    <div className={`relative flex flex-col${className}`}>
+    <div className={`relative flex flex-col ${className}`}>
       {label && (
         <label className="text-B2 text-emphasis-on_surface-high mb-1">
           {label}
-        </label> // Label if provided
+          {isRequired && <span className="text-custom-red-500"> *</span>}
+        </label>
       )}
       <input
         type={isPasswordVisible ? "text" : type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onBlur={handleBlur} // Validasi saat kehilangan fokus
         disabled={disabled}
         className={`${sizes[size]} ${baseClasses} ${
-          disabled ? variants["disabled"] : variants[variant]
+          error ? "border-custom-red-500" : variants[variant] // Border merah jika error
         } rounded-[16px] w-full transition-all duration-200 ease-in-out`}
       />
       {type === "password" && (
@@ -76,6 +83,17 @@ const TextInput = ({
             />
           )}
         </button>
+      )}
+      {error && (
+        <div className="flex items-center mt-1">
+          <CloseCircle
+            color={colors.Solid.Basic.Red[500]} // Ganti dengan warna yang sesuai
+            variant="Linear"
+            size={16}
+            className="mr-1"
+          />
+          <span className="text-custom-red-500 text-ExtraSmall">{error}</span>
+        </div>
       )}
     </div>
   );

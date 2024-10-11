@@ -3,26 +3,35 @@
 @tailwind utilities;
 
 body {
-    margin: 0;
-    padding: 0;
-  }
-  
-  .login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f0f0;
-  }
-  
-  /* h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-   */
-  .login-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    cursor: pointer;
-  }
-  
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom login container styling */
+.login-container {
+  @apply flex justify-center items-center h-screen bg-gray-200;
+}
+
+/* Custom zoom layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.wrapper {
+  @apply flex justify-center items-center;
+}
+
+.container {
+  width: 1440px;
+  height: 1024px;
+  transform-origin: top left;
+  transform: scale(calc(100vw / 1440)); /* Scaling layout berdasarkan lebar viewport */
+  background-color: white;
+  overflow: hidden;
+}
+
+.login-button {
+  @apply px-4 py-2 text-lg cursor-pointer;
+}

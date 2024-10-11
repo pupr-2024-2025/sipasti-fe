@@ -70,16 +70,20 @@ const Login = () => {
               state="border"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              isRequired={true}
+              errorMessage="Email tidak boleh kosong"
             />
             {errors.email && <p className="text-red-500">{errors.email}</p>}
             <div className="space-y-1">
               <TextInput
-                label="Password"
-                placeholder="Masukkan Password"
+                label="Kata Sandi"
+                placeholder="Masukkan kata sandi"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
                 state="border"
+                isRequired={true}
+                errorMessage="Kata sandi tidak boleh kosong"
               />
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
@@ -88,7 +92,8 @@ const Login = () => {
               <Button
                 onClick={openForgotPasswordModal}
                 variant="red_text"
-                size="Extra_Small">
+                size="Extra_Small"
+                className="">
                 Lupa Password
               </Button>
             </div>

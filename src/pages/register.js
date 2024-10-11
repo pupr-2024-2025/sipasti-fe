@@ -82,6 +82,8 @@ const Register = ({ onClose }) => {
         label="Nama Lengkap"
         placeholder="Masukkan Nama Lengkap"
         value={namalengkap}
+        isRequired={true}
+        errorMessage="Nama Lengkap tidak boleh kosong"
         onChange={(e) => setNamaLengkap(e.target.value)}
       />
 
@@ -93,6 +95,8 @@ const Register = ({ onClose }) => {
               label="NIK"
               placeholder="Masukkan NIK"
               value={nik}
+              isRequired={true}
+              errorMessage="NIK tidak boleh kosong"
               onChange={(e) => setNIK(e.target.value)}
             />
             <TextInput
@@ -105,6 +109,8 @@ const Register = ({ onClose }) => {
               label="Balai"
               placeholder="Masukkan Balai"
               value={balai}
+              isRequired={true}
+              errorMessage="Balai tidak boleh kosong"
               onChange={(e) => setBalai(e.target.value)}
             />
           </div>
@@ -115,18 +121,24 @@ const Register = ({ onClose }) => {
               label="Email"
               placeholder="Masukkan Email"
               value={email}
+              isRequired={true}
+              errorMessage="Email tidak boleh kosong"
               onChange={(e) => setEmail(e.target.value)}
             />
             <TextInput
               label="Satuan Kerja"
               placeholder="Pilih Satuan Kerja"
               value={satuankerja}
+              isRequired={true}
+              errorMessage="Satuan kerja tidak boleh kosong"
               onChange={(e) => setSatuanKerja(e.target.value)}
             />
             <TextInput
               label="Nomor Telepon"
               placeholder="Masukkan Nomor Telepon"
               value={nomortelepon}
+              isRequired={true}
+              errorMessage="Nomor telepon tidak boleh kosong"
               onChange={(e) => setNomorTelepon(e.target.value)}
             />
           </div>
