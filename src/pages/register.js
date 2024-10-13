@@ -3,6 +3,8 @@ import TextInput from "../components/input";
 import Button from "../components/button";
 import FileInput from "../components/fileinput";
 import IconCheckbox from "../components/checkbox";
+import { CloseCircle } from "iconsax-react";
+import Dropdown from "../components/Dropdown";
 
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -15,10 +17,16 @@ const Register = ({ onClose }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadState, setUploadState] = useState("default");
   const [progress, setProgress] = useState(0);
-  const [isChecked, setIsChecked] = useState(false); // State untuk checkbox
+  const [isChecked, setIsChecked] = useState(false);
+
+  const options = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" },
+  ];
 
   const handleCheckboxChange = () => {
-    setIsChecked((prev) => !prev); // Toggle isChecked
+    setIsChecked((prev) => !prev);
   };
 
   const handleFileSelect = (files) => {
@@ -58,24 +66,31 @@ const Register = ({ onClose }) => {
     onClose();
   };
 
+  const handleSatuanKerjaSelect = (selectedOption) => {
+    setSatuanKerja(selectedOption.value);
+  };
+
   return (
-    <div className="space-y-3">
-      <h5 className="text-H5 text-emphasis-on_surface-high text-left">
-        Buat Akun
-      </h5>
+    <div className="space-y-3 max-w-[90vw] max-h-[90vh] overflow-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h5 className="text-H5 text-emphasis-on_surface-high text-left">
+          Buat Akun
+        </h5>
+        <button className="text-emphasis-on_surface-high" onClick={onClose}>
+          <CloseCircle size="24" />
+        </button>
+      </div>
+
       <p className="text-B1 text-emphasis-on_surface-medium text-left">
         Daftarkan diri anda segera ke katalog HSPW untuk mendapatkan akses mudah
         aman ke katalog, dan kemudahan administrasi daring.
       </p>
-      <div className="gap-x-1 flex">
-        <p className="text-Small text-neutral-500 text-center">
-          Sudah punya akun?
-        </p>
-        <div className="grid justify-end">
-          <Button variant="blue_text" size="Extra_Small">
-            Masuk
-          </Button>
-        </div>
+
+      <div className="flex items-center justify-left gap-x-1">
+        <p className="text-Small text-neutral-500">Sudah punya akun?</p>
+        <Button variant="blue_text" size="Extra_Small">
+          Masuk
+        </Button>
       </div>
 
       <TextInput
@@ -89,7 +104,7 @@ const Register = ({ onClose }) => {
 
       <div className="flex justify-center items-center">
         <div className="flex gap-x-8 w-full max-w-5xl">
-          {/* Left Column */}
+          {/* Kolom Kiri */}
           <div className="flex-1 space-y-4">
             <TextInput
               label="NIK"
@@ -105,17 +120,16 @@ const Register = ({ onClose }) => {
               value={nrp}
               onChange={(e) => setNRP(e.target.value)}
             />
-            <TextInput
+            <Dropdown
+              options={options}
               label="Balai"
-              placeholder="Masukkan Balai"
-              value={balai}
+              placeholder="Pilih Balai"
+              onSelect={(value) => console.log(value)}
               isRequired={true}
-              errorMessage="Balai tidak boleh kosong"
-              onChange={(e) => setBalai(e.target.value)}
             />
           </div>
 
-          {/* Right Column */}
+          {/* Kolom Kanan */}
           <div className="flex-1 space-y-4">
             <TextInput
               label="Email"
@@ -125,13 +139,12 @@ const Register = ({ onClose }) => {
               errorMessage="Email tidak boleh kosong"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <TextInput
+            <Dropdown
+              options={options}
               label="Satuan Kerja"
               placeholder="Pilih Satuan Kerja"
-              value={satuankerja}
+              onSelect={(value) => console.log(value)}
               isRequired={true}
-              errorMessage="Satuan kerja tidak boleh kosong"
-              onChange={(e) => setSatuanKerja(e.target.value)}
             />
             <TextInput
               label="Nomor Telepon"
@@ -157,16 +170,13 @@ const Register = ({ onClose }) => {
 
       <div>
         <IconCheckbox
-          label="Saya setuju dengan syarat dan ketentuan berlaku."
+          label="Saya setuju dengan syarat dan ketentuan berlaku."
           onChange={handleCheckboxChange}
         />
       </div>
 
       <div className="flex flex-row justify-end items-right space-x-4">
-        <Button
-          onClick={handleRegister}
-          variant="outlined_yellow"
-          size="Medium">
+        <Button onClick={onClose} variant="outlined_yellow" size="Medium">
           Batal
         </Button>
 
@@ -174,8 +184,7 @@ const Register = ({ onClose }) => {
           onClick={handleRegister}
           variant="solid_blue"
           size="Medium"
-          disabled={!isChecked} // Disable tombol jika checkbox tidak dicentang
-        >
+          disabled={!isChecked}>
           Buat Akun
         </Button>
       </div>

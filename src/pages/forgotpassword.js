@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
 import Button from "../components/button";
+import { CloseCircle } from "iconsax-react";
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -11,11 +12,16 @@ const ForgotPassword = ({ onClose }) => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 p-4">
       <div className="space-y-1">
-        <h5 className="text-H5 text-emphasis-on_surface-high text-left">
-          Lupa Kata Sandi
-        </h5>
+        <div className="flex justify-between items-center">
+          <h5 className="text-H5 text-emphasis-on_surface-high text-left">
+            Lupa Kata Sandi
+          </h5>
+          <button className="text-emphasis-on_surface-high" onClick={onClose}>
+            <CloseCircle size="24" />
+          </button>
+        </div>
         <p className="text-B1 text-emphasis-on_surface-medium text-left">
           Lupa kata sandi? Silakan reset akses Anda dengan memasukkan email
           berikut.

@@ -1,3 +1,4 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,16 +8,14 @@ body {
   padding: 0;
 }
 
-/* Custom login container styling */
 .login-container {
   @apply flex justify-center items-center h-screen bg-gray-200;
 }
 
-/* Custom zoom layout */
 html, body {
   height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden; /* Menghindari scrollbar horizontal */
 }
 
 .wrapper {
@@ -24,12 +23,27 @@ html, body {
 }
 
 .container {
-  width: 1440px;
-  height: 1024px;
+  width: 100%; /* Atur ke 100% untuk responsif */
+  max-width: 1440px;
+  height: auto; /* Ganti dengan auto untuk tinggi */
+  max-height: 1024px; /* Batasi tinggi maksimum */
   transform-origin: top left;
-  transform: scale(calc(100vw / 1440)); /* Scaling layout berdasarkan lebar viewport */
+  transform: scale(1);
   background-color: white;
   overflow: hidden;
+}
+
+/* Media query untuk layar lebih kecil dari 1440px */
+@media (max-width: 1440px) {
+  .container {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 1024px) {
+  .container {
+    transform: scale(0.7);
+  }
 }
 
 .login-button {

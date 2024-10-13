@@ -21,10 +21,7 @@ const Login = () => {
     useState(false);
   const router = useRouter();
 
-  const handleLogin = () => {
-    // Implementasikan logika login di sini
-    // Misalnya, validasi dan navigasi setelah login
-  };
+  const handleLogin = () => {};
 
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);
@@ -50,9 +47,9 @@ const Login = () => {
           />
         </div>
 
-        {/* Login card */}
-        <div className="flex flex-col items-center justify-center mt-14">
-          <div className="flex-auto self-center text-center">
+        {/* Login card dengan padding atas 56px */}
+        <div className="flex flex-col items-center justify-center flex-grow mt-[56px]">
+          <div className="self-center text-center">
             <h5 className="text-H5 text-emphasis-on_surface-high">
               Selamat Datang di Katalog HSPW!
             </h5>
@@ -115,6 +112,7 @@ const Login = () => {
                 <div className="flex-grow border-t-2 border-emphasis-on_surface-small rounded-full"></div>
               </div>
             </div>
+
             <div className="space-y-2">
               <Button
                 onClick={handleLogin}
