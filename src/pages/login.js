@@ -89,8 +89,8 @@ const Login = () => {
               <Button
                 onClick={openForgotPasswordModal}
                 variant="red_text"
-                size="Extra_Small"
-                className="">
+                size="ExtraSmall"
+                className="custom-padding">
                 Lupa Password
               </Button>
             </div>
@@ -144,10 +144,7 @@ const Login = () => {
             2024© SIPASTI V.3.0 All Reserved by PUPR
           </p>
           <div className="gap-x-2 flex items-center">
-            <Button
-              onClick={handleLogin}
-              variant="blue_text"
-              size="Extra_Small">
+            <Button onClick={handleLogin} variant="blue_text" size="B2">
               Kebijakan Privasi
             </Button>
             <svg
@@ -158,10 +155,7 @@ const Login = () => {
               fill="none">
               <circle cx="2" cy="2" r="2" fill="#B3B3B3" />
             </svg>
-            <Button
-              onClick={handleLogin}
-              variant="blue_text"
-              size="Extra_Small">
+            <Button onClick={handleLogin} variant="blue_text" size="B2">
               Syarat dan Ketentuan
             </Button>
           </div>
