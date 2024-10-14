@@ -15,6 +15,7 @@ const TextInput = ({
   type = "text",
   isRequired = false, // Prop untuk required
   errorMessage = "This field is required", // Default pesan error
+  labelPosition = "top", // New prop to control label position
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState(""); // State untuk pesan error
@@ -48,22 +49,69 @@ const TextInput = ({
   return (
     <div className={`relative flex flex-col ${className}`}>
       {label && (
-        <label className="text-B2 text-emphasis-on_surface-high mb-1">
-          {label}
-          {isRequired && <span className="text-custom-red-500"> *</span>}
-        </label>
+        <div
+          className={`flex ${
+            labelPosition === "left" ? "items-center" : "flex-col"
+          } mb-1`}>
+          <label className="text-B2 text-emphasis-on_surface-high flex items-center w-[180px]">
+            {label}
+            {isRequired && (
+              <span className="text-custom-red-500 ml-1 items-center">*</span>
+            )}{" "}
+            {/* Asterisk inline with label */}
+          </label>
+          {labelPosition === "left" ? (
+            <div className="ml-4 w-full">
+              {" "}
+              {/* Adds space between label and input when left */}
+              <input
+                type={isPasswordVisible ? "text" : type}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                onBlur={handleBlur} // Validasi saat kehilangan fokus
+                disabled={disabled}
+                className={`${sizes[size]} ${baseClasses} ${
+                  error ? "border-custom-red-500" : variants[variant]
+                } rounded-[16px] w-full transition-all duration-200 ease-in-out`}
+              />
+              {error && (
+                <div className="mt-1 text-custom-red-500 text-ExtraSmall">
+                  {error}
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <input
+                type={isPasswordVisible ? "text" : type}
+                placeholder={placeholder}
+                value={value}
+                onChange={onChange}
+                onBlur={handleBlur} // Validasi saat kehilangan fokus
+                disabled={disabled}
+                className={`${sizes[size]} ${baseClasses} ${
+                  error ? "border-custom-red-500" : variants[variant]
+                } rounded-[16px] w-full transition-all duration-200 ease-in-out`}
+              />
+              {error && (
+                <div className="flex items-center mt-1">
+                  <CloseCircle
+                    color={colors.Solid.Basic.Red[500]} // Ganti dengan warna yang sesuai
+                    variant="Linear"
+                    size={16}
+                    className="mr-1"
+                  />
+                  <span className="text-custom-red-500 text-ExtraSmall">
+                    {error}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       )}
-      <input
-        type={isPasswordVisible ? "text" : type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        onBlur={handleBlur} // Validasi saat kehilangan fokus
-        disabled={disabled}
-        className={`${sizes[size]} ${baseClasses} ${
-          error ? "border-custom-red-500" : variants[variant] // Border merah jika error
-        } rounded-[16px] w-full transition-all duration-200 ease-in-out`}
-      />
+
       {type === "password" && (
         <button
           type="button"
@@ -83,17 +131,6 @@ const TextInput = ({
             />
           )}
         </button>
-      )}
-      {error && (
-        <div className="flex items-center mt-1">
-          <CloseCircle
-            color={colors.Solid.Basic.Red[500]} // Ganti dengan warna yang sesuai
-            variant="Linear"
-            size={16}
-            className="mr-1"
-          />
-          <span className="text-custom-red-500 text-ExtraSmall">{error}</span>
-        </div>
       )}
     </div>
   );

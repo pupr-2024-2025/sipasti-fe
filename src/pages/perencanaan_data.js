@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../components/navigationbar";
 import Tabs from "../components/Tabs";
+import TextInput from "../components/input"; // Import the TextInput component
 
 const Dashboard = () => {
+  // Declare the username state using useState
+  const [username, setUsername] = useState("");
+
   const tabs = [
     {
       label: "Sinkron data dari HPS",
@@ -14,7 +18,6 @@ const Dashboard = () => {
           <p className="text-B2 text-emphasis-on_surface-medium">
             Informasi dan statistik mengenai pengguna terdaftar.
           </p>
-          {/* You can add more content or components related to user statistics here */}
         </div>
       ),
     },
@@ -28,19 +31,6 @@ const Dashboard = () => {
           <p className="text-B2 text-emphasis-on_surface-medium">
             Melihat aktivitas terbaru yang dilakukan di sistem.
           </p>
-          {/* You can add more content or components related to recent activities here */}
-        </div>
-      ),
-    },
-    {
-      label: "Laporan",
-      content: (
-        <div>
-          <h3 className="text-H3 text-emphasis-on_surface-high">Laporan</h3>
-          <p className="text-B2 text-emphasis-on_surface-medium">
-            Melihat dan mengunduh laporan pengguna dan aktivitas.
-          </p>
-          {/* You can add more content or components related to reports here */}
         </div>
       ),
     },
@@ -57,9 +47,21 @@ const Dashboard = () => {
           Informasi Umum
         </h4>
 
-        {/* Tabs Component Integration */}
         <div className="mt-6">
           <Tabs tabs={tabs} />
+        </div>
+
+        {/* TextInput Component */}
+        <div className="mt-4">
+          <TextInput
+            label="Kode RUP"
+            labelPosition="left" // Set label position to the left
+            placeholder="Masukkan Kode RUP"
+            size="Medium"
+            isRequired="true"
+            value={username} // Bind the username state
+            onChange={(e) => setUsername(e.target.value)} // Update the state
+          />
         </div>
       </div>
     </div>

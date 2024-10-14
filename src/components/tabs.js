@@ -4,15 +4,15 @@ const Tabs = ({ tabs }) => {
   const [activeTab, setActiveTab] = useState(tabs[0].label);
 
   return (
-    <div className="flex flex-col">
-      <div className="flex space-x-4 bg-custom-neutral-100 rounded-lg p-1">
+    <div className="">
+      <div className="inline-flex space-x-2 bg-custom-neutral-100 rounded-[16px] p-2">
         {tabs.map((tab) => (
           <button
             key={tab.label}
             onClick={() => setActiveTab(tab.label)}
-            className={`py-2 px-4 text-B1 rounded-full transition-all cursor-pointer ${
+            className={`px-4 py-3 text-Small rounded-[12px] transition-all duration-300 cursor-pointer whitespace-nowrap ${
               activeTab === tab.label
-                ? "bg-surface-light-background text-emphasis-on_surface-high"
+                ? "bg-custom-blue-500 text-emphasis-on_color-high" // Active tab styling with animation
                 : "text-emphasis-on_surface-medium hover:bg-surface-light-overlay"
             }`}>
             {tab.label}
@@ -23,7 +23,9 @@ const Tabs = ({ tabs }) => {
         {tabs.map((tab) => (
           <div
             key={tab.label}
-            className={`${activeTab === tab.label ? "block" : "hidden"}`}>
+            className={`transition-opacity duration-300 ${
+              activeTab === tab.label ? "opacity-100" : "opacity-0 hidden"
+            }`}>
             {tab.content}
           </div>
         ))}
