@@ -3,8 +3,7 @@ import Navbar from "../../components/navigationbar";
 import Tabs from "../../components/Tabs";
 import TextInput from "../../components/input";
 import Button from "../../components/button";
-import ProgressBar from "../../components/progressbar";
-import HorizontalLinearAlternativeLabelStepper from "../../components/progressbar";
+import Stepper from "../../components/stepper";
 import Tahap2 from "./Tahap2";
 
 const Tahap1 = () => {
@@ -13,11 +12,19 @@ const Tahap1 = () => {
   const [namaPaket, setNamaPaket] = useState("");
   const [namaPPK, setNamaPPK] = useState("");
   const [jabatanPPK, setJabatanPPK] = useState("");
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
 
   const handleCariData = () => {
     console.log("Mencari data di SIPASTI dengan Kode RUP:", koderup);
   };
+
+  const NUMBER_OF_STEPS = 4;
+  const stepLabels = [
+    "Informasi Umum",
+    "Kebutuhan Khusus",
+    "Penentuan Shortlist Vendor",
+    "Perancangan Kuesioner",
+  ];
 
   const tabs = [
     {
@@ -135,20 +142,23 @@ const Tahap1 = () => {
     },
   ];
 
-  // Check if all required fields are filled
   const areFieldsFilled = () => {
     return (
-      namaBalai.trim() !== "" && // Check namaBalai
+      namaBalai.trim() !== "" &&
       namaPaket.trim() !== "" &&
       namaPPK.trim() !== "" &&
       jabatanPPK.trim() !== ""
     );
   };
 
-  // Function to save data and move to the next step
+  const nextStep = () => {
+    if (currentStep < NUMBER_OF_STEPS - 1) {
+      setCurrentStep((prevStep) => prevStep + 1);
+    }
+  };
+
   const handleNextStep = () => {
     if (areFieldsFilled()) {
-      // Simpan data di sini jika perlu, lalu masuk ke tahap 2
       console.log("Data disimpan:", {
         koderup,
         namaBalai,
@@ -156,7 +166,7 @@ const Tahap1 = () => {
         namaPPK,
         jabatanPPK,
       });
-      setCurrentStep(2); // Pindah ke Tahap2
+      nextStep();
     } else {
       alert("Pastikan semua field telah diisi dengan benar.");
     }
@@ -170,12 +180,15 @@ const Tahap1 = () => {
           <h3 className="text-H3 text-emphasis-on_surface-high">
             Tahap Perencanaan Data
           </h3>
-          <div className="container mx-auto">
-            <HorizontalLinearAlternativeLabelStepper
+          <div className="justify-center items-full space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+            <Stepper
               currentStep={currentStep}
+              numberOfSteps={NUMBER_OF_STEPS}
+              labels={stepLabels}
             />
+            <br />
           </div>
-          {currentStep === 1 && (
+          {currentStep === 0 && (
             <>
               <h4 className="text-H4 text-emphasis-on_surface-high">
                 Informasi Umum
@@ -185,27 +198,25 @@ const Tahap1 = () => {
               </div>
             </>
           )}
-          {currentStep === 2 && <Tahap2 />}{" "}
+          {currentStep === 1 && <Tahap2 />}{" "}
           {/* Render Tahap2 jika currentStep === 2 */}
         </div>
 
-        {currentStep === 1 && (
+        {currentStep === 0 && (
           <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
             <Button
               variant="outlined_yellow"
               size="Medium"
-              disabled={currentStep === 1} // Disable the button if on the first step
-              onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 1))} // Go back to the previous step
-            >
+              disabled={currentStep === 0}
+              onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}>
               Kembali
             </Button>
 
             <Button
               variant="solid_blue"
               size="Medium"
-              disabled={!areFieldsFilled()} // Disable the button based on field validation
-              onClick={handleNextStep} // Simpan data dan lanjut ke Tahap2
-            >
+              disabled={!areFieldsFilled()}
+              onClick={handleNextStep}>
               Lanjut
             </Button>
           </div>

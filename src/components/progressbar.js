@@ -16,7 +16,7 @@ const ProgressBar = ({ currentStep }) => {
           <div
             className={`flex items-center justify-center w-10 h-10 rounded-full ${
               index + 1 === currentStep
-                ? "bg-blue-600 text-white"
+                ? "bg-custom-blue-600 text-white"
                 : "border-2 border-neutral-300 text-neutral-400"
             }`}>
             <span>{index + 1}</span>
