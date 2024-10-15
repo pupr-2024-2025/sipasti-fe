@@ -19,7 +19,7 @@ const Tabs = ({ tabs }) => {
           </button>
         ))}
       </div>
-      <div className="p-4">
+      <div className="">
         {tabs.map((tab) => (
           <div
             key={tab.label}

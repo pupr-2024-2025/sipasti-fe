@@ -1,6 +1,6 @@
 // src/pages/_app.js
-import '../styles/globals.css';
-import Login from './login';
+import "../styles/globals.css";
+import Login from "./login";
 import localFont from "next/font/local";
 
 const poppins = localFont({
@@ -14,11 +14,12 @@ const poppins = localFont({
 // }
 
 function MyApp({ Component, pageProps }) {
-  return <div
-    className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}
-    >
-    <Component {...pageProps} />
-  </div>;
+  return (
+    <div
+      className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}>
+      <Component {...pageProps} />
+    </div>
+  );
 }
 
 export default MyApp;
