@@ -201,7 +201,16 @@ const Tahap1 = () => {
           {currentStep === 1 && <Tahap2 />}{" "}
           {/* Render Tahap2 jika currentStep === 2 */}
         </div>
-
+        <TextInput
+          label="Jabatanaaaaaaaaaaaaaaaaaaaaaaaaa yayayasodas asdasdasdasidjwpoqw diof PPaaaaaaaaaaaaaaaaaaaaaaaaaaK"
+          labelPosition="left"
+          placeholder="Masukkan Jabatan PPK"
+          size="Medium"
+          isRequired="true"
+          value={jabatanPPK}
+          errorMessage="Jabatan PPK tidak boleh kosong"
+          onChange={(e) => setJabatanPPK(e.target.value)}
+        />
         {currentStep === 0 && (
           <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
             <Button

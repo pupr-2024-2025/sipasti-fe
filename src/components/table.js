@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TextInput from "../components/input"; // Pastikan path ini sesuai dengan lokasi file TextInput
+import TextInput from "../components/input"; // Ensure this path matches your TextInput location
 
 const Table = ({ columns, data }) => {
   const [inputValues, setInputValues] = useState(
@@ -9,7 +9,7 @@ const Table = ({ columns, data }) => {
     }, {})
   );
 
-  // Fungsi untuk menangani perubahan input
+  // Function to handle input changes
   const handleInputChange = (rowId, columnAccessor, value) => {
     setInputValues((prev) => ({
       ...prev,
@@ -21,10 +21,10 @@ const Table = ({ columns, data }) => {
   };
 
   return (
-    <div className="p-6">
+    <div className="">
       <div className="rounded-[16px] border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="table-fixed w-full min-w-max">
+          <table className="table-auto w-full min-w-max">
             <thead>
               <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
                 {columns.map((column, index) => (
@@ -48,7 +48,8 @@ const Table = ({ columns, data }) => {
                       className="p-6 text-base font-normal">
                       {column.type === "textInput" ? (
                         <TextInput
-                          label={column.title}
+                          label="" // Set to empty string to hide the label
+                          placeholder={column.placeholder} // Pass the custom placeholder here
                           value={inputValues[row.id]?.[column.accessor] || ""}
                           onChange={(e) =>
                             handleInputChange(
@@ -59,7 +60,7 @@ const Table = ({ columns, data }) => {
                           }
                         />
                       ) : (
-                        row[column.accessor] // Tampilkan teks biasa untuk kolom selain textInput
+                        row[column.accessor] // Display plain text for non-textInput columns
                       )}
                     </td>
                   ))}

@@ -10,6 +10,7 @@ const Tahap2 = () => {
       accessor: "namamaterial",
       width: "300px",
       type: "textInput",
+      placeholder: "Masukkan Nama Material",
       align: "left",
     },
     {
