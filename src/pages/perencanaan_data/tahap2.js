@@ -9,7 +9,7 @@ const Tahap2 = () => {
       title: "Nama Material",
       accessor: "namamaterial",
       width: "300px",
-      type: "textInput",
+      type: "text",
       placeholder: "Masukkan Nama Material",
       align: "left",
     },
@@ -24,56 +24,64 @@ const Tahap2 = () => {
       title: "Spesifikasi",
       accessor: "spesifikasi",
       width: "240px",
-      type: "input",
+      type: "textInput",
+      placeholder: "Masukkan Spesifikasi",
       align: "left",
     },
     {
       title: "Ukuran",
       accessor: "ukuran",
       width: "240px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Ukuran",
       align: "center",
     },
     {
       title: "Kodefikasi",
       accessor: "kodefikasi",
       width: "240px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Kodefikasi",
       align: "center",
     },
     {
       title: "Kelompok Material",
       accessor: "kelompokmaterial",
       width: "240px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Kelompok Material",
       align: "center",
     },
     {
       title: "Jumlah Kebutuhan",
       accessor: "jumlahkebutuhan",
       width: "260px",
-      type: "input",
+      type: "textInput",
+      placeholder: "Masukkan Jumlah Kebutuhan",
       align: "right",
     },
     {
       title: "Merk",
       accessor: "merk",
       width: "200px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Merk",
       align: "left",
     },
     {
       title: "Provinsi",
       accessor: "provinsi",
       width: "200px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Provinsi",
       align: "left",
     },
     {
       title: "Kabupaten/Kota",
       accessor: "kabupate_kota",
       width: "200px",
-      type: "text",
+      type: "textInput",
+      placeholder: "Masukkan Kanpuaten/Kota",
       align: "left",
     },
     {
@@ -173,7 +181,7 @@ const Tahap2 = () => {
   ];
 
   return (
-    <div className="p-8">
+    <div className="">
       <h3 className="text-H4 text-emphasis-on_surface-high">
         Identifikasi Kebutuhan
       </h3>

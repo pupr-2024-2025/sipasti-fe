@@ -116,7 +116,7 @@ const Login = () => {
             <div className="space-y-2">
               <Button
                 onClick={handleLogin}
-                variant="outlined_yellow"
+                variant="disabled"
                 size="Medium"
                 className="w-full">
                 Masuk menggunakan SSO
