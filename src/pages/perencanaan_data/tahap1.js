@@ -180,7 +180,7 @@ const Tahap1 = () => {
           <h3 className="text-H3 text-emphasis-on_surface-high">
             Tahap Perencanaan Data
           </h3>
-          <div className="justify-center items-full space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
             <Stepper
               currentStep={currentStep}
               numberOfSteps={NUMBER_OF_STEPS}

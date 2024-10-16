@@ -1,30 +1,142 @@
 import React from "react";
-import Table from "../../components/Table";
+import Table from "../../components/table";
 import Tabs from "../../components/Tabs";
+import Button from "../../components/button";
 
 const Tahap2 = () => {
   const columns = [
-    { title: "Kode RUP", accessor: "kodeRUP", width: "150px" },
-    { title: "Nama Paket", accessor: "namaPaket", width: "200px" },
-    { title: "Nama PPK", accessor: "namaPPK", width: "150px" },
-    { title: "Jabatan PPK", accessor: "jabatanPPK", width: "200px" },
-    { title: "Jabatan PPK", accessor: "jabatanPPK", width: "200px" },
-    { title: "Jabatan ayam", accessor: "jabatanPPK", width: "200px" },
+    {
+      title: "Nama Material",
+      accessor: "namamaterial",
+      width: "300px",
+      type: "textInput",
+      align: "left",
+    },
+    {
+      title: "Satuan",
+      accessor: "satuan",
+      width: "185px",
+      type: "number",
+      align: "left",
+    },
+    {
+      title: "Spesifikasi",
+      accessor: "spesifikasi",
+      width: "240px",
+      type: "input",
+      align: "left",
+    },
+    {
+      title: "Ukuran",
+      accessor: "ukuran",
+      width: "240px",
+      type: "text",
+      align: "center",
+    },
+    {
+      title: "Kodefikasi",
+      accessor: "kodefikasi",
+      width: "240px",
+      type: "text",
+      align: "center",
+    },
+    {
+      title: "Kelompok Material",
+      accessor: "kelompokmaterial",
+      width: "240px",
+      type: "text",
+      align: "center",
+    },
+    {
+      title: "Jumlah Kebutuhan",
+      accessor: "jumlahkebutuhan",
+      width: "260px",
+      type: "input",
+      align: "right",
+    },
+    {
+      title: "Merk",
+      accessor: "merk",
+      width: "200px",
+      type: "text",
+      align: "left",
+    },
+    {
+      title: "Provinsi",
+      accessor: "provinsi",
+      width: "200px",
+      type: "text",
+      align: "left",
+    },
+    {
+      title: "Kabupaten/Kota",
+      accessor: "kabupate_kota",
+      width: "200px",
+      type: "text",
+      align: "left",
+    },
+    {
+      title: "Aksi",
+      accessor: "aksi",
+      width: "52px",
+      type: "button",
+      align: "center",
+    },
   ];
+
   const data = [
     {
-      kodeRUP: "12345",
-      namaPaket: "Pembangunan Jembatan",
-      namaPPK: "Ahmad",
-      jabatanPPK: "Manager",
+      namamaterial: "Pasir",
+      satuan: "m³",
+      spesifikasi: "Silika",
+      ukuran: "16-30 mm",
+      kodefikasi: "M304",
+      kelompokmaterial: "Bahan Baku",
+      jumlahkebutuhan: "15",
+      merk: "KDK",
+      provinsi: "Jawa Timur",
+      kabupate_kota: "Kota Surabaya",
+      aksi: "Detail", // Konten untuk tombol
     },
     {
-      kodeRUP: "67890",
-      namaPaket: "Perbaikan Jalan",
-      namaPPK: "Budi",
-      jabatanPPK: "Supervisor",
+      namamaterial: "Pasar",
+      satuan: "m³",
+      spesifikasi: "Silika",
+      ukuran: "16-30 mm",
+      kodefikasi: "M304",
+      kelompokmaterial: "Bahan Baku",
+      jumlahkebutuhan: "15",
+      merk: "KDK",
+      provinsi: "Jawa Timur",
+      kabupate_kota: "Kota Surabaya",
+      aksi: <button>Detail</button>,
     },
-    // Data lainnya
+    {
+      namamaterial: "Pasur",
+      satuan: "m³",
+      spesifikasi: "Silika",
+      ukuran: "16-30 mm",
+      kodefikasi: "M304",
+      kelompokmaterial: "Bahan Baku",
+      jumlahkebutuhan: "15",
+      merk: "KDK",
+      provinsi: "Jawa Timur",
+      kabupate_kota: "Kota Surabaya",
+      aksi: <button>Detail</button>,
+    },
+    {
+      namamaterial: "Pasir",
+      satuan: "m³",
+      spesifikasi: "Silika",
+      ukuran: "16-30 mm",
+      kodefikasi: "M304",
+      kelompokmaterial: "Bahan Baku",
+      jumlahkebutuhan: "15",
+      merk: "KDK",
+      provinsi: "Jawa Timur",
+      kabupate_kota: "Kota Surabaya",
+      aksi: <button>Detail</button>,
+    },
   ];
 
   // Tabs configuration
@@ -32,8 +144,12 @@ const Tahap2 = () => {
     {
       label: "Material",
       content: (
-        <div className="mt-3 rounded-[16px] space-y-8">
-          <Table columns={columns} data={data} />
+        <div className="mt-3 space-y-8">
+          <div className="rounded-[16px] overflow-hidden">
+            <div className="overflow-x-auto">
+              <Table columns={columns} data={data} />
+            </div>
+          </div>
         </div>
       ),
     },

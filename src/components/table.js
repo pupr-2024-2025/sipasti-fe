@@ -1,38 +1,74 @@
-import React from "react";
+import React, { useState } from "react";
+import TextInput from "../components/input"; // Pastikan path ini sesuai dengan lokasi file TextInput
 
 const Table = ({ columns, data }) => {
+  const [inputValues, setInputValues] = useState(
+    data.reduce((acc, row) => {
+      acc[row.id] = {}; // Initialize for each row by unique id
+      return acc;
+    }, {})
+  );
+
+  // Fungsi untuk menangani perubahan input
+  const handleInputChange = (rowId, columnAccessor, value) => {
+    setInputValues((prev) => ({
+      ...prev,
+      [rowId]: {
+        ...prev[rowId],
+        [columnAccessor]: value,
+      },
+    }));
+  };
+
   return (
-    <div className="overflow-x-auto">
-      {" "}
-      <table className="table-fixed divide-y divide-gray-200 min-w-max">
-        {" "}
-        <thead>
-          <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
-            {columns.map((column, index) => (
-              <th
-                key={index}
-                className="py-3 px-4"
-                style={{ width: column.width }}>
-                {column.title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((column, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="py-3 px-4"
-                  style={{ width: column.width }}>
-                  {row[column.accessor]}
-                </td>
+    <div className="p-6">
+      <div className="rounded-[16px] border border-gray-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="table-fixed w-full min-w-max">
+            <thead>
+              <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
+                {columns.map((column, index) => (
+                  <th
+                    key={index}
+                    className={`p-6 text-base font-normal ${
+                      index !== columns.length - 1 ? "pr-6" : ""
+                    }`}
+                    style={{ width: column.width }}>
+                    {column.title}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="bg-white">
+              {data.map((row) => (
+                <tr key={row.id}>
+                  {columns.map((column) => (
+                    <td
+                      key={column.accessor}
+                      className="p-6 text-base font-normal">
+                      {column.type === "textInput" ? (
+                        <TextInput
+                          label={column.title}
+                          value={inputValues[row.id]?.[column.accessor] || ""}
+                          onChange={(e) =>
+                            handleInputChange(
+                              row.id,
+                              column.accessor,
+                              e.target.value
+                            )
+                          }
+                        />
+                      ) : (
+                        row[column.accessor] // Tampilkan teks biasa untuk kolom selain textInput
+                      )}
+                    </td>
+                  ))}
+                </tr>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };
