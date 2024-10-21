@@ -16,13 +16,13 @@ const Dropdown = ({
   const [isFocused, setIsFocused] = useState(false); // State for tracking focus
 
   const handleToggle = () => {
-    setIsOpen(!isOpen);
+    setIsOpen((prev) => !prev);
     setIsFocused(true); // Set focused when the dropdown is toggled
   };
 
   const handleSelect = (option) => {
-    setSelectedValue(option.value);
-    onSelect(option.value);
+    setSelectedValue(option);
+    onSelect(option); // Call onSelect with the selected option
     setIsOpen(false);
     setError(""); // Clear error when a selection is made
     setIsFocused(false); // Clear focus state when an option is selected
@@ -35,14 +35,6 @@ const Dropdown = ({
       setError("");
     }
     setIsFocused(false); // Clear focus state when blurred
-  };
-
-  const sizes = {
-    ExtraSmall: "text-ExtraSmall px-2 py-1",
-    Small: "text-Small px-3 py-2", // Use Small size
-    Medium: "text-Medium px-4 py-3",
-    Large: "text-Large px-5 py-4",
-    ExtraLarge: "text-ExtraLarge px-6 py-5",
   };
 
   return (
@@ -61,37 +53,30 @@ const Dropdown = ({
           className={`p-3 min-h-12 w-full border-[1.5px] rounded-[16px] transition-all duration-200 ease-in-out ${
             error
               ? "border-custom-red-500"
-              : isFocused // Change border color when focused
-              ? "border-custom-blue-500 text-emphasis-on_surface-medium" // Blue border and medium text when focused
+              : isFocused
+              ? "border-custom-blue-500 text-emphasis-on_surface-medium"
               : "border border-surface-light-outline"
-          } ${sizes.Small} text-left flex justify-between items-center`} // Flexbox for alignment
-        >
+          } text-left flex justify-between items-center`}>
           <span
             className={`${
               isFocused
                 ? "text-emphasis-on_surface-medium"
                 : "text-emphasis-on_surface-small"
             }`}>
-            {selectedValue || placeholder}{" "}
-            {/* Use placeholder for empty state */}
+            {selectedValue || placeholder}
           </span>
-          <ArrowDown2 size={16} color={colors.Surface.On_Surface_Small} />{" "}
-          {/* Chevron icon */}
+          <ArrowDown2 size={16} color={colors.Surface.On_Surface_Small} />
         </button>
 
         {isOpen && (
-          <div
-            className="absolute z-10 bg-surface-light-background shadow-lg rounded-md mt-1 w-full p-2"
-            style={{ padding: "8px" }}>
-            {/* Set padding for the container */}
-            {options.map((option) => (
+          <div className="absolute z-20 bg-surface-light-background shadow-lg rounded-md mt-1 w-full">
+            {options.map((option, index) => (
               <div
-                key={option.value}
+                key={index} // Use a unique key here
                 onClick={() => handleSelect(option)}
-                className="hover:bg-custom-blue-50 hover:text-custom-blue-500 cursor-pointer text-left text-emphasis-on_surface-high text-Small rounded-md mb-1" // Set hover styles and margin bottom
-                style={{ padding: "8px 12px", borderRadius: "4px" }} // Padding and corner radius for each option
-              >
-                {option.label} {/* Render option label */}
+                className="hover:bg-custom-blue-50 hover:text-custom-blue-500 cursor-pointer text-left text-emphasis-on_surface-high text-Small rounded-md mb-1"
+                style={{ padding: "8px 12px" }}>
+                {option} {/* Render option label */}
               </div>
             ))}
           </div>
@@ -100,7 +85,7 @@ const Dropdown = ({
       {error && (
         <div className="flex items-center mt-1">
           <CloseCircle
-            color={colors.Solid.Basic.Red[500]} // Change to your desired error color
+            color={colors.Solid.Basic.Red[500]}
             variant="Linear"
             size={16}
             className="mr-1"

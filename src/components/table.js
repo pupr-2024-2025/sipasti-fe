@@ -1,21 +1,23 @@
 import React, { useState } from "react";
-import TextInput from "../components/input"; // Ensure this path matches your TextInput location
+import TextInput from "../components/input"; // Pastikan jalurnya benar
+import Dropdown from "../components/dropdown"; // Pastikan jalurnya benar
 
 const Table = ({ columns, data }) => {
+  // Initialize state to hold input values for each row
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
-      acc[row.id] = {}; // Initialize for each row by unique id
+      acc[row.id] = {}; // Create an empty object for each row
       return acc;
     }, {})
   );
 
-  // Function to handle input changes
+  // Function to handle changes in inputs and dropdowns
   const handleInputChange = (rowId, columnAccessor, value) => {
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
         ...prev[rowId],
-        [columnAccessor]: value,
+        [columnAccessor]: value, // Update the specific value
       },
     }));
   };
@@ -48,8 +50,8 @@ const Table = ({ columns, data }) => {
                       className="p-6 text-base font-normal">
                       {column.type === "textInput" ? (
                         <TextInput
-                          label="" // Set to empty string to hide the label
-                          placeholder={column.placeholder} // Pass the custom placeholder here
+                          label="" // Kosongkan label untuk menghilangkan label
+                          placeholder={column.placeholder}
                           value={inputValues[row.id]?.[column.accessor] || ""}
                           onChange={(e) =>
                             handleInputChange(
@@ -59,8 +61,20 @@ const Table = ({ columns, data }) => {
                             )
                           }
                         />
+                      ) : column.type === "dropdown" ? (
+                        <Dropdown
+                          options={column.options} // Opsi dropdown
+                          value={inputValues[row.id]?.[column.accessor] || ""}
+                          onSelect={(selectedValue) =>
+                            handleInputChange(
+                              row.id,
+                              column.accessor,
+                              selectedValue
+                            )
+                          }
+                        />
                       ) : (
-                        row[column.accessor] // Display plain text for non-textInput columns
+                        row[column.accessor] // Untuk "text", tampilkan nilai langsung
                       )}
                     </td>
                   ))}

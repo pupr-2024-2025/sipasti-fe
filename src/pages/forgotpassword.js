@@ -8,7 +8,7 @@ const ForgotPassword = ({ onClose }) => {
 
   const handleSubmit = () => {
     console.log("Reset password email sent to:", email);
-    onClose(); // Tutup popup setelah pengiriman
+    onClose();
   };
 
   return (
