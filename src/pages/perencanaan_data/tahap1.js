@@ -4,7 +4,7 @@ import Tabs from "../../components/Tabs";
 import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
-import Tahap2 from "./Tahap2";
+import Tahap2 from "./tahap2";
 
 const Tahap1 = () => {
   const [koderup, setKodeRUP] = useState("");

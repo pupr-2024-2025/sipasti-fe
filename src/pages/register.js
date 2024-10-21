@@ -4,7 +4,7 @@ import Button from "../components/button";
 import FileInput from "../components/fileinput";
 import IconCheckbox from "../components/checkbox";
 import { CloseCircle } from "iconsax-react";
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/dropdown";
 
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
