@@ -1,13 +1,13 @@
-import React, { useState } from "react"; // Import useState here
-import Table from "../../components/table"; // Pastikan jalurnya benar
-import Pagination from "../../components/pagination"; // Update the path as needed
+import React, { useState } from "react"; 
+import Table from "../../components/table"; 
+import Pagination from "../../components/pagination"; 
 
 const Tahap2 = () => {
-  // State for pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5; // Set your total pages here
+  const itemsPerPage = 10; 
+  const totalData = 2; // Total rows in your data array
+  const totalPages = Math.ceil(totalData / itemsPerPage); 
 
-  // Data kolom untuk tabel
   const columns = [
     { title: "Nama Material", accessor: "namaMaterial", type: "text" },
     { title: "Satuan", accessor: "satuan", type: "text" },
@@ -61,7 +61,6 @@ const Tahap2 = () => {
     },
   ];
 
-  // Data dummy untuk baris tabel
   const data = [
     {
       id: 1,
@@ -91,6 +90,9 @@ const Tahap2 = () => {
     },
   ];
 
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalData);
+
   return (
     <div>
       <h2 className="text-lg font-semibold mb-4">
@@ -100,7 +102,8 @@ const Tahap2 = () => {
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage} // Use the setter directly
+        onPageChange={setCurrentPage}
+        totalData={totalData}
       />
     </div>
   );

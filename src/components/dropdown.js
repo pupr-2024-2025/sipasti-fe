@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import colors from "../styles/colors"; // Import your colors
-import { CloseCircle, ArrowDown2 } from "iconsax-react"; // Import your chevron icon here
+import colors from "../styles/colors";
+import { CloseCircle, ArrowDown2 } from "iconsax-react";
 
 const Dropdown = ({
   options,
   label,
-  placeholder = "Pilih Opsi", // Default placeholder text
+  placeholder = "Pilih Opsi",
   onSelect,
   value,
   isRequired = false,
@@ -13,19 +13,19 @@ const Dropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || "");
   const [error, setError] = useState("");
-  const [isFocused, setIsFocused] = useState(false); // State for tracking focus
+  const [isFocused, setIsFocused] = useState(false);
 
   const handleToggle = () => {
     setIsOpen((prev) => !prev);
-    setIsFocused(true); // Set focused when the dropdown is toggled
+    setIsFocused(true);
   };
 
   const handleSelect = (option) => {
     setSelectedValue(option);
-    onSelect(option); // Call onSelect with the selected option
+    onSelect(option);
     setIsOpen(false);
-    setError(""); // Clear error when a selection is made
-    setIsFocused(false); // Clear focus state when an option is selected
+    setError("");
+    setIsFocused(false);
   };
 
   const handleBlur = () => {
@@ -34,7 +34,7 @@ const Dropdown = ({
     } else {
       setError("");
     }
-    setIsFocused(false); // Clear focus state when blurred
+    setIsFocused(false);
   };
 
   return (
@@ -56,27 +56,33 @@ const Dropdown = ({
               : isFocused
               ? "border-custom-blue-500 text-emphasis-on_surface-medium"
               : "border border-surface-light-outline"
-          } text-left flex justify-between items-center`}>
+          } text-left flex justify-between items-center`}
+        >
           <span
             className={`${
               isFocused
                 ? "text-emphasis-on_surface-medium"
                 : "text-emphasis-on_surface-small"
-            }`}>
+            }`}
+          >
             {selectedValue || placeholder}
           </span>
           <ArrowDown2 size={16} color={colors.Surface.On_Surface_Small} />
         </button>
 
         {isOpen && (
-          <div className="absolute z-20 bg-surface-light-background shadow-lg rounded-md mt-1 w-full">
+          <div
+            className="z-30 bg-surface-light-background shadow-lg rounded-md mt-1 w-full"
+            style={{ top: "100%", left: 0 }} // Positioning
+          >
             {options.map((option, index) => (
               <div
-                key={index} // Use a unique key here
+                key={index}
                 onClick={() => handleSelect(option)}
                 className="hover:bg-custom-blue-50 hover:text-custom-blue-500 cursor-pointer text-left text-emphasis-on_surface-high text-Small rounded-md mb-1"
-                style={{ padding: "8px 12px" }}>
-                {option} {/* Render option label */}
+                style={{ padding: "8px 12px" }}
+              >
+                {option}
               </div>
             ))}
           </div>
