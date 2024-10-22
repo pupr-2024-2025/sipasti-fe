@@ -194,7 +194,7 @@ const Tahap1 = () => {
                 Informasi Umum
               </h4>
               <div className="mt-6">
-                <Tabs tabs={tabs} />
+              <Tabs tabs={tabs} />
               </div>
             </>
           )}

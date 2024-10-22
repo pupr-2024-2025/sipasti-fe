@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Table from "../../components/table"; 
 import Pagination from "../../components/pagination"; 
 import Tabs from "../../components/Tabs";
+import Button from "../../components/button";
 
 const Tahap2 = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -85,8 +86,8 @@ const Tahap2 = () => {
     { id: 20, namaMaterial: "Lantai", satuan: "m²", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
   ];
 
-  const startIndex = (currentPage - 1) * itemsPerPage + 1;
-  const endIndex = Math.min(currentPage * itemsPerPage, totalData);
+  const startIndex = (currentPage - 1) * itemsPerPage; // Adjusted to index data correctly
+  const currentData = data.slice(startIndex, startIndex + itemsPerPage); // Get current page data
 
   const tabs = [
     {
@@ -95,7 +96,7 @@ const Tahap2 = () => {
         <div className="mt-3 space-y-8">
           <div className="rounded-[16px] overflow-hidden">
             <div className="overflow-x-auto">
-              <Table columns={columns} data={data.slice(startIndex - 1, endIndex)} />
+              <Table columns={columns} data={currentData} />
             </div>
           </div>
         </div>
@@ -124,8 +125,18 @@ const Tahap2 = () => {
       <h4 className="text-H4 font-semibold mb-4">
         Identifikasi Kebutuhan
       </h4>
-      <div className="mt-6">
-        <Tabs tabs={tabs} />
+      <div className="flex items-center space-x-4">
+        <div className="mt-6 flex-grow">
+                  <Tabs
+            tabs={tabs}
+            button={{
+              label: "Tambah Data",
+              variant: "solid_blue",
+              size: "Medium",
+              onClick: () => console.log("Button clicked"),
+            }}
+          />
+        </div>
       </div>
       <Pagination
         currentPage={currentPage}
