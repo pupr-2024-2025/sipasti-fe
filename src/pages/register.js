@@ -67,7 +67,7 @@ const Register = ({ onClose }) => {
   };
 
   const handleSatuanKerjaSelect = (selectedOption) => {
-    setSatuanKerja(selectedOption.value);
+    setSatuanKerja(selectedOption.value); // Access the 'value' property
   };
 
   return (
@@ -124,7 +124,10 @@ const Register = ({ onClose }) => {
               options={options}
               label="Balai"
               placeholder="Pilih Balai"
-              onSelect={(value) => console.log(value)}
+              onSelect={(selectedOption) => {
+                console.log(selectedOption); // You might want to log the value instead
+                setBalai(selectedOption.value); // Set state with the selected value
+              }}
               isRequired={true}
             />
           </div>
@@ -143,7 +146,7 @@ const Register = ({ onClose }) => {
               options={options}
               label="Satuan Kerja"
               placeholder="Pilih Satuan Kerja"
-              onSelect={(value) => console.log(value)}
+              onSelect={handleSatuanKerjaSelect} // This is already correct
               isRequired={true}
             />
             <TextInput

@@ -74,7 +74,7 @@ const Table = ({ columns, data }) => {
                           }
                         />
                       ) : (
-                        row[column.accessor] // Untuk "text", tampilkan nilai langsung
+                        row[column.accessor]
                       )}
                     </td>
                   ))}
