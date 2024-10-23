@@ -1,76 +1,67 @@
 import React, { useState } from "react";
-import TextInput from "../components/input"; // Pastikan jalurnya benar
-import Dropdown from "../components/dropdown"; // Pastikan jalurnya benar
+import TextInput from "../components/input";
+import Dropdown from "../components/dropdown";
 
 const Table = ({ columns, data }) => {
-  // Initialize state to hold input values for each row
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
-      acc[row.id] = {}; // Create an empty object for each row
+      acc[row.id] = {};
       return acc;
     }, {})
   );
 
-  // Function to handle changes in inputs and dropdowns
   const handleInputChange = (rowId, columnAccessor, value) => {
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
         ...prev[rowId],
-        [columnAccessor]: value, // Update the specific value
+        [columnAccessor]: value,
       },
     }));
   };
 
   return (
     <div className="">
-      <div className="rounded-[16px] border border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full min-w-max">
+    <div className="rounded-[16px] border border-gray-200 overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="table-auto w-full min-w-max">
             <thead>
               <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
                 {columns.map((column, index) => (
                   <th
                     key={index}
-                    className={`p-6 text-base font-normal ${
-                      index !== columns.length - 1 ? "pr-6" : ""
-                    }`}
-                    style={{ width: column.width }}>
+                    className="p-6 text-base font-normal"
+                    style={{ width: column.width || 'auto' }} 
+                  >
                     {column.title}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="bg-white">
-              {data.map((row) => (
-                <tr key={row.id}>
+              {data.map((row, rowIndex) => (
+                <tr key={row.id} className={rowIndex % 2 === 0 ? "bg-custom-neutral-0" : "bg-custom-neutral-100"}> 
                   {columns.map((column) => (
                     <td
                       key={column.accessor}
-                      className="p-6 text-base font-normal">
+                      className="p-6 text-base font-normal"
+                      style={{ width: column.width || 'auto' }} // Apply column width here
+                    >
                       {column.type === "textInput" ? (
                         <TextInput
-                          label="" // Kosongkan label untuk menghilangkan label
+                          label=""
                           placeholder={column.placeholder}
                           value={inputValues[row.id]?.[column.accessor] || ""}
                           onChange={(e) =>
-                            handleInputChange(
-                              row.id,
-                              column.accessor,
-                              e.target.value
-                            )
+                            handleInputChange(row.id, column.accessor, e.target.value)
                           }
                         />
                       ) : column.type === "dropdown" ? (
                         <Dropdown
-                          options={column.options} // Opsi dropdown
+                          options={column.options}
                           value={inputValues[row.id]?.[column.accessor] || ""}
                           onSelect={(selectedValue) =>
-                            handleInputChange(
-                              row.id,
-                              column.accessor,
-                              selectedValue
-                            )
+                            handleInputChange(row.id, column.accessor, selectedValue)
                           }
                         />
                       ) : (

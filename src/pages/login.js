@@ -21,7 +21,16 @@ const Login = () => {
     useState(false);
   const router = useRouter();
 
-  const handleLogin = () => {};
+  // Dummy login function to simulate successful login
+  const handleLogin = () => {
+    if (email === "user@pupr.com" && password === "password123") {
+      // If email and password match, redirect to dashboard
+      router.push("/dashboard");
+    } else {
+      // Set error message if login fails
+      setErrors({ email: "Email atau Kata Sandi salah." });
+    }
+  };
 
   const openRegisterModal = () => setIsRegisterModalOpen(true);
   const closeRegisterModal = () => setIsRegisterModalOpen(false);

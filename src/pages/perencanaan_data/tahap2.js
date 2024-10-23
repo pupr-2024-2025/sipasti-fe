@@ -4,62 +4,70 @@ import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
 
-const Tahap2 = () => {
+const Tahap2 = ({ onNext, onBack }) => { // Ambil props untuk navigasi
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; 
   const totalData = 20; // Total rows in your data array
   const totalPages = Math.ceil(totalData / itemsPerPage); 
 
   const columns = [
-    { title: "Nama Material", accessor: "namaMaterial", type: "text" },
-    { title: "Satuan", accessor: "satuan", type: "text" },
+    { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" },
+    { title: "Satuan", accessor: "satuan", type: "text" , width: "154px"},
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
       type: "textInput",
       placeholder: "Masukkan Spesifikasi",
+      width: "240px"
     },
     {
       title: "Ukuran",
       accessor: "ukuran",
       type: "textInput",
       placeholder: "Masukkan Ukuran",
+      width: "240px"
     },
     {
       title: "Kodefikasi",
       accessor: "kodefikasi",
       type: "textInput",
       placeholder: "Masukkan Kodefikasi",
+      width: "240px"
     },
     {
       title: "Kelompok Material",
       accessor: "kelompokMaterial",
       type: "dropdown",
       options: ["Kelompok A", "Kelompok B", "Kelompok C"],
+      width: "240px"
     },
     {
       title: "Jumlah Kebutuhan",
       accessor: "jumlahKebutuhan",
       type: "textInput",
       placeholder: "Masukkan Jumlah",
+      width: "260px"
     },
     {
       title: "Merk",
       accessor: "merk",
       type: "textInput",
       placeholder: "Masukkan Merk",
+      width: "200px"
     },
     {
       title: "Provinsi",
       accessor: "provinsi",
       type: "dropdown",
       options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      width: "200px"
     },
     {
       title: "Kabupaten/Kota",
       accessor: "kabupatenKota",
       type: "dropdown",
       options: ["Bandung", "Surabaya", "Jakarta"],
+      width: "300px"
     },
   ];
 
@@ -127,7 +135,7 @@ const Tahap2 = () => {
       </h4>
       <div className="flex items-center space-x-4">
         <div className="mt-6 flex-grow">
-                  <Tabs
+          <Tabs
             tabs={tabs}
             button={{
               label: "Tambah Data",
@@ -144,6 +152,21 @@ const Tahap2 = () => {
         onPageChange={setCurrentPage}
         totalData={totalData}
       />
+      {/* Tombol Kembali dan Lanjut */}
+      <div className="flex flex-row justify-end items-right space-x-4 mt-3">
+        <Button
+          variant="outlined_yellow"
+          size="Medium"
+          onClick={onBack}>
+          Kembali
+        </Button>
+        <Button
+          variant="solid_blue"
+          size="Medium"
+          onClick={onNext}>
+          Lanjut
+        </Button>
+      </div>
     </div>
   );
 };

@@ -15,7 +15,7 @@ body {
 html, body {
   height: 100%;
   margin: 0;
-  overflow-x: hidden; /* Menghindari scrollbar horizontal */
+  /* Hapus overflow-x: hidden untuk memungkinkan scrollbar horizontal */
 }
 
 .wrapper {
@@ -30,7 +30,7 @@ html, body {
   transform-origin: top left;
   transform: scale(1);
   background-color: white;
-  overflow: hidden;
+  overflow: hidden; /* Ini masih baik jika ingin membatasi overflow pada container */
 }
 
 /* Media query untuk layar lebih kecil dari 1440px */
