@@ -43,16 +43,17 @@ const Tahap2 = ({ onNext, onBack }) => {
     }
   };
 
-  const columns = [
-    { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" },
-    { title: "Satuan", accessor: "satuan", type: "text", width: "154px", questionMark: true },
+    const columns = [
+    { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" }, // Not required
+    { title: "Satuan", accessor: "satuan", type: "text", width: "154px", tooltipText: "Contoh pengisian: m³, m²"}, // Not required
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
       type: "textInput",
       placeholder: "Masukkan Spesifikasi",
       width: "240px",
-      questionMark: true,
+      tooltipText: "Contoh pengisian: Silika, GI Medium - Socket",
+      required: true, // Required
     },
     {
       title: "Ukuran",
@@ -60,7 +61,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Ukuran",
       width: "240px",
-      questionMark: true,
+      tooltipText: "Contoh pengisian: 16-30 mm, D 1,25 inch",
+      required: true, // Required
     },
     {
       title: "Kodefikasi",
@@ -68,7 +70,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Kodefikasi",
       width: "240px",
-      questionMark: true,
+      tooltipText: "Contoh pengisian: M304, M.114.e",
+      required: true, // Required
     },
     {
       title: "Kelompok Material",
@@ -76,6 +79,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Kelompok A", "Kelompok B", "Kelompok C"],
       width: "240px",
+      required: true, // Required
     },
     {
       title: "Jumlah Kebutuhan",
@@ -83,6 +87,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Jumlah",
       width: "260px",
+      required: true, // Required
     },
     {
       title: "Merk",
@@ -90,6 +95,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Merk",
       width: "200px",
+      required: true, // Required
     },
     {
       title: "Provinsi",
@@ -97,6 +103,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
       width: "200px",
+      required: true, // Required
     },
     {
       title: "Kabupaten/Kota",
@@ -104,6 +111,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Bandung", "Surabaya", "Jakarta"],
       width: "300px",
+      required: true, // Required
     },
     {
       title: "Aksi",
@@ -114,7 +122,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       width: "52px",
     },
   ];
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = data.slice(startIndex, startIndex + itemsPerPage);
 

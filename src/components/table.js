@@ -3,10 +3,11 @@ import TextInput from "../components/input";
 import Dropdown from "../components/Dropdown";
 import Button from "../components/Button";
 import Image from "next/image";
-import QuestionMark from "../../public/images/question_mark.svg";
+import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
 import Tooltip from "./tooltip";
 
 const Table = ({ columns, data }) => {
+  // Menyimpan nilai input dan error secara bersamaan
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -14,7 +15,16 @@ const Table = ({ columns, data }) => {
     }, {})
   );
 
+  // Menyimpan state untuk error messages
+  const [errors, setErrors] = useState(
+    data.reduce((acc, row) => {
+      acc[row.id] = {};
+      return acc;
+    }, {})
+  );
+
   const handleInputChange = (rowId, columnAccessor, value) => {
+    // Set nilai input
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
@@ -22,10 +32,39 @@ const Table = ({ columns, data }) => {
         [columnAccessor]: value,
       },
     }));
+
+    // Reset error jika ada perubahan pada field
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [rowId]: {
+        ...prevErrors[rowId],
+        [columnAccessor]: "",
+      },
+    }));
+  };
+
+  const validateInputs = () => {
+    let isValid = true;
+    const newErrors = { ...errors };
+
+    columns.forEach((column) => {
+      if (column.required) {
+        data.forEach((row) => {
+          const value = inputValues[row.id]?.[column.accessor];
+          if (!value) {
+            isValid = false;
+            newErrors[row.id][column.accessor] = `${column.title} is required`; // Set error message
+          }
+        });
+      }
+    });
+
+    setErrors(newErrors); // Set error state
+    return isValid;
   };
 
   return (
-    <div className="">
+    <div>
       <div className="rounded-[16px] border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="table-auto w-full min-w-max">
@@ -41,12 +80,10 @@ const Table = ({ columns, data }) => {
                   >
                     <div className="flex items-center">
                       {column.title}
-                      {column.questionMark && (
-                        <Tooltip text="More information about this column."> {/* Add tooltip text here */}
-                          <div
-                            className="ml-2 cursor-pointer text-emphasis-on_surface-medium"
-                            title="More info"
-                          >
+                      {column.required && <span className="text-red-500 ml-1">*</span>} {/* Required Indicator */}
+                      {column.tooltipText && (
+                        <Tooltip text={column.tooltipText}>
+                          <div className="ml-2 cursor-pointer text-emphasis-on_surface-medium">
                             <Image
                               src={QuestionMark}
                               alt="Info"
@@ -67,26 +104,41 @@ const Table = ({ columns, data }) => {
                   {columns.map((column) => (
                     <td key={column.accessor} className="p-6 text-base font-normal">
                       {column.type === "textInput" ? (
-                        <TextInput
-                          label=""
-                          placeholder={column.placeholder}
-                          value={inputValues[row.id]?.[column.accessor] || ""}
-                          onChange={(e) =>
-                            handleInputChange(row.id, column.accessor, e.target.value)
-                          }
-                        />
+                        <>
+                          <TextInput
+                            label=""
+                            placeholder={column.placeholder}
+                            value={inputValues[row.id]?.[column.accessor] || ""}
+                            onChange={(e) =>
+                              handleInputChange(row.id, column.accessor, e.target.value)
+                            }
+                          />
+                          {errors[row.id]?.[column.accessor] && (
+                            <span className="text-custom-red-500 text-sm">
+                              {errors[row.id][column.accessor]}
+                            </span>
+                          )}
+                        </>
                       ) : column.type === "dropdown" ? (
-                        <Dropdown
-                          options={column.options.map((option) => ({
-                            value: option,
-                            label: option,
-                          }))}
-                          placeholder="Pilih Opsi"
-                          value={inputValues[row.id]?.[column.accessor] || ""}
-                          onSelect={(value) =>
-                            handleInputChange(row.id, column.accessor, value)
-                          }
-                        />
+                        <>
+                          <Dropdown
+                            options={column.options.map((option) => ({
+                              value: option,
+                              label: option,
+                            }))}
+                            placeholder="Pilih Opsi"
+                            value={inputValues[row.id]?.[column.accessor] || ""}
+                            onSelect={(value) =>
+                              handleInputChange(row.id, column.accessor, value)
+                            }
+                            isRequired={column.required}
+                          />
+                          {errors[row.id]?.[column.accessor] && (
+                            <span className="text-custom-red-500 text-sm">
+                              {errors[row.id][column.accessor]}
+                            </span>
+                          )}
+                        </>
                       ) : column.type === "iconButton" ? (
                         <Button
                           size="Small"

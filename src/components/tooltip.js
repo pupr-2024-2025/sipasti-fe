@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import QuestionMark from '../../public/images/question_mark.svg'; // Adjust the path as necessary
 
 // Tooltip component
-const Tooltip = ({ children, text }) => {
+const Tooltip = ({ children, text, showIcon = false }) => {
   const [visible, setVisible] = useState(false);
   const tooltipRef = useRef();
   const targetRef = useRef();
@@ -23,14 +25,6 @@ const Tooltip = ({ children, text }) => {
       const targetRect = targetRef.current.getBoundingClientRect();
       const spaceAbove = targetRect.top; // Space above the target
       const spaceBelow = window.innerHeight - targetRect.bottom; // Space below the target
-
-      if (spaceAbove < tooltipRect.height + 8 && spaceBelow > tooltipRect.height) {
-        // If not enough space above, position below with an 8px margin
-        tooltipRef.current.style.top = `${targetRect.bottom + window.scrollY + 8}px`;
-      } else {
-        // Position above with an 8px margin
-        tooltipRef.current.style.top = `${targetRect.top - tooltipRect.height + window.scrollY - 8}px`;
-      }
     }
   }, [visible]);
 
@@ -43,16 +37,27 @@ const Tooltip = ({ children, text }) => {
     >
       {children}
       {visible && (
-        <div
-          ref={tooltipRef}
-          className="absolute z-10 p-2 bg-gray-700 text-white text-sm rounded-md shadow-lg transition-opacity duration-200"
-          style={{
-            left: '50%',
-            transform: 'translateX(-50%)',
-            opacity: visible ? 1 : 0,
-          }}
-        >
-          {text}
+        <div>
+          <div
+            ref={tooltipRef}
+            className="absolute z-10 p-3 bg-emphasis-on_surface-high text-emphasis-on_color-high text-Caption rounded-[16px] shadow-lg transition-opacity duration-200"
+            style={{
+              left: '50%',
+              transform: 'translateX(-50%)',
+              opacity: visible ? 1 : 0,
+              minWidth: '200px', // Set minimum width for the tooltip
+            }}
+          >
+            {/* If showIcon is true, display the icon with the text */}
+            {showIcon && (
+              <div className="flex items-center">
+                <Image src={QuestionMark} alt="Help" width={16} height={16} className="mr-1" />
+                <span>{text}</span>
+              </div>
+            )}
+            {/* If showIcon is false, just display the text */}
+            {!showIcon && <span>{text}</span>}
+          </div>
         </div>
       )}
     </div>
