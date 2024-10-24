@@ -1,0 +1,32 @@
+.customSelectWrapper {
+  position: relative;
+  display: flex;
+}
+
+.customSelect {
+  padding: 12px; /* Adjust padding for better look */
+  min-height: 48px; /* Height of the select */
+  width: 100%;
+  border: 1.5px solid #ccc; /* Replace with your color variable */
+  border-radius: 16px; /* Rounded corners */
+  appearance: none; /* Remove default arrow */
+  background-color: #fff; /* Background color */
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23B0B0B0' stroke-width='1.5'%3E%3Cpath d='M3 6l5 5 5-5'/%3E%3C/svg%3E"); /* Custom down arrow */
+  background-repeat: no-repeat;
+  background-position: right 12px center; /* Position the arrow */
+  background-size: 12px; /* Size of the arrow */
+  transition: border-color 0.2s ease-in-out; /* Transition for border */
+}
+
+.error {
+  border-color: red; /* Error border color */
+}
+
+.customSelect:focus {
+  outline: none; /* Remove focus outline */
+  border-color: blue; /* Focus border color */
+}
+
+.customSelect option {
+  padding: 12px; /* Padding for options (optional) */
+}

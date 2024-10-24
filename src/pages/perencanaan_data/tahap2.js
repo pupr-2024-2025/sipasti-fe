@@ -1,77 +1,17 @@
-import React, { useState } from "react"; 
-import Table from "../../components/table"; 
-import Pagination from "../../components/pagination"; 
+import React, { useState } from "react";
+import Table from "../../components/table";
+import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
+import { Trash } from "iconsax-react"; // Import ikon Trash
 
-const Tahap2 = ({ onNext, onBack }) => { // Ambil props untuk navigasi
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 10; 
-    const totalData = 20; // Total rows in your data array
-    const totalPages = Math.ceil(totalData / itemsPerPage); 
+const Tahap2 = ({ onNext, onBack }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const totalData = 20; // Total rows in your data array
+  const totalPages = Math.ceil(totalData / itemsPerPage);
 
-    const columns = [
-        { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" },
-        { title: "Satuan", accessor: "satuan", type: "text" , width: "154px"},
-        {
-          title: "Spesifikasi",
-          accessor: "spesifikasi",
-          type: "textInput",
-          placeholder: "Masukkan Spesifikasi",
-          width: "240px"
-        },
-        {
-          title: "Ukuran",
-          accessor: "ukuran",
-          type: "textInput",
-          placeholder: "Masukkan Ukuran",
-          width: "240px"
-        },
-        {
-          title: "Kodefikasi",
-          accessor: "kodefikasi",
-          type: "textInput",
-          placeholder: "Masukkan Kodefikasi",
-          width: "240px"
-        },
-        {
-          title: "Kelompok Material",
-          accessor: "kelompokMaterial",
-          type: "dropdown",
-          options: ["Kelompok A", "Kelompok B", "Kelompok C"],
-          width: "240px"
-        },
-        {
-          title: "Jumlah Kebutuhan",
-          accessor: "jumlahKebutuhan",
-          type: "textInput",
-          placeholder: "Masukkan Jumlah",
-          width: "260px"
-        },
-        {
-          title: "Merk",
-          accessor: "merk",
-          type: "textInput",
-          placeholder: "Masukkan Merk",
-          width: "200px"
-        },
-        {
-          title: "Provinsi",
-          accessor: "provinsi",
-          type: "dropdown",
-          options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
-          width: "200px"
-        },
-        {
-          title: "Kabupaten/Kota",
-          accessor: "kabupatenKota",
-          type: "dropdown",
-          options: ["Bandung", "Surabaya", "Jakarta"],
-          width: "300px"
-        },
-      ];
-
-  const data = [
+  const [data, setData] = useState([
     { id: 1, namaMaterial: "Pasir", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
     { id: 2, namaMaterial: "Batu", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
     { id: 3, namaMaterial: "Semen", satuan: "ton", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
@@ -92,6 +32,87 @@ const Tahap2 = ({ onNext, onBack }) => { // Ambil props untuk navigasi
     { id: 18, namaMaterial: "Kabel", satuan: "meter", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
     { id: 19, namaMaterial: "Lem", satuan: "kg", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
     { id: 20, namaMaterial: "Lantai", satuan: "m²", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
+  ]);
+
+  // Function to delete a row
+  const handleDelete = (row) => {
+    const confirmed = window.confirm(`Apakah kamu yakin ingin menghapus material ${row.namaMaterial}?`);
+    if (confirmed) {
+      const newData = data.filter((item) => item.id !== row.id);
+      setData(newData); // Update state after deletion
+    }
+  };
+
+  const columns = [
+    { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" },
+    { title: "Satuan", accessor: "satuan", type: "text", width: "154px", questionMark: true },
+    {
+      title: "Spesifikasi",
+      accessor: "spesifikasi",
+      type: "textInput",
+      placeholder: "Masukkan Spesifikasi",
+      width: "240px",
+      questionMark: true,
+    },
+    {
+      title: "Ukuran",
+      accessor: "ukuran",
+      type: "textInput",
+      placeholder: "Masukkan Ukuran",
+      width: "240px",
+      questionMark: true,
+    },
+    {
+      title: "Kodefikasi",
+      accessor: "kodefikasi",
+      type: "textInput",
+      placeholder: "Masukkan Kodefikasi",
+      width: "240px",
+      questionMark: true,
+    },
+    {
+      title: "Kelompok Material",
+      accessor: "kelompokMaterial",
+      type: "dropdown",
+      options: ["Kelompok A", "Kelompok B", "Kelompok C"],
+      width: "240px",
+    },
+    {
+      title: "Jumlah Kebutuhan",
+      accessor: "jumlahKebutuhan",
+      type: "textInput",
+      placeholder: "Masukkan Jumlah",
+      width: "260px",
+    },
+    {
+      title: "Merk",
+      accessor: "merk",
+      type: "textInput",
+      placeholder: "Masukkan Merk",
+      width: "200px",
+    },
+    {
+      title: "Provinsi",
+      accessor: "provinsi",
+      type: "dropdown",
+      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      width: "200px",
+    },
+    {
+      title: "Kabupaten/Kota",
+      accessor: "kabupatenKota",
+      type: "dropdown",
+      options: ["Bandung", "Surabaya", "Jakarta"],
+      width: "300px",
+    },
+    {
+      title: "Aksi",
+      accessor: "aksi",
+      type: "iconButton",
+      icon: Trash, // Use Trash icon for delete action
+      onClick: (row) => handleDelete(row), // Handle delete action
+      width: "52px",
+    },
   ];
 
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -105,56 +126,44 @@ const Tahap2 = ({ onNext, onBack }) => { // Ambil props untuk navigasi
         <div className="mt-3 space-y-8">
           <div className="rounded-[16px] overflow-hidden">
             <div className="overflow-x-auto">
-              <Table columns={columns} data={data} />
+              <Table columns={columns} data={currentData} /> {/* Pass currentData here */}
             </div>
           </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage} // Update current page state
+            totalData={totalData} // Total data for pagination display
+          />
         </div>
       ),
     },
     {
       label: "Peralatan",
       content: (
-        <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
-          <p>Konten untuk tab lainnya</p>
+        <div className="flex flex-col gap-4">
+          <h3>Input Data</h3>
+          <Button label="Back" onClick={onBack} />
+          <Button label="Next" onClick={onNext} />
         </div>
       ),
     },
     {
       label: "Tenaga Kerja",
       content: (
-        <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
-          <p>Konten untuk tab lainnya</p>
+        <div className="flex flex-col gap-4">
+          <h3>Input Data</h3>
+          <Button label="Back" onClick={onBack} />
+          <Button label="Next" onClick={onNext} />
         </div>
       ),
     },
   ];
 
   return (
-    <div className="">
-      <h3 className="text-H4 text-emphasis-on_surface-high">
-        Identifikasi Kebutuhan
-      </h3>
-
-      {/* Render Tabs component */}
-      <div className="mt-6">
-        <Tabs tabs={tabs} />
-      </div>
-      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-        <Button
-          variant="outlined_yellow"
-          size="Medium"
-          onClick={onBack}>
-          Kembali
-        </Button>
-        <Button
-          variant="solid_blue"
-          size="Medium"
-          onClick={onNext}>
-          Lanjut
-        </Button>
-      </div>
+    <div>
+      <Tabs tabs={tabs} />
     </div>
-    
   );
 };
 

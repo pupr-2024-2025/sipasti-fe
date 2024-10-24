@@ -1,15 +1,19 @@
 import React, { useState } from "react";
-import TextInput from "../components/input"; // Ensure this path matches your TextInput location
+import TextInput from "../components/input";
+import Dropdown from "../components/Dropdown";
+import Button from "../components/Button";
+import Image from "next/image";
+import QuestionMark from "../../public/images/question_mark.svg";
+import Tooltip from "./tooltip";
 
 const Table = ({ columns, data }) => {
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
-      acc[row.id] = {}; // Initialize for each row by unique id
+      acc[row.id] = {};
       return acc;
     }, {})
   );
 
-  // Function to handle input changes
   const handleInputChange = (rowId, columnAccessor, value) => {
     setInputValues((prev) => ({
       ...prev,
@@ -33,8 +37,26 @@ const Table = ({ columns, data }) => {
                     className={`p-6 text-base font-normal ${
                       index !== columns.length - 1 ? "pr-6" : ""
                     }`}
-                    style={{ width: column.width }}>
-                    {column.title}
+                    style={{ width: column.width }}
+                  >
+                    <div className="flex items-center">
+                      {column.title}
+                      {column.questionMark && (
+                        <Tooltip text="More information about this column."> {/* Add tooltip text here */}
+                          <div
+                            className="ml-2 cursor-pointer text-emphasis-on_surface-medium"
+                            title="More info"
+                          >
+                            <Image
+                              src={QuestionMark}
+                              alt="Info"
+                              width={16}
+                              height={16}
+                            />
+                          </div>
+                        </Tooltip>
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -43,24 +65,41 @@ const Table = ({ columns, data }) => {
               {data.map((row) => (
                 <tr key={row.id}>
                   {columns.map((column) => (
-                    <td
-                      key={column.accessor}
-                      className="p-6 text-base font-normal">
+                    <td key={column.accessor} className="p-6 text-base font-normal">
                       {column.type === "textInput" ? (
                         <TextInput
-                          label="" // Set to empty string to hide the label
-                          placeholder={column.placeholder} // Pass the custom placeholder here
+                          label=""
+                          placeholder={column.placeholder}
                           value={inputValues[row.id]?.[column.accessor] || ""}
                           onChange={(e) =>
-                            handleInputChange(
-                              row.id,
-                              column.accessor,
-                              e.target.value
-                            )
+                            handleInputChange(row.id, column.accessor, e.target.value)
+                          }
+                        />
+                      ) : column.type === "dropdown" ? (
+                        <Dropdown
+                          options={column.options.map((option) => ({
+                            value: option,
+                            label: option,
+                          }))}
+                          placeholder="Pilih Opsi"
+                          value={inputValues[row.id]?.[column.accessor] || ""}
+                          onSelect={(value) =>
+                            handleInputChange(row.id, column.accessor, value)
+                          }
+                        />
+                      ) : column.type === "iconButton" ? (
+                        <Button
+                          size="Small"
+                          variant="outlined_icon"
+                          iconLeft={<column.icon />}
+                          onClick={() =>
+                            column.onClick
+                              ? column.onClick(row)
+                              : console.log(`Clicked icon button on row ${row.id}`)
                           }
                         />
                       ) : (
-                        row[column.accessor] // Display plain text for non-textInput columns
+                        row[column.accessor]
                       )}
                     </td>
                   ))}
