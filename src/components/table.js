@@ -110,8 +110,17 @@ const Table = ({ columns, data }) => {
                             placeholder={column.placeholder}
                             value={inputValues[row.id]?.[column.accessor] || ""}
                             onChange={(e) =>
-                              handleInputChange(row.id, column.accessor, e.target.value)
+                              handleInputChange(
+                                row.id,
+                                column.accessor,
+                                e.target.value,
+                              )
                             }
+
+                          // this line
+                            isRequired={column.required}
+                            errorMessage={errors[row.id]?.[column.accessor]}
+                          // until this line
                           />
                           {/* Defensive check for errors */}
                           {errors[row.id] && errors[row.id][column.accessor] && (
