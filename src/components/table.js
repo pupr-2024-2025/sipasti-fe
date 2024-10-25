@@ -7,7 +7,7 @@ import QuestionMark from "../../public/images/question_mark.svg"; // Your questi
 import Tooltip from "./tooltip";
 
 const Table = ({ columns, data }) => {
-  // Menyimpan nilai input dan error secara bersamaan
+  // Store input values
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -15,7 +15,7 @@ const Table = ({ columns, data }) => {
     }, {})
   );
 
-  // Menyimpan state untuk error messages
+  // Store error messages
   const [errors, setErrors] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -24,7 +24,7 @@ const Table = ({ columns, data }) => {
   );
 
   const handleInputChange = (rowId, columnAccessor, value) => {
-    // Set nilai input
+    // Set input value
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
@@ -33,7 +33,7 @@ const Table = ({ columns, data }) => {
       },
     }));
 
-    // Reset error jika ada perubahan pada field
+    // Reset error if there is a change in the field
     setErrors((prevErrors) => ({
       ...prevErrors,
       [rowId]: {
@@ -53,7 +53,7 @@ const Table = ({ columns, data }) => {
           const value = inputValues[row.id]?.[column.accessor];
           if (!value) {
             isValid = false;
-            newErrors[row.id][column.accessor] = `${column.title} is required`; // Set error message
+            newErrors[row.id][column.accessor] = `${column.title} wajib diisi`; // Set error message
           }
         });
       }
@@ -113,7 +113,8 @@ const Table = ({ columns, data }) => {
                               handleInputChange(row.id, column.accessor, e.target.value)
                             }
                           />
-                          {errors[row.id]?.[column.accessor] && (
+                          {/* Defensive check for errors */}
+                          {errors[row.id] && errors[row.id][column.accessor] && (
                             <span className="text-custom-red-500 text-sm">
                               {errors[row.id][column.accessor]}
                             </span>
@@ -133,7 +134,8 @@ const Table = ({ columns, data }) => {
                             }
                             isRequired={column.required}
                           />
-                          {errors[row.id]?.[column.accessor] && (
+                          {/* Defensive check for errors */}
+                          {errors[row.id] && errors[row.id][column.accessor] && (
                             <span className="text-custom-red-500 text-sm">
                               {errors[row.id][column.accessor]}
                             </span>

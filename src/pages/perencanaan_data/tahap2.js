@@ -43,7 +43,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     }
   };
 
-    const columns = [
+  const columns = [
     { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" }, // Not required
     { title: "Satuan", accessor: "satuan", type: "text", width: "154px", tooltipText: "Contoh pengisian: m³, m²"}, // Not required
     {
@@ -122,25 +122,21 @@ const Tahap2 = ({ onNext, onBack }) => {
       width: "52px",
     },
   ];
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = data.slice(startIndex, startIndex + itemsPerPage);
 
-  // Tabs configuration
   const tabs = [
     {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <div className="rounded-[16px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table columns={columns} data={currentData} /> {/* Pass currentData here */}
-            </div>
-          </div>
+          <Table columns={columns} data={currentData} /> {/* Render the table */}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage} // Update current page state
-            totalData={totalData} // Total data for pagination display
+            onPageChange={setCurrentPage}
+            totalData={totalData}
           />
         </div>
       ),
@@ -149,17 +145,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       label: "Peralatan",
       content: (
         <div className="flex flex-col gap-4">
-          <h3>Input Data</h3>
-          <Button label="Back" onClick={onBack} />
-          <Button label="Next" onClick={onNext} />
-        </div>
-      ),
-    },
-    {
-      label: "Tenaga Kerja",
-      content: (
-        <div className="flex flex-col gap-4">
-          <h3>Input Data</h3>
           <Button label="Back" onClick={onBack} />
           <Button label="Next" onClick={onNext} />
         </div>
