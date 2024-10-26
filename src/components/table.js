@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TextInput from "../components/input";
+import TextInput from "../components/Input";
 import Dropdown from "../components/Dropdown";
 import Button from "../components/Button";
 import Image from "next/image";
@@ -12,7 +12,7 @@ const Table = ({ columns, data }) => {
     data.reduce((acc, row) => {
       acc[row.id] = {};
       return acc;
-    }, {})
+    }, {}),
   );
 
   // Store error messages
@@ -20,7 +20,7 @@ const Table = ({ columns, data }) => {
     data.reduce((acc, row) => {
       acc[row.id] = {};
       return acc;
-    }, {})
+    }, {}),
   );
 
   const handleInputChange = (rowId, columnAccessor, value) => {
@@ -76,7 +76,8 @@ const Table = ({ columns, data }) => {
                     className={`px-3 py-6 text-base font-normal ${
                       index !== columns.length - 1 ? "pr-6" : ""
                     }`}
-                    style={{ width: column.width }}>
+                    style={{ width: column.width }}
+                  >
                     <div className="flex items-center">
                       {column.title}
                       {column.required && (
@@ -106,7 +107,8 @@ const Table = ({ columns, data }) => {
                   {columns.map((column) => (
                     <td
                       key={column.accessor}
-                      className="px-3 py-6 text-base font-normal">
+                      className="px-3 py-6 text-base font-normal"
+                    >
                       {column.type === "textInput" ? (
                         <>
                           <TextInput
@@ -117,7 +119,7 @@ const Table = ({ columns, data }) => {
                               handleInputChange(
                                 row.id,
                                 column.accessor,
-                                e.target.value
+                                e.target.value,
                               )
                             }
                             // this line
@@ -145,16 +147,7 @@ const Table = ({ columns, data }) => {
                             onSelect={(value) =>
                               handleInputChange(row.id, column.accessor, value)
                             }
-                            isRequired={column.required}
-                            errorMessage={errors[row.id]?.[column.accessor]}
                           />
-                          {/* Defensive check for errors */}
-                          {errors[row.id] &&
-                            errors[row.id][column.accessor] && (
-                              <span className="text-custom-red-500 text-sm">
-                                {errors[row.id][column.accessor]}
-                              </span>
-                            )}
                         </>
                       ) : column.type === "iconButton" ? (
                         <Button
@@ -165,7 +158,7 @@ const Table = ({ columns, data }) => {
                             column.onClick
                               ? column.onClick(row)
                               : console.log(
-                                  `Clicked icon button on row ${row.id}`
+                                  `Clicked icon button on row ${row.id}`,
                                 )
                           }
                         />
