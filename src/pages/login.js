@@ -79,7 +79,9 @@ const Login = () => {
               isRequired={true}
               errorMessage="Email tidak boleh kosong"
             />
-            {errors.email && <p className="text-custom-red-500">{errors.email}</p>}
+            {errors.email && (
+              <p className="text-custom-red-500">{errors.email}</p>
+            )}
             <div className="space-y-1">
               <TextInput
                 label="Kata Sandi"

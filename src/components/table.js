@@ -73,14 +73,16 @@ const Table = ({ columns, data }) => {
                 {columns.map((column, index) => (
                   <th
                     key={index}
-                    className={`p-6 text-base font-normal ${
+                    className={`px-3 py-6 text-base font-normal ${
                       index !== columns.length - 1 ? "pr-6" : ""
                     }`}
-                    style={{ width: column.width }}
-                  >
+                    style={{ width: column.width }}>
                     <div className="flex items-center">
                       {column.title}
-                      {column.required && <span className="text-red-500 ml-1">*</span>} {/* Required Indicator */}
+                      {column.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}{" "}
+                      {/* Required Indicator */}
                       {column.tooltipText && (
                         <Tooltip text={column.tooltipText}>
                           <div className="ml-2 cursor-pointer text-emphasis-on_surface-medium">
@@ -102,7 +104,9 @@ const Table = ({ columns, data }) => {
               {data.map((row) => (
                 <tr key={row.id}>
                   {columns.map((column) => (
-                    <td key={column.accessor} className="p-6 text-base font-normal">
+                    <td
+                      key={column.accessor}
+                      className="px-3 py-6 text-base font-normal">
                       {column.type === "textInput" ? (
                         <>
                           <TextInput
@@ -113,21 +117,21 @@ const Table = ({ columns, data }) => {
                               handleInputChange(
                                 row.id,
                                 column.accessor,
-                                e.target.value,
+                                e.target.value
                               )
                             }
-
-                          // this line
+                            // this line
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
-                          // until this line
+                            // until this line
                           />
                           {/* Defensive check for errors */}
-                          {errors[row.id] && errors[row.id][column.accessor] && (
-                            <span className="text-custom-red-500 text-sm">
-                              {errors[row.id][column.accessor]}
-                            </span>
-                          )}
+                          {errors[row.id] &&
+                            errors[row.id][column.accessor] && (
+                              <span className="text-custom-red-500 text-sm">
+                                {errors[row.id][column.accessor]}
+                              </span>
+                            )}
                         </>
                       ) : column.type === "dropdown" ? (
                         <>
@@ -142,13 +146,15 @@ const Table = ({ columns, data }) => {
                               handleInputChange(row.id, column.accessor, value)
                             }
                             isRequired={column.required}
+                            errorMessage={errors[row.id]?.[column.accessor]}
                           />
                           {/* Defensive check for errors */}
-                          {errors[row.id] && errors[row.id][column.accessor] && (
-                            <span className="text-custom-red-500 text-sm">
-                              {errors[row.id][column.accessor]}
-                            </span>
-                          )}
+                          {errors[row.id] &&
+                            errors[row.id][column.accessor] && (
+                              <span className="text-custom-red-500 text-sm">
+                                {errors[row.id][column.accessor]}
+                              </span>
+                            )}
                         </>
                       ) : column.type === "iconButton" ? (
                         <Button
@@ -158,7 +164,9 @@ const Table = ({ columns, data }) => {
                           onClick={() =>
                             column.onClick
                               ? column.onClick(row)
-                              : console.log(`Clicked icon button on row ${row.id}`)
+                              : console.log(
+                                  `Clicked icon button on row ${row.id}`
+                                )
                           }
                         />
                       ) : (

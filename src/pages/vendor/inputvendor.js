@@ -55,7 +55,7 @@ const Inputvendor = () => {
     setUploadState("default");
     setSelectedFile(null);
     setProgress(0);
-  };  
+  };
 
   return (
     <div className="p-8">
@@ -64,7 +64,7 @@ const Inputvendor = () => {
         <h3 className="text-H3 text-emphasis-on_surface-high">
           Input Data Vendor
         </h3>
-        
+
         {/* Wrapper utama dengan flex-grow untuk fill layout */}
         <div className="flex flex-wrap gap-4 mt-3">
           {/* Setiap div akan menggunakan lebar penuh secara fleksibel */}
