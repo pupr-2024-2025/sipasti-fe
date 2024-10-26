@@ -13,6 +13,7 @@ const Tahap1 = () => {
   const [namaPPK, setNamaPPK] = useState("");
   const [jabatanPPK, setJabatanPPK] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
+  const [filterCriteria, setFilterCriteria] = useState(""); // State for filter criteria
 
   const handleCariData = () => {
     console.log("Mencari data di SIPASTI dengan Kode RUP:", koderup);
@@ -194,8 +195,19 @@ const Tahap1 = () => {
                 Informasi Umum
               </h4>
               <div className="mt-6">
-              <Tabs tabs={tabs} />
+                <Tabs tabs={tabs} />
               </div>
+              {/* Conditionally render filter input */}
+              {filterCriteria && (
+                <TextInput
+                  label="Filter"
+                  labelPosition="left"
+                  placeholder="Masukkan kriteria filter"
+                  size="Medium"
+                  value={filterCriteria}
+                  onChange={(e) => setFilterCriteria(e.target.value)}
+                />
+              )}
             </>
           )}
           {currentStep === 1 && <Tahap2 />}{" "}

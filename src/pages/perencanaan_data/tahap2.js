@@ -4,6 +4,7 @@ import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
 import { Trash } from "iconsax-react"; // Import ikon Trash
+import SearchBox from "../../components/searchbox"; // Import SearchBox component
 
 const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -12,40 +13,314 @@ const Tahap2 = ({ onNext, onBack }) => {
   const totalPages = Math.ceil(totalData / itemsPerPage);
 
   const [data, setData] = useState([
-    { id: 1, namaMaterial: "Pasir", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 2, namaMaterial: "Batu", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 3, namaMaterial: "Semen", satuan: "ton", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 4, namaMaterial: "Baja", satuan: "kg", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 5, namaMaterial: "Kaca", satuan: "m²", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 6, namaMaterial: "Papan", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 7, namaMaterial: "Koral", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 8, namaMaterial: "Asphalt", satuan: "ton", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 9, namaMaterial: "Cat", satuan: "liter", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 10, namaMaterial: "Pipa PVC", satuan: "meter", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 11, namaMaterial: "Beton", satuan: "m³", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 12, namaMaterial: "Tali", satuan: "meter", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 13, namaMaterial: "Paku", satuan: "kg", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 14, namaMaterial: "Bata", satuan: "biji", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 15, namaMaterial: "Sandal", satuan: "pasang", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 16, namaMaterial: "Kunci", satuan: "biji", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 17, namaMaterial: "Lampu", satuan: "biji", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 18, namaMaterial: "Kabel", satuan: "meter", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 19, namaMaterial: "Lem", satuan: "kg", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
-    { id: 20, namaMaterial: "Lantai", satuan: "m²", spesifikasi: "", ukuran: "", kodefikasi: "", jumlahKebutuhan: "", merk: "", provinsi: "", kabupatenKota: "", kelompokMaterial: "" },
+    {
+      id: 1,
+      namaMaterial: "Pasir",
+      satuan: "m³",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 2,
+      namaMaterial: "Batu",
+      satuan: "m³",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 3,
+      namaMaterial: "Semen",
+      satuan: "ton",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 4,
+      namaMaterial: "Baja",
+      satuan: "kg",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 5,
+      namaMaterial: "Kaca",
+      satuan: "m²",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 6,
+      namaMaterial: "Papan",
+      satuan: "m³",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 7,
+      namaMaterial: "Koral",
+      satuan: "m³",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 8,
+      namaMaterial: "Asphalt",
+      satuan: "ton",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 9,
+      namaMaterial: "Cat",
+      satuan: "liter",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 10,
+      namaMaterial: "Pipa PVC",
+      satuan: "meter",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 11,
+      namaMaterial: "Beton",
+      satuan: "m³",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 12,
+      namaMaterial: "Tali",
+      satuan: "meter",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 13,
+      namaMaterial: "Paku",
+      satuan: "kg",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 14,
+      namaMaterial: "Bata",
+      satuan: "biji",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 15,
+      namaMaterial: "Sandal",
+      satuan: "pasang",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 16,
+      namaMaterial: "Kunci",
+      satuan: "biji",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 17,
+      namaMaterial: "Lampu",
+      satuan: "biji",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 18,
+      namaMaterial: "Kabel",
+      satuan: "meter",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 19,
+      namaMaterial: "Lem",
+      satuan: "kg",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
+    {
+      id: 20,
+      namaMaterial: "Lantai",
+      satuan: "m²",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    },
   ]);
 
   // Function to delete a row
   const handleDelete = (row) => {
-    const confirmed = window.confirm(`Apakah kamu yakin ingin menghapus material ${row.namaMaterial}?`);
+    const confirmed = window.confirm(
+      `Apakah kamu yakin ingin menghapus material ${row.namaMaterial}?`
+    );
     if (confirmed) {
       const newData = data.filter((item) => item.id !== row.id);
       setData(newData); // Update state after deletion
     }
   };
 
+  const button = {
+    label: "Add Data",
+    variant: "solid_blue",
+    size: "Medium",
+    onClick: () => {
+      console.log("Button clicked!");
+    },
+  };
+
+  const filter = {
+    label: "Filter", // Optional label for the filter
+    onFilter: (query) => {
+      console.log("Filtering with term:", query);
+      // Add your filtering logic here
+      const filteredData = data.filter((item) =>
+        item.namaMaterial.toLowerCase().includes(query.toLowerCase())
+      );
+      setData(filteredData);
+    },
+  };
+
   const columns = [
-    { title: "Nama Material", accessor: "namaMaterial", type: "text", width: "300px" }, // Not required
-    { title: "Satuan", accessor: "satuan", type: "text", width: "154px", tooltipText: "Contoh pengisian: m³, m²"}, // Not required
+    {
+      title: "Nama Material",
+      accessor: "namaMaterial",
+      type: "text",
+      width: "300px",
+    },
+    {
+      title: "Satuan",
+      accessor: "satuan",
+      type: "text",
+      width: "154px",
+      tooltipText: "Contoh pengisian: m³, m²",
+    },
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
@@ -53,7 +328,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Spesifikasi",
       width: "240px",
       tooltipText: "Contoh pengisian: Silika, GI Medium - Socket",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Ukuran",
@@ -62,7 +337,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Ukuran",
       width: "240px",
       tooltipText: "Contoh pengisian: 16-30 mm, D 1,25 inch",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Kodefikasi",
@@ -71,7 +346,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Kodefikasi",
       width: "240px",
       tooltipText: "Contoh pengisian: M304, M.114.e",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Kelompok Material",
@@ -79,7 +354,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Kelompok A", "Kelompok B", "Kelompok C"],
       width: "240px",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Jumlah Kebutuhan",
@@ -87,7 +362,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Jumlah",
       width: "260px",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Merk",
@@ -95,7 +370,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       placeholder: "Masukkan Merk",
       width: "200px",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Provinsi",
@@ -103,7 +378,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
       width: "200px",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Kabupaten/Kota",
@@ -111,14 +386,14 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "dropdown",
       options: ["Bandung", "Surabaya", "Jakarta"],
       width: "300px",
-      required: true, // Required
+      required: true,
     },
     {
       title: "Aksi",
       accessor: "aksi",
       type: "iconButton",
-      icon: Trash, // Use Trash icon for delete action
-      onClick: (row) => handleDelete(row), // Handle delete action
+      icon: Trash,
+      onClick: (row) => handleDelete(row),
       width: "52px",
     },
   ];
@@ -131,7 +406,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <Table columns={columns} data={currentData} /> {/* Render the table */}
+          <Table columns={columns} data={currentData} />{" "}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -154,7 +429,7 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   return (
     <div>
-      <Tabs tabs={tabs} />
+      <Tabs tabs={tabs} button={button} filter={filter} />
     </div>
   );
 };
