@@ -10,8 +10,8 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Data asli
-  const [data, setData] = useState([
+  // Data asli untuk masing-masing tab
+  const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
       namaMaterial: "Pasir",
@@ -25,166 +25,108 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
       kelompokMaterial: "",
     },
-    {
-      id: 2,
-      namaMaterial: "Batu",
-      satuan: "m³",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 3,
-      namaMaterial: "Semen",
-      satuan: "ton",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 4,
-      namaMaterial: "Baja",
-      satuan: "kg",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 5,
-      namaMaterial: "Kaca",
-      satuan: "m²",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 6,
-      namaMaterial: "Papan",
-      satuan: "m³",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 7,
-      namaMaterial: "Koral",
-      satuan: "m³",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 8,
-      namaMaterial: "Asphalt",
-      satuan: "ton",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 9,
-      namaMaterial: "Cat",
-      satuan: "liter",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    {
-      id: 10,
-      namaMaterial: "Pipa PVC",
-      satuan: "meter",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlahKebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompokMaterial: "",
-    },
-    // ... (more items can be added as needed)
+    // Tambahkan data lainnya sesuai kebutuhan
   ]);
 
-  // State untuk data yang difilter
-  const [filteredData, setFilteredData] = useState(data);
+  const [dataPeralatan, setDataPeralatan] = useState([
+    {
+      id: 1,
+      namaPeralatan: "Excavator",
+      satuan: "unit",
+      tipe: "",
+      merk: "",
+      kapasitas: "",
+      jumlahKebutuhan: "",
+      provinsi: "",
+      kabupatenKota: "",
+    },
+    // Tambahkan data lainnya sesuai kebutuhan
+  ]);
 
-  // Centralized Search Logic
-  const handleSearch = (query) => {
+  const [dataTenagaKerja, setDataTenagaKerja] = useState([
+    {
+      id: 1,
+      namaPekerja: "Tukang Batu",
+      kategori: "Pekerja Harian",
+      upah: "",
+      jumlahKebutuhan: "",
+      provinsi: "",
+      kabupatenKota: "",
+    },
+    // Tambahkan data lainnya sesuai kebutuhan
+  ]);
+
+  // State untuk data yang difilter per tab
+  const [filteredDataMaterial, setFilteredDataMaterial] =
+    useState(dataMaterial);
+  const [filteredDataPeralatan, setFilteredDataPeralatan] =
+    useState(dataPeralatan);
+  const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
+    useState(dataTenagaKerja);
+
+  // Search logic per tab
+  const handleSearch = (query, tab) => {
+    const data =
+      tab === "Material"
+        ? dataMaterial
+        : tab === "Peralatan"
+        ? dataPeralatan
+        : dataTenagaKerja;
     const result = data.filter((item) =>
       Object.values(item).some((value) =>
         value.toString().toLowerCase().includes(query.toLowerCase())
       )
     );
-    setFilteredData(result);
+    if (tab === "Material") {
+      setFilteredDataMaterial(result);
+    } else if (tab === "Peralatan") {
+      setFilteredDataPeralatan(result);
+    } else {
+      setFilteredDataTenagaKerja(result);
+    }
     setCurrentPage(1); // Reset to the first page
   };
 
-  // Function untuk menghapus row
-  const handleDelete = (row) => {
+  const handleDelete = (row, tab) => {
     const confirmed = window.confirm(
-      `Apakah kamu yakin ingin menghapus material ${row.namaMaterial}?`
+      `Apakah kamu yakin ingin menghapus item ${
+        tab === "Material"
+          ? row.namaMaterial
+          : tab === "Peralatan"
+          ? row.namaPeralatan
+          : row.namaPekerja
+      }?`
     );
     if (confirmed) {
-      const newData = data.filter((item) => item.id !== row.id);
-      setData(newData);
-      setFilteredData(newData); // Update filtered data as well
-      setCurrentPage(1); // Reset to first page after deletion
+      const newData = (
+        tab === "Material"
+          ? dataMaterial
+          : tab === "Peralatan"
+          ? dataPeralatan
+          : dataTenagaKerja
+      ).filter((item) => item.id !== row.id);
+      if (tab === "Material") {
+        setDataMaterial(newData);
+        setFilteredDataMaterial(newData);
+      } else if (tab === "Peralatan") {
+        setDataPeralatan(newData);
+        setFilteredDataPeralatan(newData);
+      } else {
+        setDataTenagaKerja(newData);
+        setFilteredDataTenagaKerja(newData);
+      }
+      setCurrentPage(1);
     }
   };
 
-  const columns = [
+  const columnsMaterial = [
     {
       title: "Nama Material",
       accessor: "namaMaterial",
       type: "text",
       width: "300px",
     },
-    {
-      title: "Satuan",
-      accessor: "satuan",
-      type: "text",
-      width: "154px",
-    },
+    { title: "Satuan", accessor: "satuan", type: "text", width: "154px" },
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
@@ -254,51 +196,196 @@ const Tahap2 = ({ onNext, onBack }) => {
       accessor: "aksi",
       type: "iconButton",
       icon: Trash,
-      onClick: (row) => handleDelete(row),
+      onClick: (row) => handleDelete(row, "Material"),
       width: "52px",
     },
   ];
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  const columnsPeralatan = [
+    {
+      title: "Nama Peralatan",
+      accessor: "namaPeralatan",
+      type: "text",
+      width: "300px",
+    },
+    { title: "Satuan", accessor: "satuan", type: "text", width: "154px" },
+    {
+      title: "Tipe",
+      accessor: "tipe",
+      type: "textInput",
+      placeholder: "Masukkan Tipe",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Merk",
+      accessor: "merk",
+      type: "textInput",
+      placeholder: "Masukkan Merk",
+      width: "200px",
+      required: true,
+    },
+    {
+      title: "Kapasitas",
+      accessor: "kapasitas",
+      type: "textInput",
+      placeholder: "Masukkan Kapasitas",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Jumlah Kebutuhan",
+      accessor: "jumlahKebutuhan",
+      type: "textInput",
+      placeholder: "Masukkan Jumlah",
+      width: "260px",
+      required: true,
+    },
+    {
+      title: "Provinsi",
+      accessor: "provinsi",
+      type: "dropdown",
+      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      width: "200px",
+      required: true,
+    },
+    {
+      title: "Kabupaten/Kota",
+      accessor: "kabupatenKota",
+      type: "dropdown",
+      options: ["Bandung", "Surabaya", "Jakarta"],
+      width: "300px",
+      required: true,
+    },
+    {
+      title: "Aksi",
+      accessor: "aksi",
+      type: "iconButton",
+      icon: Trash,
+      onClick: (row) => handleDelete(row, "Peralatan"),
+      width: "52px",
+    },
+  ];
 
-  // Total pages based on filtered data
-  const totalPages =
-    filteredData.length > 0 ? Math.ceil(filteredData.length / itemsPerPage) : 1;
-
-  // Ensure currentPage does not exceed total pages
-  const handlePageChange = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
+  const columnsTenagaKerja = [
+    {
+      title: "Nama Pekerja",
+      accessor: "namaPekerja",
+      type: "text",
+      width: "300px",
+    },
+    { title: "Kategori", accessor: "kategori", type: "text", width: "200px" },
+    {
+      title: "Upah",
+      accessor: "upah",
+      type: "textInput",
+      placeholder: "Masukkan Upah",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Jumlah Kebutuhan",
+      accessor: "jumlahKebutuhan",
+      type: "textInput",
+      placeholder: "Masukkan Jumlah",
+      width: "260px",
+      required: true,
+    },
+    {
+      title: "Provinsi",
+      accessor: "provinsi",
+      type: "dropdown",
+      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      width: "200px",
+      required: true,
+    },
+    {
+      title: "Kabupaten/Kota",
+      accessor: "kabupatenKota",
+      type: "dropdown",
+      options: ["Bandung", "Surabaya", "Jakarta"],
+      width: "300px",
+      required: true,
+    },
+    {
+      title: "Aksi",
+      accessor: "aksi",
+      type: "iconButton",
+      icon: Trash,
+      onClick: (row) => handleDelete(row, "Tenaga Kerja"),
+      width: "52px",
+    },
+  ];
 
   const tabs = [
     {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox placeholder="Cari material..." onSearch={handleSearch} />
-          <Table columns={columns} data={currentData} />
+          <SearchBox
+            placeholder="Cari material..."
+            onSearch={(query) => handleSearch(query, "Material")}
+          />
+          <Table
+            columns={columnsMaterial}
+            data={filteredDataMaterial.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+            )}
+          />
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange} // Update the pagination handler
+            totalPages={Math.ceil(filteredDataMaterial.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
           />
-          <p>
-            Menampilkan {startIndex + 1} sampai{" "}
-            {Math.min(startIndex + itemsPerPage, filteredData.length)} dari{" "}
-            {filteredData.length} data.
-          </p>
         </div>
       ),
     },
     {
       label: "Peralatan",
       content: (
-        <div className="flex flex-col gap-4">
-          <Button label="Back" onClick={onBack} />
-          <Button label="Next" onClick={onNext} />
+        <div className="mt-3 space-y-8">
+          <SearchBox
+            placeholder="Cari peralatan..."
+            onSearch={(query) => handleSearch(query, "Peralatan")}
+          />
+          <Table
+            columns={columnsPeralatan}
+            data={filteredDataPeralatan.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+            )}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(filteredDataPeralatan.length / itemsPerPage)}
+            onPageChange={setCurrentPage}
+          />
+        </div>
+      ),
+    },
+    {
+      label: "Tenaga Kerja",
+      content: (
+        <div className="mt-3 space-y-8">
+          <SearchBox
+            placeholder="Cari tenaga kerja..."
+            onSearch={(query) => handleSearch(query, "Tenaga Kerja")}
+          />
+          <Table
+            columns={columnsTenagaKerja}
+            data={filteredDataTenagaKerja.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+            )}
+          />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(
+              filteredDataTenagaKerja.length / itemsPerPage
+            )}
+            onPageChange={setCurrentPage}
+          />
         </div>
       ),
     },
@@ -307,6 +394,19 @@ const Tahap2 = ({ onNext, onBack }) => {
   return (
     <div>
       <Tabs tabs={tabs} />
+      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+          Kembali
+        </Button>
+
+        <Button
+          variant="solid_blue"
+          size="Medium"
+          onClick={onNext} // Menggunakan onNext saat tombol diklik
+        >
+          Simpan & Lanjut
+        </Button>
+      </div>
     </div>
   );
 };
