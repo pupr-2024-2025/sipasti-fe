@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../components/navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
@@ -8,6 +8,26 @@ import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox"; // Import the SearchBox component
 
 const Tahap4 = () => {
+  const fetchCommonInformation = useCallback(async () => {
+    const response = await fetch("https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/1");
+    const data = await response.json();
+    const commonInformation = data?.data || {
+      kode_rup: "",
+      nama_balai: "",
+      nama_paket: "",
+      nama_ppk: "",
+      jabatan_ppk: "",
+    };
+    setCommonInformation(commonInformation);
+  }, []);
+
+  useEffect(() => {
+    fetchCommonInformation()
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }, [fetchCommonInformation]);
+
   // State untuk setiap input form
   const [formValues, setFormValues] = useState({
     vendorName: "",
@@ -19,6 +39,14 @@ const Tahap4 = () => {
     picName: "",
     province: "",
     city: "",
+  });
+
+  const [commonInformation, setCommonInformation] = useState({
+    kode_rup: "",
+    nama_balai: "",
+    nama_paket: "",
+    nama_ppk: "",
+    jabatan_ppk: "",
   });
 
   const [dataMaterial, setDataMaterial] = useState([
@@ -137,35 +165,35 @@ const Tahap4 = () => {
             label="Kode RUP"
             labelPosition="left"
             size="Medium"
-            placeholder="92381023123913"
+            placeholder={commonInformation.kode_rup}
             disabledActive={true}
           />
           <TextInput
             label="Nama Balai"
             labelPosition="left"
             size="Medium"
-            placeholder="Balai Diklat PU WIlayah IV Surabaya"
+            placeholder={commonInformation.nama_balai}
             disabledActive={true}
           />
           <TextInput
             label="Nama Paket"
             labelPosition="left"
             size="Medium"
-            placeholder="Pembangunan Jembatan Gantung 6"
+            placeholder={commonInformation.nama_paket}
             disabledActive={true}
           />
           <TextInput
             label="Nama PPK"
             labelPosition="left"
             size="Medium"
-            placeholder="Farhan"
+            placeholder={commonInformation.nama_ppk}
             disabledActive={true}
           />
           <TextInput
             label="Jabatan PPK"
             labelPosition="left"
             size="Medium"
-            placeholder="PPK 3.1 Satker PJN Wilayah 3 Provinsi Jatim"
+            placeholder={commonInformation.jabatan_ppk}
             disabledActive={true}
           />
         </div>
