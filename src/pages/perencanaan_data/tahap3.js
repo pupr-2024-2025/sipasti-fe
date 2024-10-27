@@ -441,28 +441,6 @@ const Tahap3 = ({ onNext, onBack }) => {
   // State to manage errors
   const [formErrors, setFormErrors] = useState({});
 
-  // Function to delete a row
-  const handleDelete = (row, type) => {
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin menghapus ${type} ${row.respondenvendor}?`
-    );
-    if (confirmed) {
-      if (type === "Material") {
-        setMaterialData((prevData) =>
-          prevData.filter((item) => item.id !== row.id)
-        );
-      } else if (type === "Equipment") {
-        setEquipmentData((prevData) =>
-          prevData.filter((item) => item.id !== row.id)
-        );
-      } else {
-        setLaborData((prevData) =>
-          prevData.filter((item) => item.id !== row.id)
-        );
-      }
-    }
-  };
-
   // Define columns for each type
   const columns = [
     {
@@ -546,6 +524,7 @@ const Tahap3 = ({ onNext, onBack }) => {
                 columns={columns}
                 data={materialData}
                 errors={formErrors}
+                setParentState={() => {}}
               />{" "}
               {/* Pass errors to Table */}
             </div>
@@ -569,6 +548,7 @@ const Tahap3 = ({ onNext, onBack }) => {
                 columns={columns}
                 data={equipmentData}
                 errors={formErrors}
+                setParentState={() => {}}
               />{" "}
               {/* Pass errors to Table */}
             </div>
@@ -588,7 +568,12 @@ const Tahap3 = ({ onNext, onBack }) => {
         <div className="mt-3 space-y-8">
           <div className="rounded-[16px] overflow-hidden">
             <div className="overflow-x-auto">
-              <Table columns={columns} data={laborData} errors={formErrors} />{" "}
+              <Table
+                columns={columns}
+                data={laborData}
+                errors={formErrors}
+                setParentState={() => {}}
+              />{" "}
               {/* Pass errors to Table */}
             </div>
           </div>
