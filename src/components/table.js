@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import TextInput from "../components/input";
 import Dropdown from "../components/Dropdown";
 import Button from "../components/Button";
-import Checkbox from "../components/Checkbox"; // Import the Checkbox component
+import Checkbox from "../components/checkbox"; // Import the Checkbox component
 import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
 import Tooltip from "./tooltip";

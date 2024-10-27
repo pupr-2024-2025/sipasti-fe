@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
-import Button from "../../components/button";
+import Button from "../../components/Button";
 import { Trash } from "iconsax-react";
 
 const Tahap3 = ({ onNext, onBack }) => {

@@ -16,7 +16,8 @@ const poppins = localFont({
 function MyApp({ Component, pageProps }) {
   return (
     <div
-      className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}>
+      className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}
+      suppressHydrationWarning={false}>
       <Component {...pageProps} />
     </div>
   );

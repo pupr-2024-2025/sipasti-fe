@@ -8,12 +8,12 @@ import LoginImage from "../../public/images/login-asset.svg";
 
 import Register from "./register";
 import TextInput from "../components/input";
-import Button from "../components/button";
+import Button from "../components/Button";
 import Modal from "../components/modal";
 import ForgotPassword from "./forgotpassword";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -21,14 +21,62 @@ const Login = () => {
     useState(false);
   const router = useRouter();
 
-  // Dummy login function to simulate successful login
-  const handleLogin = () => {
-    if (email === "user@pupr.com" && password === "password123") {
-      // If email and password match, redirect to dashboard
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        }
+      );
+      console.log(response);
+
+      if (!response.ok) {
+        throw new Error(
+          "Login gagal. Periksa kembali email dan kata sandi Anda."
+        );
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.token);
       router.push("/dashboard");
-    } else {
-      // Set error message if login fails
-      setErrors({ email: "Email atau Kata Sandi salah." });
+    } catch (error) {
+      setErrors({ username: error.message });
+    }
+  };
+
+  // Function to handle SSO login
+  const handleSSOLogin = async () => {
+    const token = "YOUR_SSO_TOKEN";
+
+    try {
+      const response = await fetch(
+        "https://bravo.pu.go.id/backend/ssoinformation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Login SSO gagal");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        router.push("/dashboard");
+      } else {
+        setErrors({ username: "Login SSO gagal." });
+      }
+    } catch (error) {
+      setErrors({ username: error.message });
     }
   };
 
@@ -74,13 +122,13 @@ const Login = () => {
               label="Email"
               placeholder="Masukkan Email"
               state="border"
-              value={email}
+              value={username}
               onChange={(e) => setEmail(e.target.value)}
               isRequired={true}
-              errorMessage="Email tidak boleh kosong"
+              errorMessage="Username tidak boleh kosong"
             />
-            {errors.email && (
-              <p className="text-custom-red-500">{errors.email}</p>
+            {errors.username && (
+              <p className="text-custom-red-500">{errors.username}</p>
             )}
             <div className="space-y-1">
               <TextInput
@@ -126,8 +174,8 @@ const Login = () => {
 
             <div className="space-y-2">
               <Button
-                onClick={handleLogin}
-                variant="outlined_yellow"
+                onClick={handleSSOLogin}
+                variant="disabled"
                 size="Medium"
                 className="w-full">
                 Masuk menggunakan SSO

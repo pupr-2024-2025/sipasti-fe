@@ -17,14 +17,13 @@ const FileInput = ({
   progress = 0,
   onCancel,
   selectedFile,
-  totalProcessingTime = 30, // Total waktu pemrosesan dalam detik
+  totalProcessingTime = 30,
+  required = false, // Tambahkan prop untuk mengatur apakah field ini wajib
 }) => {
   const fileInputRef = useRef(null);
   const [startTime, setStartTime] = useState(null);
   const [elapsedTime, setElapsedTime] = useState(0);
-
-  // Menambahkan console.log di sini untuk memeriksa onCancel
-  console.log("onCancel function:", onCancel);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
@@ -32,8 +31,15 @@ const FileInput = ({
 
   const handleFileChange = (event) => {
     const files = event.target.files;
-    if (onFileSelect) {
-      onFileSelect(files);
+
+    // Jika field required, periksa jika tidak ada file yang dipilih
+    if (required && files.length === 0) {
+      setErrorMessage("File wajib dipilih.");
+    } else {
+      setErrorMessage(""); // Kosongkan pesan kesalahan jika valid
+      if (onFileSelect) {
+        onFileSelect(files);
+      }
     }
   };
 
@@ -41,16 +47,15 @@ const FileInput = ({
     if (state === "processing") {
       setStartTime(Date.now());
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000)); // Menghitung waktu berlalu dalam detik
-      }, 1000); // Memperbarui setiap detik
+        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+      }, 1000);
 
-      return () => clearInterval(interval); // Membersihkan interval saat komponen tidak lagi digunakan
+      return () => clearInterval(interval);
     }
   }, [state, startTime]);
 
   return (
     <div className={className}>
-      {/* Hidden file input field */}
       <input
         type="file"
         ref={fileInputRef}
@@ -59,14 +64,18 @@ const FileInput = ({
         multiple={multiple}
         accept={accept}
       />
-
-      {/* Custom button for file upload */}
       <div>
         {Label && (
-          <p className="text-B2 text-emphasis-on_surface-high">{Label}</p>
+          <p className="text-B2 text-emphasis-on_surface-high">
+            {Label} {required && <span className="text-red-500">*</span>}
+          </p>
         )}
 
-        {/* State-based rendering */}
+        {/* Tampilkan pesan kesalahan */}
+        {errorMessage && (
+          <p className="text-red-500 text-Small">{errorMessage}</p>
+        )}
+
         {state === "default" && (
           <div className="border-2 border-dashed border-emphasis-on_surface-small px-3 py-2 rounded-[16px] flex justify-left items-center space-x-3">
             <Button
@@ -85,7 +94,6 @@ const FileInput = ({
 
         {state === "processing" && selectedFile && (
           <div className="bg-custom-neutral-100 px-3 py-2 rounded-[16px] flex flex-col space-y-2">
-            {/* Additional File Information */}
             <div className="flex items-start content-start space-x-3 w-full">
               <div className="flex-shrink-0">
                 <DocumentText1
@@ -108,18 +116,11 @@ const FileInput = ({
                   )}
                 </div>
                 <div className="flex justify-between items-center w-full custom-padding">
-                  {/* Bagian teks yang hug */}
                   <div className="inline-flex items-center gap-1">
                     <p className="text-Small text-emphasis-on_surface-small">
                       {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                     </p>
-                    <div className="Ellipse1 w-0.5 h-0.5 bg-emphasis-on_surface-small rounded-full mx-1" />
-                    <p className="text-Small text-emphasis-on_surface-small">
-                      {totalProcessingTime - elapsedTime} Detik Tersisa
-                    </p>
                   </div>
-
-                  {/* Bagian progress */}
                   <div className="ml-auto flex items-center">
                     <div className="text-Small text-emphasis-on_surface-medium rounded-md py-1 px-3">
                       {progress}%
@@ -128,7 +129,6 @@ const FileInput = ({
                 </div>
               </div>
             </div>
-            {/* Progress Bar */}
             <div className="relative w-full h-1 bg-custom-neutral-0 rounded-full">
               <div
                 className="absolute h-full bg-custom-blue-500 rounded-full transition-all duration-300 ease-in-out"
@@ -138,7 +138,6 @@ const FileInput = ({
         )}
         {state === "done" && (
           <div className="border-2 border-solid border-custom-blue-500 px-3 py-4 rounded-[16px] flex justify-self-stretch items-left space-x-3">
-            {/* Menggunakan div untuk menampilkan informasi file tanpa kursor klik */}
             <div className="flex items-start content-start space-x-3 w-full cursor-default">
               <div className="flex-shrink-0">
                 <DocumentText1
@@ -166,7 +165,6 @@ const FileInput = ({
                   <p className="text-Small">
                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                   </p>
-                  <div className="Ellipse1 w-0.5 h-0.5 bg-emphasis-on_surface-small rounded-full" />
                   <p className="text-Small text-custom-blue-500">
                     Berkas berhasil diunggah.
                   </p>
