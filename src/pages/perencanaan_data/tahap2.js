@@ -62,6 +62,10 @@ const Tahap2 = ({ onNext, onBack }) => {
     useState(dataPeralatan);
   const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
     useState(dataTenagaKerja);
+  
+  const [stateMaterial, setStateMaterial] = useState(null);
+  const [statePeralatan, setStatePeralatan] = useState(null);
+  const [stateTenagaKerja, setStateTenagaKerja] = useState(null);
 
   // Search logic per tab
   const handleSearch = (query, tab) => {
@@ -121,11 +125,11 @@ const Tahap2 = ({ onNext, onBack }) => {
   const columnsMaterial = [
     {
       title: "Nama Material",
-      accessor: "namaMaterial",
-      type: "text",
+      accessor: "nama_material",
+      type: "textInput",
       width: "300px",
     },
-    { title: "Satuan", accessor: "satuan", type: "text", width: "154px" },
+    { title: "Satuan", accessor: "satuan", type: "textInput", width: "154px" },
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
@@ -152,7 +156,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Kelompok Material",
-      accessor: "kelompokMaterial",
+      accessor: "kelompok_material",
       type: "dropdown",
       options: ["Kelompok A", "Kelompok B", "Kelompok C"],
       width: "240px",
@@ -160,7 +164,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Jumlah Kebutuhan",
-      accessor: "jumlahKebutuhan",
+      accessor: "jumlah_kebutuhan",
       type: "textInput",
       placeholder: "Masukkan Jumlah",
       width: "260px",
@@ -203,25 +207,26 @@ const Tahap2 = ({ onNext, onBack }) => {
   const columnsPeralatan = [
     {
       title: "Nama Peralatan",
-      accessor: "namaPeralatan",
-      type: "text",
-      width: "300px",
-    },
-    { title: "Satuan", accessor: "satuan", type: "text", width: "154px" },
-    {
-      title: "Tipe",
-      accessor: "tipe",
+      accessor: "nama_peralatan",
+      placeholder: "Masukkan Nama Peralatan",
       type: "textInput",
-      placeholder: "Masukkan Tipe",
-      width: "240px",
+      width: "300px",
       required: true,
     },
     {
-      title: "Merk",
-      accessor: "merk",
+      title: "Satuan",
+      accessor: "satuan",
+      placeholder: "Masukkan Satuan",
       type: "textInput",
-      placeholder: "Masukkan Merk",
-      width: "200px",
+      width: "154px",
+      required: true,
+    },
+    {
+      title: "Spesifikasi",
+      accessor: "spesifikasi",
+      type: "textInput",
+      placeholder: "Masukkan Spesifikasi",
+      width: "240px",
       required: true,
     },
     {
@@ -233,16 +238,41 @@ const Tahap2 = ({ onNext, onBack }) => {
       required: true,
     },
     {
-      title: "Jumlah Kebutuhan",
-      accessor: "jumlahKebutuhan",
+      title: "Kodefikasi",
+      accessor: "kodefikasi",
       type: "textInput",
-      placeholder: "Masukkan Jumlah",
+      placeholder: "Masukkan Kodefikasi",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Kelompok Peralatan",
+      accessor: "kelompok_peralatan",
+      type: "dropdown",
+      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      placeholder: "Masukkan Kelompok Peralatan",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Jumlah Kebutuhan",
+      accessor: "jumlah_kebutuhan",
+      type: "textInput",
+      placeholder: "Masukkan Jumlah Kebutuhan",
       width: "260px",
       required: true,
     },
     {
+      title: "Merk",
+      accessor: "merk",
+      type: "textInput",
+      placeholder: "Masukkan Merk",
+      width: "200px",
+      required: true,
+    },
+    {
       title: "Provinsi",
-      accessor: "provinsi",
+      accessor: "provincies_id",
       type: "dropdown",
       options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
       width: "200px",
@@ -250,10 +280,10 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Kabupaten/Kota",
-      accessor: "kabupatenKota",
+      accessor: "cities_id",
       type: "dropdown",
       options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "300px",
+      width: "200px",
       required: true,
     },
     {
@@ -268,31 +298,40 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const columnsTenagaKerja = [
     {
-      title: "Nama Pekerja",
-      accessor: "namaPekerja",
-      type: "text",
-      width: "300px",
-    },
-    { title: "Kategori", accessor: "kategori", type: "text", width: "200px" },
-    {
-      title: "Upah",
-      accessor: "upah",
+      title: "Jenis Tenaga Kerja",
+      accessor: "jenis_tenaga_kerja",
       type: "textInput",
-      placeholder: "Masukkan Upah",
-      width: "240px",
+      placeholder: "Masukkan Tenaga Kerja",
+      width: "300px",
+      required: true,
+    },
+    {
+      title: "Satuan",
+      accessor: "satuan",
+      jumlah_kebutuhan: "Masukkan Satuan",
+      type: "textInput",
+      width: "154px",
       required: true,
     },
     {
       title: "Jumlah Kebutuhan",
-      accessor: "jumlahKebutuhan",
+      accessor: "jumlah_kebutuhan",
       type: "textInput",
-      placeholder: "Masukkan Jumlah",
-      width: "260px",
+      placeholder: "Masukkan Jumlah Kebutuhan",
+      width: "240px",
+      required: true,
+    },
+    {
+      title: "Kodefikasi",
+      accessor: "kodefikasi",
+      type: "textInput",
+      placeholder: "Masukkan Kodefikasi",
+      width: "240px",
       required: true,
     },
     {
       title: "Provinsi",
-      accessor: "provinsi",
+      accessor: "provincies_id",
       type: "dropdown",
       options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
       width: "200px",
@@ -300,10 +339,10 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Kabupaten/Kota",
-      accessor: "kabupatenKota",
+      accessor: "cities_id",
       type: "dropdown",
       options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "300px",
+      width: "200px",
       required: true,
     },
     {
@@ -331,6 +370,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               (currentPage - 1) * itemsPerPage,
               currentPage * itemsPerPage
             )}
+            setParentState={setStateMaterial}
           />
           <Pagination
             currentPage={currentPage}
@@ -354,6 +394,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               (currentPage - 1) * itemsPerPage,
               currentPage * itemsPerPage
             )}
+            setParentState={setStatePeralatan}
           />
           <Pagination
             currentPage={currentPage}
@@ -377,6 +418,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               (currentPage - 1) * itemsPerPage,
               currentPage * itemsPerPage
             )}
+            setParentState={setStateTenagaKerja}
           />
           <Pagination
             currentPage={currentPage}
@@ -390,6 +432,55 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
   ];
 
+  const handleSubmitSecondStep = async () => {
+    try {
+      if (!stateMaterial) throw new Error("Data material belum diisi!");
+      if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
+      if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
+      // Lakukan validasi stateMaterial
+      console.log(JSON.stringify(stateMaterial));
+      const stateMaterialFirst = stateMaterial['1'];
+      const statePeralatanFirst = statePeralatan['1'];
+      const stateTenagaKerjaFirst = stateTenagaKerja['1'];
+      const requestData = {
+        informasi_umum_id: 1,
+        material: [{
+          ...stateMaterialFirst,
+          provincies_id: 1,
+          cities_id: 1,
+        }],
+        peralatan: [{
+          ...statePeralatanFirst,
+          provincies_id: 1,
+          cities_id: 1,
+        }],
+        tenaga_kerja: [{
+          ...stateTenagaKerjaFirst,
+          provincies_id: 1,
+          cities_id: 1,
+        }],
+      }
+      console.log(JSON.stringify(requestData));
+      const response = await fetch("https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      console.log(response.body);
+
+      if (!response.ok) {
+        throw new Error(
+          "Submit tahap 2 gagal"
+        );
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return (
     <div>
       <Tabs tabs={tabs} />
@@ -401,9 +492,15 @@ const Tahap2 = ({ onNext, onBack }) => {
         <Button
           variant="solid_blue"
           size="Medium"
-          onClick={() => {
+          onClick={async () => {
             console.log("onNext called");
-            onNext();
+            try {
+              await handleSubmitSecondStep();
+              onNext(); // This will only run if handleSubmitSecondStep succeeds
+            } catch (error) {
+              alert(error.message);
+              // onNext() won't be called
+            }
           }}>
           Simpan & Lanjut
         </Button>
