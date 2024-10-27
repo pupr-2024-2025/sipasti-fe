@@ -7,7 +7,7 @@ import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
 import Tooltip from "./tooltip";
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, setParentState }) => {
   // Store input values
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
@@ -29,13 +29,22 @@ const Table = ({ columns, data }) => {
 
   const handleInputChange = (rowId, columnAccessor, value) => {
     // Set input value
+    const dropdownFields = [
+      'kelompok_material',
+      'kelompok_peralatan',
+      'provinsi',
+      'kabupaten_kota',
+    ];
+
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
         ...prev[rowId],
-        [columnAccessor]: value,
+        [columnAccessor]: dropdownFields.includes(columnAccessor) ? value?.value : value,
       },
     }));
+
+    setParentState(inputValues);
 
     // Reset error if there is a change in the field
     setErrors((prevErrors) => ({
