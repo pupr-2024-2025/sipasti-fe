@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import colors from "../styles/colors";
-import { EyeSlash, Eye, CloseCircle } from "iconsax-react"; // Import ikon CloseCircle
+import { EyeSlash, Eye, CloseCircle } from "iconsax-react";
 
 const TextInput = ({
   label,
@@ -10,15 +10,15 @@ const TextInput = ({
   variant = "border",
   value,
   onChange,
-  disabled = false,
+  disabledActive = false, // Ganti nama prop menjadi disabledActive
   className = "",
   type = "text",
-  isRequired = false, // Prop untuk required
-  errorMessage = "This field is required", // Default pesan error
-  labelPosition = "top", // Atur posisi label
+  isRequired = false,
+  errorMessage = "This field is required",
+  labelPosition = "top",
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [error, setError] = useState(""); // State untuk pesan error
+  const [error, setError] = useState("");
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -35,36 +35,35 @@ const TextInput = ({
   const variants = {
     border:
       "border border-surface-light-outline focus:outline-none focus:border-2 focus:border-custom-blue-500",
+    disabledActive:
+      "bg-white border border-surface-light-outline cursor-not-allowed text-emphasis-on_surface-high",
   };
 
-  // Fungsi untuk validasi
   const handleBlur = () => {
     if (isRequired && !value) {
-      setError(errorMessage); // Set pesan error jika input required tapi kosong
+      setError(errorMessage);
     } else {
-      setError(""); // Hapus error jika valid
+      setError("");
     }
   };
 
-  // Fungsi untuk menangani perubahan input
   const handleChange = (e) => {
-    onChange(e); // Memanggil fungsi onChange yang diberikan melalui props
-
-    if (error) {
-      setError(""); // Reset error ketika pengguna mengetik lagi
+    if (!disabledActive) {
+      onChange(e);
+      if (error) {
+        setError("");
+      }
     }
   };
 
   return (
     <div className={`relative w-full ${className}`}>
-      {labelPosition === "top" ? ( // Jika label di atas input
+      {labelPosition === "top" ? (
         <>
           {label && (
             <label
               className="text-B2 text-emphasis-on_surface-high w-[180px] block mb-1"
-              style={{
-                whiteSpace: "nowrap",
-              }}>
+              style={{ whiteSpace: "nowrap" }}>
               {label}
               {isRequired && (
                 <span className="text-custom-red-500 ml-1">*</span>
@@ -76,14 +75,16 @@ const TextInput = ({
               type={isPasswordVisible ? "text" : type}
               placeholder={placeholder}
               value={value}
-              onChange={handleChange} // Menangani perubahan input
-              onBlur={handleBlur} // Validasi saat kehilangan fokus
-              disabled={disabled}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={disabledActive} // Gunakan disabledActive di sini
               className={`${sizes[size]} ${baseClasses} ${
-                error
+                disabledActive
+                  ? variants.disabledActive
+                  : error
                   ? `border-custom-red-500 focus:border-custom-blue-500 border-2`
                   : variants[variant]
-              } rounded-[16px] transition-all duration-200 ease-in-out h-12`} // Set height input
+              } rounded-[16px] transition-all duration-200 ease-in-out h-12`}
             />
             {type === "password" && (
               <button
@@ -109,7 +110,7 @@ const TextInput = ({
           {error && (
             <div className="flex items-center mt-1">
               <CloseCircle
-                color={colors.Solid.Basic.Red[500]} // Ganti dengan warna yang sesuai
+                color={colors.Solid.Basic.Red[500]}
                 variant="Linear"
                 size={16}
                 className="mr-1"
@@ -121,15 +122,12 @@ const TextInput = ({
           )}
         </>
       ) : (
-        // Jika label di samping input
         <div className="flex flex-col">
           <div className="flex items-center space-x-12">
             {label && (
               <label
-                className="text-B2 text-emphasis-on_surface-high h-8 min-w-[180px] mr-2" // Tambahkan min-w-[180px]
-                style={{
-                  whiteSpace: "nowrap",
-                }}>
+                className="text-B2 text-emphasis-on_surface-high h-8 min-w-[180px] mr-2"
+                style={{ whiteSpace: "nowrap" }}>
                 {label}
                 {isRequired && (
                   <span className="text-custom-red-500 ml-1">*</span>
@@ -141,14 +139,16 @@ const TextInput = ({
                 type={isPasswordVisible ? "text" : type}
                 placeholder={placeholder}
                 value={value}
-                onChange={handleChange} // Menangani perubahan input
-                onBlur={handleBlur} // Validasi saat kehilangan fokus
-                disabled={disabled}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={disabledActive}
                 className={`${sizes[size]} ${baseClasses} ${
-                  error
+                  disabledActive
+                    ? variants.disabledActive
+                    : error
                     ? `border-custom-red-500 focus:border-custom-blue-500 border-2`
                     : variants[variant]
-                } rounded-[16px] transition-all duration-200 ease-in-out h-12`} // Set height input
+                } rounded-[16px] transition-all duration-200 ease-in-out h-12`}
               />
               {type === "password" && (
                 <button
@@ -174,10 +174,8 @@ const TextInput = ({
           </div>
           {error && (
             <div className="flex items-center mt-1 ml-[236px]">
-              {" "}
-              {/* Adjust margin-left to match label width */}
               <CloseCircle
-                color={colors.Solid.Basic.Red[500]} // Ganti dengan warna yang sesuai
+                color={colors.Solid.Basic.Red[500]}
                 variant="Linear"
                 size={16}
                 className="mr-1"

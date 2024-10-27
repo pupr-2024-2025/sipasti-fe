@@ -5,6 +5,8 @@ import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
 import Tahap2 from "./tahap2";
+import Tahap3 from "./tahap3";
+import Tahap4 from "./tahap4";
 
 const Tahap1 = () => {
   const [koderup, setKodeRUP] = useState("");
@@ -210,8 +212,24 @@ const Tahap1 = () => {
               )}
             </>
           )}
-          {currentStep === 1 && <Tahap2 />}{" "}
-          {/* Render Tahap2 jika currentStep === 2 */}
+          {currentStep === 1 && (
+            <Tahap2
+              onNext={handleNextStep}
+              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+            />
+          )}
+          {currentStep === 2 && (
+            <Tahap3
+              onNext={handleNextStep}
+              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+            />
+          )}
+          {currentStep === 3 && (
+            <Tahap4
+              onNext={handleNextStep}
+              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
+            />
+          )}
         </div>
         {currentStep === 0 && (
           <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">

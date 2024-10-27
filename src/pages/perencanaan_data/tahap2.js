@@ -10,7 +10,6 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Data asli untuk masing-masing tab
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
@@ -402,8 +401,10 @@ const Tahap2 = ({ onNext, onBack }) => {
         <Button
           variant="solid_blue"
           size="Medium"
-          onClick={onNext} // Menggunakan onNext saat tombol diklik
-        >
+          onClick={() => {
+            console.log("onNext called");
+            onNext();
+          }}>
           Simpan & Lanjut
         </Button>
       </div>

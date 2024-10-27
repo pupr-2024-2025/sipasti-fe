@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TextInput from "../components/input";
 import Dropdown from "../components/Dropdown";
 import Button from "../components/Button";
+import Checkbox from "../components/Checkbox"; // Import the Checkbox component
 import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
 import Tooltip from "./tooltip";
@@ -23,6 +24,9 @@ const Table = ({ columns, data }) => {
     }, {})
   );
 
+  // State to track selected row IDs for background color change
+  const [selectedRows, setSelectedRows] = useState([]);
+
   const handleInputChange = (rowId, columnAccessor, value) => {
     // Set input value
     setInputValues((prev) => ({
@@ -41,6 +45,18 @@ const Table = ({ columns, data }) => {
         [columnAccessor]: "",
       },
     }));
+  };
+
+  const handleCheckboxChange = (rowId, checked) => {
+    // Update input value for checkbox
+    handleInputChange(rowId, "checkbox", checked);
+
+    // Update selected rows based on checkbox state
+    setSelectedRows((prevSelected) =>
+      checked
+        ? [...prevSelected, rowId]
+        : prevSelected.filter((id) => id !== rowId)
+    );
   };
 
   const validateInputs = () => {
@@ -81,8 +97,7 @@ const Table = ({ columns, data }) => {
                       {column.title}
                       {column.required && (
                         <span className="text-red-500 ml-1">*</span>
-                      )}{" "}
-                      {/* Required Indicator */}
+                      )}
                       {column.tooltipText && (
                         <Tooltip text={column.tooltipText}>
                           <div className="ml-2 cursor-pointer text-emphasis-on_surface-medium">
@@ -100,9 +115,17 @@ const Table = ({ columns, data }) => {
                 ))}
               </tr>
             </thead>
-            <tbody className="bg-white">
-              {data.map((row) => (
-                <tr key={row.id}>
+            <tbody className="bg-surface-light-background">
+              {data.map((row, index) => (
+                <tr
+                  key={row.id}
+                  className={`${
+                    selectedRows.includes(row.id)
+                      ? "bg-custom-blue-200" // Highlight selected rows
+                      : index % 2 === 0
+                      ? "bg-custom-neutral-0"
+                      : "bg-custom-neutral-100"
+                  }`}>
                   {columns.map((column) => (
                     <td
                       key={column.accessor}
@@ -120,12 +143,9 @@ const Table = ({ columns, data }) => {
                                 e.target.value
                               )
                             }
-                            // this line
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
-                            // until this line
                           />
-                          {/* Defensive check for errors */}
                           {errors[row.id] &&
                             errors[row.id][column.accessor] && (
                               <span className="text-custom-red-500 text-sm">
@@ -148,7 +168,6 @@ const Table = ({ columns, data }) => {
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
                           />
-                          {/* Defensive check for errors */}
                           {errors[row.id] &&
                             errors[row.id][column.accessor] && (
                               <span className="text-custom-red-500 text-sm">
@@ -167,6 +186,16 @@ const Table = ({ columns, data }) => {
                               : console.log(
                                   `Clicked icon button on row ${row.id}`
                                 )
+                          }
+                        />
+                      ) : column.type === "checkbox" ? (
+                        <Checkbox
+                          label=""
+                          checked={
+                            inputValues[row.id]?.[column.accessor] || false
+                          }
+                          onChange={(checked) =>
+                            handleCheckboxChange(row.id, checked)
                           }
                         />
                       ) : (
