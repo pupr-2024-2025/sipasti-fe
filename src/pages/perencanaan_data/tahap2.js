@@ -9,12 +9,14 @@ import SearchBox from "../../components/searchbox";
 const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [rowsToAdd, setRowsToAdd] = useState(0);
 
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
-      namaMaterial: "Pasir",
-      satuan: "m³",
+      namaMaterial: "",
+      satuan: "mÂ³",
       spesifikasi: "",
       ukuran: "",
       kodefikasi: "",
@@ -55,6 +57,63 @@ const Tahap2 = ({ onNext, onBack }) => {
     // Tambahkan data lainnya sesuai kebutuhan
   ]);
 
+  const handleAddRowMaterial = () => {
+    const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
+      id: dataMaterial.length + index + 1, // Unique ID
+      namaMaterial: "", // Default value, adjust as needed
+      satuan: "",
+      spesifikasi: "",
+      ukuran: "",
+      kodefikasi: "",
+      jumlahKebutuhan: "",
+      merk: "",
+      provinsi: "",
+      kabupatenKota: "",
+      kelompokMaterial: "",
+    }));
+
+    setDataMaterial((prevData) => [...prevData, ...newRows]);
+    setFilteredDataMaterial((prevData) => [...prevData, ...newRows]);
+    setRowsToAdd(0); // Reset input
+    setIsModalOpen(false); // Close modal
+  };
+
+  const handleAddRowsPeralatan = () => {
+    const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
+      id: dataPeralatan.length + index + 1, // Unique ID
+      namaPeralatan: "", // Default value, adjust as needed
+      satuan: "",
+      tipe: "",
+      merk: "",
+      kapasitas: "",
+      jumlahKebutuhan: "",
+      provinsi: "",
+      kabupatenKota: "",
+    }));
+
+    setDataPeralatan((prevData) => [...prevData, ...newRows]);
+    setFilteredDataPeralatan((prevData) => [...prevData, ...newRows]);
+    setRowsToAdd(0); // Reset input
+    setIsModalOpen(false); // Close modal
+  };
+
+  const handleAddRowsTenagaKerja = () => {
+    const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
+      id: dataTenagaKerja.length + index + 1, // Unique ID
+      namaPekerja: "", // Default value, adjust as needed
+      kategori: "",
+      upah: "",
+      jumlahKebutuhan: "",
+      provinsi: "",
+      kabupatenKota: "",
+    }));
+
+    setDataTenagaKerja((prevData) => [...prevData, ...newRows]);
+    setFilteredDataTenagaKerja((prevData) => [...prevData, ...newRows]);
+    setRowsToAdd(0); // Reset input
+    setIsModalOpen(false); // Close
+  };
+
   // State untuk data yang difilter per tab
   const [filteredDataMaterial, setFilteredDataMaterial] =
     useState(dataMaterial);
@@ -62,7 +121,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     useState(dataPeralatan);
   const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
     useState(dataTenagaKerja);
-  
+
   const [stateMaterial, setStateMaterial] = useState(null);
   const [statePeralatan, setStatePeralatan] = useState(null);
   const [stateTenagaKerja, setStateTenagaKerja] = useState(null);
@@ -126,10 +185,17 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Nama Material",
       accessor: "nama_material",
+      placeholder: "Masukkan Nama Material",
       type: "textInput",
       width: "300px",
     },
-    { title: "Satuan", accessor: "satuan", type: "textInput", width: "154px" },
+    {
+      title: "Satuan",
+      accessor: "satuan",
+      type: "textInput",
+      width: "154px",
+      placeholder: "Masukkan Satuan",
+    },
     {
       title: "Spesifikasi",
       accessor: "spesifikasi",
@@ -360,10 +426,46 @@ const Tahap2 = ({ onNext, onBack }) => {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox
-            placeholder="Cari material..."
-            onSearch={(query) => handleSearch(query, "Material")}
-          />
+          <div className="flex items-center space-x-3 mt-3">
+            <SearchBox placeholder="Cari Material..." onSearch={handleSearch} />
+            <Button
+              variant="solid_blue"
+              size="Medium"
+              onClick={() => setIsModalOpen(true)}>
+              Tambah Data
+            </Button>
+          </div>
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 ">
+              <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
+                <label className="block mb-2">
+                  <p className="text-Medium font-bold text-emphasis-on_surface-high">
+                    Tambah Data
+                  </p>
+                  <p className="text-Small text-emphasis-on_surface-medium">
+                    Masukkan jumlah baris yang ingin ditambahkan:
+                  </p>
+                  <input
+                    type="number"
+                    value={rowsToAdd}
+                    onChange={(e) => setRowsToAdd(Number(e.target.value))}
+                    min="1"
+                    className="border rounded px-2 py-1 w-full"
+                  />
+                </label>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outlined_yellow"
+                    size="Medium"
+                    onClick={() => setIsModalOpen(false)}>
+                    Batal{" "}
+                  </Button>
+                  <Button onClick={handleAddRowMaterial}>Tambah</Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Table
             columns={columnsMaterial}
             data={filteredDataMaterial.slice(
@@ -384,10 +486,48 @@ const Tahap2 = ({ onNext, onBack }) => {
       label: "Peralatan",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox
-            placeholder="Cari peralatan..."
-            onSearch={(query) => handleSearch(query, "Peralatan")}
-          />
+          <div className="flex items-center space-x-3 mt-3">
+            <SearchBox
+              placeholder="Cari Peralatan..."
+              onSearch={handleSearch}
+            />
+            <Button
+              variant="solid_blue"
+              size="Medium"
+              onClick={() => setIsModalOpen(true)}>
+              Tambah Data
+            </Button>
+          </div>
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 ">
+              <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
+                <label className="block mb-2">
+                  <p className="text-Medium font-bold text-emphasis-on_surface-high">
+                    Tambah Data
+                  </p>
+                  <p className="text-Small text-emphasis-on_surface-medium">
+                    Masukkan jumlah baris yang ingin ditambahkan:
+                  </p>
+                  <input
+                    type="number"
+                    value={rowsToAdd}
+                    onChange={(e) => setRowsToAdd(Number(e.target.value))}
+                    min="1"
+                    className="border rounded px-2 py-1 w-full"
+                  />
+                </label>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outlined_yellow"
+                    size="Medium"
+                    onClick={() => setIsModalOpen(false)}>
+                    Batal{" "}
+                  </Button>
+                  <Button onClick={handleAddRowsPeralatan}>Tambah</Button>
+                </div>
+              </div>
+            </div>
+          )}
           <Table
             columns={columnsPeralatan}
             data={filteredDataPeralatan.slice(
@@ -408,10 +548,48 @@ const Tahap2 = ({ onNext, onBack }) => {
       label: "Tenaga Kerja",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox
-            placeholder="Cari tenaga kerja..."
-            onSearch={(query) => handleSearch(query, "Tenaga Kerja")}
-          />
+          <div className="flex items-center space-x-3 mt-3">
+            <SearchBox
+              placeholder="Cari Tenaga Kerja..."
+              onSearch={handleSearch}
+            />
+            <Button
+              variant="solid_blue"
+              size="Medium"
+              onClick={() => setIsModalOpen(true)}>
+              Tambah Data
+            </Button>
+          </div>
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 ">
+              <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
+                <label className="block mb-2">
+                  <p className="text-Medium font-bold text-emphasis-on_surface-high">
+                    Tambah Data
+                  </p>
+                  <p className="text-Small text-emphasis-on_surface-medium">
+                    Masukkan jumlah baris yang ingin ditambahkan:
+                  </p>
+                  <input
+                    type="number"
+                    value={rowsToAdd}
+                    onChange={(e) => setRowsToAdd(Number(e.target.value))}
+                    min="1"
+                    className="border rounded px-2 py-1 w-full"
+                  />
+                </label>
+                <div className="flex justify-end space-x-2">
+                  <Button
+                    variant="outlined_yellow"
+                    size="Medium"
+                    onClick={() => setIsModalOpen(false)}>
+                    Batal{" "}
+                  </Button>
+                  <Button onClick={handleAddRowsTenagaKerja}>Tambah</Button>
+                </div>
+              </div>
+            </div>
+          )}
           <Table
             columns={columnsTenagaKerja}
             data={filteredDataTenagaKerja.slice(
@@ -439,42 +617,49 @@ const Tahap2 = ({ onNext, onBack }) => {
       if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
       // Lakukan validasi stateMaterial
       console.log(JSON.stringify(stateMaterial));
-      const stateMaterialFirst = stateMaterial['1'];
-      const statePeralatanFirst = statePeralatan['1'];
-      const stateTenagaKerjaFirst = stateTenagaKerja['1'];
+      const stateMaterialFirst = stateMaterial["1"];
+      const statePeralatanFirst = statePeralatan["1"];
+      const stateTenagaKerjaFirst = stateTenagaKerja["1"];
       const requestData = {
         informasi_umum_id: 1,
-        material: [{
-          ...stateMaterialFirst,
-          provincies_id: 1,
-          cities_id: 1,
-        }],
-        peralatan: [{
-          ...statePeralatanFirst,
-          provincies_id: 1,
-          cities_id: 1,
-        }],
-        tenaga_kerja: [{
-          ...stateTenagaKerjaFirst,
-          provincies_id: 1,
-          cities_id: 1,
-        }],
-      }
+        material: [
+          {
+            ...stateMaterialFirst,
+            provincies_id: 1,
+            cities_id: 1,
+          },
+        ],
+        peralatan: [
+          {
+            ...statePeralatanFirst,
+            provincies_id: 1,
+            cities_id: 1,
+          },
+        ],
+        tenaga_kerja: [
+          {
+            ...stateTenagaKerjaFirst,
+            provincies_id: 1,
+            cities_id: 1,
+          },
+        ],
+      };
       console.log(JSON.stringify(requestData));
-      const response = await fetch("https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
 
       console.log(response.body);
 
       if (!response.ok) {
-        throw new Error(
-          "Submit tahap 2 gagal"
-        );
+        throw new Error("Submit tahap 2 gagal");
       }
     } catch (error) {
       throw error;

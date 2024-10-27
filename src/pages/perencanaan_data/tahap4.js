@@ -1,33 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
-import SearchBox from "../../components/searchbox"; // Import the SearchBox component
-
-const Tahap4 = () => {
-  const fetchCommonInformation = useCallback(async () => {
-    const response = await fetch("https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/1");
-    const data = await response.json();
-    const commonInformation = data?.data || {
-      kode_rup: "",
-      nama_balai: "",
-      nama_paket: "",
-      nama_ppk: "",
-      jabatan_ppk: "",
-    };
-    setCommonInformation(commonInformation);
-  }, []);
-
-  useEffect(() => {
-    fetchCommonInformation()
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
-  }, [fetchCommonInformation]);
-
+import SearchBox from "../../components/searchbox";
+import Button from "../../components/Button";
+const Tahap4 = ({ onNext, onBack }) => {
   // State untuk setiap input form
   const [formValues, setFormValues] = useState({
     vendorName: "",
@@ -39,14 +19,6 @@ const Tahap4 = () => {
     picName: "",
     province: "",
     city: "",
-  });
-
-  const [commonInformation, setCommonInformation] = useState({
-    kode_rup: "",
-    nama_balai: "",
-    nama_paket: "",
-    nama_ppk: "",
-    jabatan_ppk: "",
   });
 
   const [dataMaterial, setDataMaterial] = useState([
@@ -92,6 +64,22 @@ const Tahap4 = () => {
       kabupatenKota: "",
     },
     // Tambahkan data lainnya sesuai kebutuhan
+  ]);
+  const [dataVendor, setDataVendor] = useState([
+    {
+      id: 1,
+      namaVendor: "PT. Konstruksi Mandiri",
+      pemilikVendor: "Ir. H. Sutrisno, M. T.",
+      Alamat: "Jl. Raya Bogor KM 23, Jakarta Timur, DKI Jakarta",
+      Kontak: "021-1234567",
+    },
+    {
+      id: 2,
+      namaVendor: "CV. Prima Beton",
+      pemilikVendor: "Dr. H. Budi Santoso, S.T., M.T.",
+      Alamat: "Jl. Gajah Mada No. 12, Surabaya, Jawa Timur",
+      Kontak: "031-7654321",
+    },
   ]);
 
   // State tambahan untuk pagination dan pencarian
@@ -153,6 +141,7 @@ const Tahap4 = () => {
 
   return (
     <div className="space-y-3">
+      <Navbar />
       <h4 className="text-H4 text-emphasis-on_surface-high">
         Perancangan Kuesioner
       </h4>
@@ -165,35 +154,35 @@ const Tahap4 = () => {
             label="Kode RUP"
             labelPosition="left"
             size="Medium"
-            placeholder={commonInformation.kode_rup}
+            placeholder="92381023123913"
             disabledActive={true}
           />
           <TextInput
             label="Nama Balai"
             labelPosition="left"
             size="Medium"
-            placeholder={commonInformation.nama_balai}
+            placeholder="Balai Diklat PU WIlayah IV Surabaya"
             disabledActive={true}
           />
           <TextInput
             label="Nama Paket"
             labelPosition="left"
             size="Medium"
-            placeholder={commonInformation.nama_paket}
+            placeholder="Pembangunan Jembatan Gantung 6"
             disabledActive={true}
           />
           <TextInput
             label="Nama PPK"
             labelPosition="left"
             size="Medium"
-            placeholder={commonInformation.nama_ppk}
+            placeholder="Farhan"
             disabledActive={true}
           />
           <TextInput
             label="Jabatan PPK"
             labelPosition="left"
             size="Medium"
-            placeholder={commonInformation.jabatan_ppk}
+            placeholder="PPK 3.1 Satker PJN Wilayah 3 Provinsi Jatim"
             disabledActive={true}
           />
         </div>
@@ -291,94 +280,36 @@ const Tahap4 = () => {
         ]}
       />
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
-      <Tabs
-        tabs={[
+      <Table
+        columns={[
+          { title: "Nama Vendor", accessor: "namaVendor" },
+          { title: "Pemilik Vendor", accessor: "pemilikVendor" },
+          { title: "Alamat", accessor: "Alamat" },
+          { title: "Kontak", accessor: "Kontak" },
           {
-            label: "Material",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Material..."
-                  onSearch={handleSearchMaterial}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Material", accessor: "namaMaterial" },
-                    { title: "Satuan", accessor: "satuan" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
-                  ]}
-                  data={filteredDataMaterial.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(
-                    filteredDataMaterial.length / itemsPerPage
-                  )}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
-          },
-          {
-            label: "Peralatan",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Peralatan..."
-                  onSearch={handleSearchPeralatan}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Peralatan", accessor: "namaPeralatan" },
-                    { title: "Satuan", accessor: "satuan" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
-                  ]}
-                  data={filteredDataPeralatan.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(dataPeralatan.length / itemsPerPage)}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
-          },
-          {
-            label: "Tenaga Kerja",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Tenaga Kerja..."
-                  onSearch={handleSearchTenagaKerja}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Pekerja", accessor: "namaPekerja" },
-                    { title: "Kategori", accessor: "kategori" },
-                    { title: "Upah", accessor: "upah" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
-                  ]}
-                  data={filteredDataTenagaKerja.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={Math.ceil(dataTenagaKerja.length / itemsPerPage)}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
+            title: "Aksi",
+            accessor: "Aksi",
+            type: "button",
+            align: "center",
+            // onClick: (row) => handleVendorAction(row), // Function to handle button click
+            buttonLabel: "Detail", // Button label
           },
         ]}
+        data={dataVendor} // Use your vendor data here
       />
+      <Pagination
+        currentPage={currentPage}
+        totalPages={Math.ceil(dataVendor.length / itemsPerPage)} // Use dataVendor for pagination
+        onPageChange={setCurrentPage}
+      />
+      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+          Kembali
+        </Button>
+        <Button variant="solid_blue" size="Medium" onClick={onNext}>
+          Simpan & Lanjut
+        </Button>
+      </div>
     </div>
   );
 };

@@ -30,17 +30,19 @@ const Table = ({ columns, data, setParentState }) => {
   const handleInputChange = (rowId, columnAccessor, value) => {
     // Set input value
     const dropdownFields = [
-      'kelompok_material',
-      'kelompok_peralatan',
-      'provinsi',
-      'kabupaten_kota',
+      "kelompok_material",
+      "kelompok_peralatan",
+      "provinsi",
+      "kabupaten_kota",
     ];
 
     setInputValues((prev) => ({
       ...prev,
       [rowId]: {
         ...prev[rowId],
-        [columnAccessor]: dropdownFields.includes(columnAccessor) ? value?.value : value,
+        [columnAccessor]: dropdownFields.includes(columnAccessor)
+          ? value?.value
+          : value,
       },
     }));
 
@@ -197,6 +199,23 @@ const Table = ({ columns, data, setParentState }) => {
                                 )
                           }
                         />
+                      ) : column.type === "checkbox" ? (
+                        <Checkbox
+                          label=""
+                          checked={
+                            inputValues[row.id]?.[column.accessor] || false
+                          }
+                          onChange={(checked) =>
+                            handleCheckboxChange(row.id, checked)
+                          }
+                        />
+                      ) : column.type === "button" ? (
+                        <Button
+                          size="Small"
+                          variant="solid_blue" // Use the appropriate variant for a regular button
+                          onClick={() => column.onClick(row)}>
+                          {column.buttonLabel} {/* Render the button label */}
+                        </Button>
                       ) : column.type === "checkbox" ? (
                         <Checkbox
                           label=""
