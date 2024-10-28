@@ -17,12 +17,12 @@ const FileInput = ({
   progress = 0,
   onCancel,
   selectedFile,
-  totalProcessingTime = 30,
+  // totalProcessingTime = 30,
   required = false, // Tambahkan prop untuk mengatur apakah field ini wajib
 }) => {
   const fileInputRef = useRef(null);
   const [startTime, setStartTime] = useState(null);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  // const [elapsedTime, setElapsedTime] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleButtonClick = () => {

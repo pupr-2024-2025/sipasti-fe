@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Navbar from "../../components/navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
@@ -7,7 +7,29 @@ import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/Button";
+
 const Tahap4 = ({ onNext, onBack }) => {
+  const fetchCommonInformation = useCallback(async () => {
+    const response = await fetch(
+      "https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/1"
+    );
+    const data = await response.json();
+    const commonInformation = data?.data || {
+      kode_rup: "",
+      nama_balai: "",
+      nama_paket: "",
+      nama_ppk: "",
+      jabatan_ppk: "",
+    };
+    setCommonInformation(commonInformation);
+  }, []);
+
+  useEffect(() => {
+    fetchCommonInformation().catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+  }, [fetchCommonInformation]);
+
   // State untuk setiap input form
   const [formValues, setFormValues] = useState({
     vendorName: "",
@@ -19,6 +41,14 @@ const Tahap4 = ({ onNext, onBack }) => {
     picName: "",
     province: "",
     city: "",
+  });
+
+  const [commonInformation, setCommonInformation] = useState({
+    kode_rup: "",
+    nama_balai: "",
+    nama_paket: "",
+    nama_ppk: "",
+    jabatan_ppk: "",
   });
 
   const [dataMaterial, setDataMaterial] = useState([
@@ -64,22 +94,6 @@ const Tahap4 = ({ onNext, onBack }) => {
       kabupatenKota: "",
     },
     // Tambahkan data lainnya sesuai kebutuhan
-  ]);
-  const [dataVendor, setDataVendor] = useState([
-    {
-      id: 1,
-      namaVendor: "PT. Konstruksi Mandiri",
-      pemilikVendor: "Ir. H. Sutrisno, M. T.",
-      Alamat: "Jl. Raya Bogor KM 23, Jakarta Timur, DKI Jakarta",
-      Kontak: "021-1234567",
-    },
-    {
-      id: 2,
-      namaVendor: "CV. Prima Beton",
-      pemilikVendor: "Dr. H. Budi Santoso, S.T., M.T.",
-      Alamat: "Jl. Gajah Mada No. 12, Surabaya, Jawa Timur",
-      Kontak: "031-7654321",
-    },
   ]);
 
   // State tambahan untuk pagination dan pencarian
@@ -141,7 +155,6 @@ const Tahap4 = ({ onNext, onBack }) => {
 
   return (
     <div className="space-y-3">
-      <Navbar />
       <h4 className="text-H4 text-emphasis-on_surface-high">
         Perancangan Kuesioner
       </h4>
@@ -154,40 +167,39 @@ const Tahap4 = ({ onNext, onBack }) => {
             label="Kode RUP"
             labelPosition="left"
             size="Medium"
-            placeholder="92381023123913"
+            placeholder={commonInformation.kode_rup}
             disabledActive={true}
           />
           <TextInput
             label="Nama Balai"
             labelPosition="left"
             size="Medium"
-            placeholder="Balai Diklat PU WIlayah IV Surabaya"
+            placeholder={commonInformation.nama_balai}
             disabledActive={true}
           />
           <TextInput
             label="Nama Paket"
             labelPosition="left"
             size="Medium"
-            placeholder="Pembangunan Jembatan Gantung 6"
+            placeholder={commonInformation.nama_paket}
             disabledActive={true}
           />
           <TextInput
             label="Nama PPK"
             labelPosition="left"
             size="Medium"
-            placeholder="Farhan"
+            placeholder={commonInformation.nama_ppk}
             disabledActive={true}
           />
           <TextInput
             label="Jabatan PPK"
             labelPosition="left"
             size="Medium"
-            placeholder="PPK 3.1 Satker PJN Wilayah 3 Provinsi Jatim"
+            placeholder={commonInformation.jabatan_ppk}
             disabledActive={true}
           />
         </div>
       </div>
-
       <h5 className="text-H5 text-emphasis-on_surface-high">
         2. Identifikasi Kebutuhan
       </h5>
@@ -282,34 +294,44 @@ const Tahap4 = ({ onNext, onBack }) => {
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
       <Table
         columns={[
-          { title: "Nama Vendor", accessor: "namaVendor" },
-          { title: "Pemilik Vendor", accessor: "pemilikVendor" },
-          { title: "Alamat", accessor: "Alamat" },
-          { title: "Kontak", accessor: "Kontak" },
-          {
-            title: "Aksi",
-            accessor: "Aksi",
-            type: "button",
-            align: "center",
-            // onClick: (row) => handleVendorAction(row), // Function to handle button click
-            buttonLabel: "Detail", // Button label
-          },
+          { title: "Responden/Vendor", accessor: "vendor" },
+          { title: "Pemilik Vendor", accessor: "pemilikvendor" },
+          { title: "Alamat", accessor: "alamat" },
+          { title: "Kontak", accessor: "kontak" },
+          { title: "Rancangan Kuesioner", accessor: "rancangan" },
         ]}
-        data={dataVendor} // Use your vendor data here
+        data={filteredDataPeralatan.slice(
+          (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage
+        )}
       />
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(dataVendor.length / itemsPerPage)} // Use dataVendor for pagination
+        totalPages={Math.ceil(dataPeralatan.length / itemsPerPage)}
         onPageChange={setCurrentPage}
       />
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
         <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
           Kembali
         </Button>
-        <Button variant="solid_blue" size="Medium" onClick={onNext}>
+
+        <Button
+          variant="solid_blue"
+          size="Medium"
+          onClick={async () => {
+            console.log("onNext called");
+            try {
+              // await handleSubmitSecondStep();
+              onNext(); // This will only run if handleSubmitSecondStep succeeds
+            } catch (error) {
+              alert(error.message);
+              // onNext() won't be called
+            }
+          }}>
           Simpan & Lanjut
         </Button>
       </div>
+      ,
     </div>
   );
 };

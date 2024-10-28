@@ -591,10 +591,12 @@ const Tahap3 = ({ onNext, onBack }) => {
 
   return (
     <div>
-      <h3 className="text-H3 text-emphasis-on_surface-high">
-        Tahap Perencanaan Data
-      </h3>
-      <Tabs tabs={tabs} />
+      <h4 className="text-H4 text-emphasis-on_surface-high">
+        Penentuan Shortlist Vendor
+      </h4>
+      <div className="mt-6">
+        <Tabs tabs={tabs} />
+      </div>
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
         <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
           Kembali

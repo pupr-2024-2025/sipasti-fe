@@ -8,13 +8,13 @@ import Dropdown from "../components/Dropdown";
 
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
-  const [namalengkap, setNamaLengkap] = useState("");
+  const [nama_lengkap, setNamaLengkap] = useState("");
   const [nik, setNIK] = useState("");
   const [nrp, setNRP] = useState("");
-  const [balai, setBalai] = useState("");
-  const [satuankerja, setSatuanKerja] = useState("");
-  const [nomortelepon, setNomorTelepon] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [balai_kerja_id, setBalai] = useState("");
+  const [satuan_kerja_id, setSatuanKerja] = useState("");
+  const [no_handphone, setNomorTelepon] = useState("");
+  const [surat_penugasan_url, setSelectedFile] = useState(null);
   const [uploadState, setUploadState] = useState("default");
   const [progress, setProgress] = useState(0);
   const [isChecked, setIsChecked] = useState(false);
@@ -22,13 +22,13 @@ const Register = ({ onClose }) => {
   const [generalError, setGeneralError] = useState("");
 
   const labels = {
-    namalengkap: "Nama Lengkap",
+    nama_lengkap: "Nama Lengkap",
     nik: "NIK",
     email: "Email",
-    satuankerja: "Satuan Kerja",
-    nomortelepon: "Nomor Telepon",
-    balai: "Balai",
-    upload: "SK/Surat Penugasan",
+    satuan_kerja_id: "Satuan Kerja",
+    no_handphone: "Nomor Telepon",
+    balai_kerja_id: "Balai",
+    surat_penugasan_url: "SK/Surat Penugasan",
   };
 
   const balaiOptions = [{ value: "1", label: "balai 007" }];
@@ -66,16 +66,17 @@ const Register = ({ onClose }) => {
     setGeneralError("");
 
     const newErrorMessages = {};
-    if (!namalengkap)
-      newErrorMessages.namalengkap = "Nama Lengkap tidak boleh kosong";
+    if (!nama_lengkap)
+      newErrorMessages.nama_lengkap = "Nama Lengkap tidak boleh kosong";
     if (!nik) newErrorMessages.nik = "NIK tidak boleh kosong";
     if (!email) newErrorMessages.email = "Email tidak boleh kosong";
-    if (!satuankerja)
-      newErrorMessages.satuankerja = "Satuan Kerja tidak boleh kosong";
-    if (!nomortelepon)
-      newErrorMessages.nomortelepon = "Nomor Telepon tidak boleh kosong";
-    if (!balai) newErrorMessages.balai = "Balai tidak boleh kosong";
-    if (!selectedFile)
+    if (!satuan_kerja_id)
+      newErrorMessages.satuan_kerja_id = "Satuan Kerja tidak boleh kosong";
+    if (!no_handphone)
+      newErrorMessages.no_handphone = "Nomor Telepon tidak boleh kosong";
+    if (!balai_kerja_id)
+      newErrorMessages.balai_kerja_id = "Balai tidak boleh kosong";
+    if (!surat_penugasan_url)
       newErrorMessages.upload = "Upload SK/Surat Penugasan tidak boleh kosong";
 
     if (Object.keys(newErrorMessages).length > 0) {
@@ -91,13 +92,13 @@ const Register = ({ onClose }) => {
 
     const formData = new FormData();
     formData.append("email", email);
-    formData.append("namalengkap", namalengkap);
+    formData.append("nama_lengkap", nama_lengkap);
     formData.append("nik", nik);
     formData.append("nrp", nrp);
-    formData.append("balai", balai);
-    formData.append("satuankerja", satuankerja);
-    formData.append("nomortelepon", nomortelepon);
-    formData.append("file", selectedFile);
+    formData.append("balai_kerja_id", balai_kerja_id);
+    formData.append("satuan_kerja_id", satuan_kerja_id);
+    formData.append("no_handphone", no_handphone);
+    formData.append("surat_penugasan_url", surat_penugasan_url);
 
     try {
       const response = await fetch(
@@ -153,9 +154,9 @@ const Register = ({ onClose }) => {
       <TextInput
         label="Nama Lengkap"
         placeholder="Masukkan Nama Lengkap"
-        value={namalengkap}
+        value={nama_lengkap}
         isRequired={true}
-        errorMessage={errorMessages.namalengkap}
+        errorMessage={errorMessages.nama_lengkap}
         onChange={(e) => setNamaLengkap(e.target.value)}
       />
 
@@ -182,7 +183,7 @@ const Register = ({ onClose }) => {
               placeholder="Pilih Balai"
               onSelect={(selectedOption) => setBalai(selectedOption.value)}
               isRequired={true}
-              errorMessage={errorMessages.balai}
+              errorMessage={errorMessages.balai_kerja_id}
             />
           </div>
 
@@ -201,14 +202,14 @@ const Register = ({ onClose }) => {
               placeholder="Pilih Satuan Kerja"
               onSelect={handleSatuanKerjaSelect}
               isRequired={true}
-              errorMessage={errorMessages.satuankerja}
+              errorMessage={errorMessages.satuan_kerja_id}
             />
             <TextInput
               label="Nomor Telepon"
               placeholder="Masukkan Nomor Telepon"
-              value={nomortelepon}
+              value={no_handphone}
               isRequired={true}
-              errorMessage={errorMessages.nomortelepon}
+              errorMessage={errorMessages.no_handphone}
               onChange={(e) => setNomorTelepon(e.target.value)}
             />
           </div>
@@ -217,14 +218,14 @@ const Register = ({ onClose }) => {
 
       <FileInput
         onFileSelect={handleFileSelect}
-        selectedFile={selectedFile}
+        selectedFile={surat_penugasan_url}
         state={uploadState}
         progress={progress}
         onCancel={handleCancel}
         required={true}
         Label="Upload SK/Surat Penugasan"
         HelperText="Format .JPG, .PNG dan maksimal 512Kb"
-        errorMessage={errorMessages.upload}
+        errorMessage={errorMessages.surat_penugasan_url}
       />
 
       <div>

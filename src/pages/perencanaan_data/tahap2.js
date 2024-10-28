@@ -668,7 +668,12 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   return (
     <div>
-      <Tabs tabs={tabs} />
+      <h4 className="text-H4 text-emphasis-on_surface-high">
+        Identifikasi Kebutuhan{" "}
+      </h4>
+      <div className="mt-6">
+        <Tabs tabs={tabs} />
+      </div>
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
         <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
           Kembali

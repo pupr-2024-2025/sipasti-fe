@@ -15,7 +15,7 @@ const Navbar = () => {
     { href: "/dashboard", label: "Beranda" },
     { href: "/perencanaan_data/tahap1", label: "Perencanaan Data" },
     { href: "/schedule", label: "Input Kuesioner" },
-    { href: "/integration", label: "Vendor" },
+    { href: "/vendor/inputvendor", label: "Vendor" },
   ];
 
   useEffect(() => {
