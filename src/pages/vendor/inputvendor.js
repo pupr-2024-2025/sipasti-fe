@@ -134,8 +134,8 @@ const Inputvendor = ({ onNext }) => {
                 />
                 <Checkbox
                   label="Tenaga Kerja"
-                  checked={selectedTypes.includes("Tenaga_Kerja")} // Updated key here
-                  onChange={() => handleCheckboxChange("Tenaga_Kerja")} // Updated key here
+                  checked={selectedTypes.includes("TenagaKerja")} // Updated key here
+                  onChange={() => handleCheckboxChange("TenagaKerja")} // Updated key here
                 />
               </div>
             </div>

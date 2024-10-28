@@ -11,7 +11,7 @@ import Button from "../../components/Button";
 const Tahap4 = ({ onNext, onBack }) => {
   const fetchCommonInformation = useCallback(async () => {
     const response = await fetch(
-      "https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/1"
+      "https://api-ecatalogue-staging.online/api/perencanaan-data/perencanaan-data-result/?id=1"
     );
     const data = await response.json();
     const commonInformation = data?.data || {
@@ -20,6 +20,7 @@ const Tahap4 = ({ onNext, onBack }) => {
       nama_paket: "",
       nama_ppk: "",
       jabatan_ppk: "",
+      jenis_informasi: "",
     };
     setCommonInformation(commonInformation);
   }, []);
