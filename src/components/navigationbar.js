@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import logo from "../../public/images/logo.svg";
-import { User } from "iconsax-react";
+import { User, Logout } from "iconsax-react";
 import colors from "../styles/colors";
 
 const Navbar = () => {
@@ -29,6 +29,11 @@ const Navbar = () => {
       window.removeEventListener("scroll", handleScroll); // Cleanup
     };
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Hapus token dari localStorage
+    router.push("/login"); // Redirect ke halaman login
+  };
 
   return (
     <nav
@@ -110,6 +115,12 @@ const Navbar = () => {
             Username
           </span>
         </div>
+        <button
+          onClick={handleLogout}
+          className="p-2 bg-custom-neutral-0 rounded-full hover:bg-custom-red-500 transition-colors duration-300"
+          title="Logout">
+          <Logout color={colors.Emphasis.Light.On_Surface.High} size={24} />
+        </button>
       </div>
     </nav>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -20,6 +20,12 @@ const Login = () => {
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
     useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("token") && router.pathname === "/login") {
+      router.push("/dashboard");
+    }
+  }, [router]);
 
   const handleLogin = async () => {
     try {

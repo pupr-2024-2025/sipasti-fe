@@ -13,9 +13,9 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [equipmentData, setEquipmentData] = useState([]);
   const [laborData, setLaborData] = useState([]);
   const [formErrors, setFormErrors] = useState({});
+  const [selectedVendors, setSelectedVendors] = useState([]);
 
   useEffect(() => {
-    // Fetch data dari API saat komponen dimuat
     axios
       .get(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor"
@@ -30,13 +30,67 @@ const Tahap3 = ({ onNext, onBack }) => {
       });
   }, []);
 
-  // Define columns for each type
+  const handleCheckboxChange = (vendor, isChecked) => {
+    setSelectedVendors((prevSelectedVendors) => {
+      const updatedVendors = isChecked
+        ? [...prevSelectedVendors, vendor]
+        : prevSelectedVendors.filter(
+            (selectedVendor) =>
+              selectedVendor.data_vendor_id !== vendor.data_vendor_id
+          );
+
+      console.log("Selected Vendors:", updatedVendors);
+      return updatedVendors;
+    });
+  };
+
+  const handleNext = () => {
+    // Validasi input sebelum melanjutkan
+    if (!validateInputs()) {
+      console.error(
+        "Ada kesalahan input. Silakan perbaiki sebelum melanjutkan."
+      );
+      return; // Jangan lanjut jika ada kesalahan
+    }
+
+    // Cek jika shortlist_vendor tidak kosong
+    if (selectedVendors.length === 0) {
+      console.error("Silakan pilih vendor sebelum melanjutkan.");
+      return; // Jangan lanjut jika tidak ada vendor yang dipilih
+    }
+
+    const payload = {
+      informasi_umum_id: 1, // Ganti dengan ID yang sesuai
+      shortlist_vendor: selectedVendors.map((vendor) => ({
+        data_vendor_id: vendor.data_vendor_id,
+        nama_vendor: vendor.nama_vendor,
+        pemilik_vendor: vendor.pemilik_vendor,
+        alamat: vendor.alamat,
+        kontak: vendor.kontak,
+      })),
+    };
+
+    axios
+      .post(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
+        payload
+      )
+      .then((response) => {
+        console.log("Data berhasil dikirim:", response.data);
+        onNext();
+      })
+      .catch((error) => {
+        console.error("Error posting data:", error);
+      });
+  };
+
   const columns = [
     {
       title: "",
       accessor: "select",
       type: "checkbox",
-      width: "20px",
+      width: "48px",
+      onChange: (vendor, isChecked) => handleCheckboxChange(vendor, isChecked),
     },
     {
       title: "Responden/Vendor",
@@ -93,12 +147,6 @@ const Tahap3 = ({ onNext, onBack }) => {
 
     setFormErrors(newErrors); // Update state with new errors
     return isValid;
-  };
-
-  const handleNext = () => {
-    if (validateInputs()) {
-      onNext(); // Proceed to the next step if valid
-    }
   };
 
   // Tabs configuration
@@ -196,13 +244,7 @@ const Tahap3 = ({ onNext, onBack }) => {
           Kembali
         </Button>
 
-        <Button
-          variant="solid_blue"
-          size="Medium"
-          onClick={() => {
-            console.log("onNext called");
-            onNext();
-          }}>
+        <Button variant="solid_blue" size="Medium" onClick={handleNext}>
           Simpan & Lanjut
         </Button>
       </div>

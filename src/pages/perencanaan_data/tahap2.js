@@ -16,7 +16,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       id: 1,
       namaMaterial: "",
-      satuan: "mÂ³",
+      satuan: "",
       spesifikasi: "",
       ukuran: "",
       kodefikasi: "",
@@ -374,7 +374,8 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Satuan",
       accessor: "satuan",
-      jumlah_kebutuhan: "Masukkan Satuan",
+      // jumlah_kebutuhan: "Masukkan Satuan",
+      placeholder: "Masukkan Satuan",
       type: "textInput",
       width: "154px",
       required: true,

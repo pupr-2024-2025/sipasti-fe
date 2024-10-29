@@ -7,14 +7,17 @@ import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/Button";
+import axios from "axios";
 
 const Tahap4 = ({ onNext, onBack }) => {
   const fetchCommonInformation = useCallback(async () => {
     const response = await fetch(
-      "https://api-ecatalogue-staging.online/api/perencanaan-data/perencanaan-data-result/?id=1"
+      "https://api-ecatalogue-staging.online/api/perencanaan-data/perencanaan-data-result?id=1"
     );
+    console.log("response", response);
     const data = await response.json();
-    const commonInformation = data?.data || {
+    console.log("data", data);
+    const commonInformation = data?.data?.informasi_umum || {
       kode_rup: "",
       nama_balai: "",
       nama_paket: "",
@@ -22,7 +25,15 @@ const Tahap4 = ({ onNext, onBack }) => {
       jabatan_ppk: "",
       jenis_informasi: "",
     };
+    const dataMaterial = data?.data?.material || [];
+    const dataPeralatan = data?.data?.peralatan || [];
+    const dataTenagaKerja = data?.data?.tenaga_kerja || [];
+    const dataVendor = data?.data?.shortlist_vendor || [];
     setCommonInformation(commonInformation);
+    setDataMaterial(dataMaterial);
+    setDataPeralatan(dataPeralatan);
+    setDataTenagaKerja(dataTenagaKerja);
+    setDataVendor(dataVendor);
   }, []);
 
   useEffect(() => {
@@ -55,16 +66,16 @@ const Tahap4 = ({ onNext, onBack }) => {
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
-      namaMaterial: "Pasir",
-      satuan: "m³",
+      nama_material: "Pasir",
+      satuan: "mÂ³",
       spesifikasi: "",
       ukuran: "",
       kodefikasi: "",
-      jumlahKebutuhan: "",
+      jumlah_kebutuhan: "",
       merk: "",
       provinsi: "",
       kabupatenKota: "",
-      kelompokMaterial: "",
+      kelompok_material: "",
     },
     // Tambahkan data lainnya sesuai kebutuhan
   ]);
@@ -72,12 +83,12 @@ const Tahap4 = ({ onNext, onBack }) => {
   const [dataPeralatan, setDataPeralatan] = useState([
     {
       id: 1,
-      namaPeralatan: "Excavator",
+      nama_peralatan: "Excavator",
       satuan: "unit",
       tipe: "",
       merk: "",
       kapasitas: "",
-      jumlahKebutuhan: "",
+      jumlah_kebutuhan: "",
       provinsi: "",
       kabupatenKota: "",
     },
@@ -87,14 +98,25 @@ const Tahap4 = ({ onNext, onBack }) => {
   const [dataTenagaKerja, setDataTenagaKerja] = useState([
     {
       id: 1,
-      namaPekerja: "Tukang Batu",
+      jenis_tenaga_kerja: "Tukang Batu",
       kategori: "Pekerja Harian",
       upah: "",
-      jumlahKebutuhan: "",
+      jumlah_kebutuhan: "",
       provinsi: "",
       kabupatenKota: "",
     },
     // Tambahkan data lainnya sesuai kebutuhan
+  ]);
+
+  const [dataVendor, setDataVendor] = useState([
+    {
+      id: 1,
+      nama_vendor: "PT. Vendor 1",
+      pemilik_vendor: "Budi",
+      alamat: "Jl. Vendor 1 No. 1",
+      kontak: "08123456789",
+      url_kuisioner: "https://example.com",
+    },
   ]);
 
   // State tambahan untuk pagination dan pencarian
@@ -121,17 +143,17 @@ const Tahap4 = ({ onNext, onBack }) => {
 
   // Filter data berdasarkan pencarian
   const filteredDataMaterial = dataMaterial.filter((item) =>
-    item.namaMaterial.toLowerCase().includes(searchQueryMaterial.toLowerCase())
+    item.nama_material.toLowerCase().includes(searchQueryMaterial.toLowerCase())
   );
 
   const filteredDataPeralatan = dataPeralatan.filter((item) =>
-    item.namaPeralatan
+    item.nama_peralatan
       .toLowerCase()
       .includes(searchQueryPeralatan.toLowerCase())
   );
 
   const filteredDataTenagaKerja = dataTenagaKerja.filter((item) =>
-    item.namaPekerja
+    item.jenis_tenaga_kerja
       .toLowerCase()
       .includes(searchQueryTenagaKerja.toLowerCase())
   );
@@ -216,9 +238,9 @@ const Tahap4 = ({ onNext, onBack }) => {
                 />
                 <Table
                   columns={[
-                    { title: "Nama Material", accessor: "namaMaterial" },
+                    { title: "Nama Material", accessor: "nama_material" },
                     { title: "Satuan", accessor: "satuan" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
+                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
                   data={filteredDataMaterial.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -245,9 +267,9 @@ const Tahap4 = ({ onNext, onBack }) => {
                 />
                 <Table
                   columns={[
-                    { title: "Nama Peralatan", accessor: "namaPeralatan" },
+                    { title: "Nama Peralatan", accessor: "nama_peralatan" },
                     { title: "Satuan", accessor: "satuan" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
+                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
                   data={filteredDataPeralatan.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -272,10 +294,10 @@ const Tahap4 = ({ onNext, onBack }) => {
                 />
                 <Table
                   columns={[
-                    { title: "Nama Pekerja", accessor: "namaPekerja" },
+                    { title: "Nama Pekerja", accessor: "jenis_tenaga_kerja" },
                     { title: "Kategori", accessor: "kategori" },
                     { title: "Upah", accessor: "upah" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlahKebutuhan" },
+                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
                   data={filteredDataTenagaKerja.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -295,13 +317,13 @@ const Tahap4 = ({ onNext, onBack }) => {
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
       <Table
         columns={[
-          { title: "Responden/Vendor", accessor: "vendor" },
-          { title: "Pemilik Vendor", accessor: "pemilikvendor" },
+          { title: "Responden/Vendor", accessor: "nama_vendor" },
+          { title: "Pemilik Vendor", accessor: "pemilik_vendor" },
           { title: "Alamat", accessor: "alamat" },
           { title: "Kontak", accessor: "kontak" },
-          { title: "Rancangan Kuesioner", accessor: "rancangan" },
+          { title: "Rancangan Kuesioner", accessor: "url_kuisioner" },
         ]}
-        data={filteredDataPeralatan.slice(
+        data={dataVendor.slice(
           (currentPage - 1) * itemsPerPage,
           currentPage * itemsPerPage
         )}
