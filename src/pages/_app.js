@@ -1,8 +1,9 @@
 // src/pages/_app.js
 import "../styles/globals.css";
 import localFont from "next/font/local";
-import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useRouter } from "next/router";
+import ProtectedRoute from "./protectedroute";
 
 const poppins = localFont({
   src: "../styles/Poppins-Regular.woff",
@@ -16,15 +17,20 @@ function MyApp({ Component, pageProps }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token && router.pathname !== "/login") {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [router]);
 
   return (
     <div
-      className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}
-      suppressHydrationWarning={false}>
-      <Component {...pageProps} />
+      className={`${poppins.variable} font-[family-name:var(--font-poppins-r)] antialiased`}>
+      {router.pathname !== "/login" ? (
+        <ProtectedRoute>
+          <Component {...pageProps} />
+        </ProtectedRoute>
+      ) : (
+        <Component {...pageProps} />
+      )}
     </div>
   );
 }

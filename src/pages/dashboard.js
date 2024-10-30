@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/navigationbar";
 import { Line, Bar } from "react-chartjs-2";
+import ProtectedRoute from "./protectedroute";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -79,67 +80,69 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-8">
-      <Navbar />
-      <div className="p-6  min-h-screen">
-        <h2 className="text-3xl font-semibold text-gray-700 mb-4">
-          Selamat Datang di Dashboard
-        </h2>
-        <p className="text-lg text-gray-500 mb-8">
-          Ini adalah area dashboard Anda. Silakan pilih opsi di navbar untuk
-          melanjutkan.
-        </p>
+    <ProtectedRoute>
+      <div className="p-8">
+        <Navbar />
+        <div className="p-6  min-h-screen">
+          <h2 className="text-3xl font-semibold text-gray-700 mb-4">
+            Selamat Datang di Dashboard
+          </h2>
+          <p className="text-lg text-gray-500 mb-8">
+            Ini adalah area dashboard Anda. Silakan pilih opsi di navbar untuk
+            melanjutkan.
+          </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Card Statistik Pengguna dengan Grafik Garis */}
-          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-center mb-4">
-              <User size="24" color="#4CAF50" className="mr-2" />
-              <h3 className="text-xl font-semibold text-gray-700">
-                Statistik Pengguna
-              </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Card Statistik Pengguna dengan Grafik Garis */}
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+              <div className="flex items-center mb-4">
+                <User size="24" color="#4CAF50" className="mr-2" />
+                <h3 className="text-xl font-semibold text-gray-700">
+                  Statistik Pengguna
+                </h3>
+              </div>
+              <p className="text-sm text-gray-500 mb-4">
+                Grafik pertumbuhan jumlah pengguna terdaftar.
+              </p>
+              <Line data={userGrowthData} />
             </div>
-            <p className="text-sm text-gray-500 mb-4">
-              Grafik pertumbuhan jumlah pengguna terdaftar.
-            </p>
-            <Line data={userGrowthData} />
-          </div>
 
-          {/* Card Pengguna Aktif dengan Grafik */}
-          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-center mb-4">
-              <ChartIcon size="24" color="#9C27B0" className="mr-2" />
-              <h3 className="text-xl font-semibold text-gray-700">
-                Pengguna Aktif
-              </h3>
+            {/* Card Pengguna Aktif dengan Grafik */}
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+              <div className="flex items-center mb-4">
+                <ChartIcon size="24" color="#9C27B0" className="mr-2" />
+                <h3 className="text-xl font-semibold text-gray-700">
+                  Pengguna Aktif
+                </h3>
+              </div>
+              <Line data={penggunaAktifData} />
             </div>
-            <Line data={penggunaAktifData} />
-          </div>
 
-          {/* Card Aktivitas Terbaru dengan Grafik */}
-          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-center mb-4">
-              <Clock size="24" color="#FFC107" className="mr-2" />
-              <h3 className="text-xl font-semibold text-gray-700">
-                Aktivitas Terbaru
-              </h3>
+            {/* Card Aktivitas Terbaru dengan Grafik */}
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+              <div className="flex items-center mb-4">
+                <Clock size="24" color="#FFC107" className="mr-2" />
+                <h3 className="text-xl font-semibold text-gray-700">
+                  Aktivitas Terbaru
+                </h3>
+              </div>
+              <Bar data={aktivitasTerbaruData} />
             </div>
-            <Bar data={aktivitasTerbaruData} />
-          </div>
 
-          {/* Card Pembaruan Data Terbaru dengan Grafik */}
-          <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
-            <div className="flex items-center mb-4">
-              <Clock size="24" color="#F44336" className="mr-2" />
-              <h3 className="text-xl font-semibold text-gray-700">
-                Pembaruan Data Terbaru
-              </h3>
+            {/* Card Pembaruan Data Terbaru dengan Grafik */}
+            <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow duration-200">
+              <div className="flex items-center mb-4">
+                <Clock size="24" color="#F44336" className="mr-2" />
+                <h3 className="text-xl font-semibold text-gray-700">
+                  Pembaruan Data Terbaru
+                </h3>
+              </div>
+              <Bar data={pembaruanData} />
             </div>
-            <Bar data={pembaruanData} />
           </div>
         </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 };
 

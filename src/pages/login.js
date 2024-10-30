@@ -8,7 +8,7 @@ import LoginImage from "../../public/images/login-asset.svg";
 
 import Register from "./register";
 import TextInput from "../components/input";
-import Button from "../components/Button";
+import Button from "../components/button";
 import Modal from "../components/modal";
 import ForgotPassword from "./forgotpassword";
 
@@ -22,8 +22,10 @@ const Login = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem("token") && router.pathname === "/login") {
-      router.push("/dashboard");
+    const token = localStorage.getItem("token");
+    // Redirect to dashboard if user is already logged in
+    if (token && router.pathname === "/login") {
+      router.replace("/dashboard");
     }
   }, [router]);
 
@@ -39,7 +41,6 @@ const Login = () => {
           body: JSON.stringify({ username, password }),
         }
       );
-      console.log(response);
 
       if (!response.ok) {
         throw new Error(
@@ -57,7 +58,7 @@ const Login = () => {
 
   // Function to handle SSO login
   const handleSSOLogin = async () => {
-    const token = "YOUR_SSO_TOKEN";
+    const token = "YOUR_SSO_TOKEN"; // Update with your logic for SSO token
 
     try {
       const response = await fetch(
@@ -77,6 +78,7 @@ const Login = () => {
 
       const data = await response.json();
       if (data.success) {
+        localStorage.setItem("token", data.token); // Save the token received from SSO
         router.push("/dashboard");
       } else {
         setErrors({ username: "Login SSO gagal." });
@@ -94,7 +96,7 @@ const Login = () => {
 
   return (
     <div className="relative flex justify-center items-center h-screen gap-8 mx-4 md:gap-12 lg:gap-16">
-      {/* Container untuk form login */}
+      {/* Container for the login form */}
       <div className="flex flex-col justify-between w-full max-w-[900px] h-full p-8 mx-auto">
         {/* Card Header */}
         <div className="flex justify-between">
@@ -110,7 +112,7 @@ const Login = () => {
           />
         </div>
 
-        {/* Login card dengan padding atas 56px */}
+        {/* Login card with padding */}
         <div className="flex flex-col items-center justify-center flex-grow mt-[56px]">
           <div className="self-center text-center">
             <h5 className="text-H5 text-emphasis-on_surface-high">
@@ -150,7 +152,7 @@ const Login = () => {
               {errors.password && (
                 <p className="text-red-500">{errors.password}</p>
               )}
-              {/* Tombol untuk membuka modal Forgot Password */}
+              {/* Button to open Forgot Password modal */}
               <Button
                 onClick={openForgotPasswordModal}
                 variant="red_text"

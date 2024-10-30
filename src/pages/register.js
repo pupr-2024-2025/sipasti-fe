@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
-import Button from "../components/Button";
-import FileInput from "../components/fileinput";
+import Button from "../components/button";
+import FileInput from "../components/FileInput";
 import IconCheckbox from "../components/checkbox";
 import { CloseCircle } from "iconsax-react";
 import Dropdown from "../components/Dropdown";
@@ -20,6 +20,7 @@ const Register = ({ onClose }) => {
   const [isChecked, setIsChecked] = useState(false);
   const [errorMessages, setErrorMessages] = useState({});
   const [generalError, setGeneralError] = useState("");
+  const [error, setError] = useState("");
 
   const labels = {
     nama_lengkap: "Nama Lengkap",
@@ -42,6 +43,12 @@ const Register = ({ onClose }) => {
     const file = files[0];
     setSelectedFile(file);
     setUploadState("processing");
+    setError("");
+    if (files.length === 0) {
+      setError("File wajib dipilih.");
+      return;
+    }
+    setSelectedFile(files[0]);
 
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -77,7 +84,8 @@ const Register = ({ onClose }) => {
     if (!balai_kerja_id)
       newErrorMessages.balai_kerja_id = "Balai tidak boleh kosong";
     if (!surat_penugasan_url)
-      newErrorMessages.upload = "Upload SK/Surat Penugasan tidak boleh kosong";
+      newErrorMessages.surat_penugasan_url =
+        "Upload SK/Surat Penugasan tidak boleh kosong";
 
     if (Object.keys(newErrorMessages).length > 0) {
       setErrorMessages(newErrorMessages);
@@ -118,9 +126,15 @@ const Register = ({ onClose }) => {
 
       const result = await response.json();
       console.log("Registration successful:", result);
-      onClose();
+
+      // Menampilkan hasil return dari API di alert box
+      alert(result.message || "Registrasi berhasil!");
+
+      onClose(); // Menutup modal atau menandakan sukses
     } catch (error) {
       setGeneralError(error.message);
+      console.error("Error:", error.message);
+      alert("Error: " + error.message);
     }
   };
 
@@ -146,7 +160,7 @@ const Register = ({ onClose }) => {
 
       <div className="flex items-center justify-left gap-x-1">
         <p className="text-Small text-neutral-500">Sudah punya akun?</p>
-        <Button variant="blue_text" size="Extra_Small">
+        <Button variant="blue_text" size="Extra_Small" onClick={onClose}>
           Masuk
         </Button>
       </div>
@@ -156,7 +170,7 @@ const Register = ({ onClose }) => {
         placeholder="Masukkan Nama Lengkap"
         value={nama_lengkap}
         isRequired={true}
-        errorMessage={errorMessages.nama_lengkap}
+        errorMessage="Nama Lengkap tidak boleh kosong"
         onChange={(e) => setNamaLengkap(e.target.value)}
       />
 
@@ -168,7 +182,7 @@ const Register = ({ onClose }) => {
               placeholder="Masukkan NIK"
               value={nik}
               isRequired={true}
-              errorMessage={errorMessages.nik}
+              errorMessage="NIK tidak boleh kosong"
               onChange={(e) => setNIK(e.target.value)}
             />
             <TextInput
@@ -183,7 +197,7 @@ const Register = ({ onClose }) => {
               placeholder="Pilih Balai"
               onSelect={(selectedOption) => setBalai(selectedOption.value)}
               isRequired={true}
-              errorMessage={errorMessages.balai_kerja_id}
+              errorMessage="Balai tidak boleh kosong"
             />
           </div>
 
@@ -193,7 +207,7 @@ const Register = ({ onClose }) => {
               placeholder="Masukkan Email"
               value={email}
               isRequired={true}
-              errorMessage={errorMessages.email}
+              errorMessage="Email tidak boleh kosong"
               onChange={(e) => setEmail(e.target.value)}
             />
             <Dropdown
@@ -202,32 +216,34 @@ const Register = ({ onClose }) => {
               placeholder="Pilih Satuan Kerja"
               onSelect={handleSatuanKerjaSelect}
               isRequired={true}
-              errorMessage={errorMessages.satuan_kerja_id}
+              errorMessage="Satuan Kerja tidak boleh kosong"
             />
             <TextInput
               label="Nomor Telepon"
               placeholder="Masukkan Nomor Telepon"
               value={no_handphone}
               isRequired={true}
-              errorMessage={errorMessages.no_handphone}
+              errorMessage="Nomor Telepon tidak boleh kosong"
               onChange={(e) => setNomorTelepon(e.target.value)}
             />
           </div>
         </div>
       </div>
-
-      <FileInput
-        onFileSelect={handleFileSelect}
-        selectedFile={surat_penugasan_url}
-        state={uploadState}
-        progress={progress}
-        onCancel={handleCancel}
-        required={true}
-        Label="Upload SK/Surat Penugasan"
-        HelperText="Format .JPG, .PNG dan maksimal 512Kb"
-        errorMessage={errorMessages.surat_penugasan_url}
-      />
-
+      <div>
+        <FileInput
+          onFileSelect={handleFileSelect}
+          selectedFile={surat_penugasan_url}
+          state={uploadState}
+          progress={progress}
+          // onCancel={handleCancel}
+          required={true}
+          Label="Upload SK/Surat Penugasan"
+          HelperText="Format .JPG, .PNG dan maksimal 512Kb"
+          errorMessage="Upload SK/Surat Penugasan tidak boleh kosong"
+          onCancel={() => setSelectedFile(null)}
+        />
+        {error && <p className="text-red-500">{error}</p>}
+      </div>
       <div>
         <IconCheckbox
           label="Saya setuju dengan syarat dan ketentuan berlaku."

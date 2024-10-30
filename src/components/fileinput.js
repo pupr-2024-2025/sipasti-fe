@@ -17,12 +17,11 @@ const FileInput = ({
   progress = 0,
   onCancel,
   selectedFile,
-  // totalProcessingTime = 30,
-  required = false, // Tambahkan prop untuk mengatur apakah field ini wajib
+  required = false,
 }) => {
   const fileInputRef = useRef(null);
-  const [startTime, setStartTime] = useState(null);
-  // const [elapsedTime, setElapsedTime] = useState(0);
+  const startTimeRef = useRef(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
 
   const handleButtonClick = () => {
@@ -32,11 +31,10 @@ const FileInput = ({
   const handleFileChange = (event) => {
     const files = event.target.files;
 
-    // Jika field required, periksa jika tidak ada file yang dipilih
     if (required && files.length === 0) {
       setErrorMessage("File wajib dipilih.");
     } else {
-      setErrorMessage(""); // Kosongkan pesan kesalahan jika valid
+      setErrorMessage("");
       if (onFileSelect) {
         onFileSelect(files);
       }
@@ -45,14 +43,17 @@ const FileInput = ({
 
   useEffect(() => {
     if (state === "processing") {
-      setStartTime(Date.now());
+      startTimeRef.current = Date.now();
       const interval = setInterval(() => {
-        setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+        setElapsedTime(Math.floor((Date.now() - startTimeRef.current) / 1000));
       }, 1000);
 
       return () => clearInterval(interval);
+    } else {
+      // Reset elapsed time when not processing
+      setElapsedTime(0);
     }
-  }, [state, startTime]);
+  }, [state]);
 
   return (
     <div className={className}>
@@ -73,7 +74,7 @@ const FileInput = ({
 
         {/* Tampilkan pesan kesalahan */}
         {errorMessage && (
-          <p className="text-red-500 text-Small">{errorMessage}</p>
+          <p className="text-custom-red-500 text-Small">{errorMessage}</p>
         )}
 
         {state === "default" && (

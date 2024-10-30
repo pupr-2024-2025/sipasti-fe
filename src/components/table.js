@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
 import Dropdown from "../components/Dropdown";
-import Button from "../components/Button";
+import Button from "../components/button";
 import Checkbox from "../components/checkbox"; // Import the Checkbox component
 import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
 import Tooltip from "./tooltip";
 
 const Table = ({ columns, data, setParentState }) => {
-  // Store input values
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -16,7 +15,6 @@ const Table = ({ columns, data, setParentState }) => {
     }, {})
   );
 
-  // Store error messages
   const [errors, setErrors] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -59,10 +57,8 @@ const Table = ({ columns, data, setParentState }) => {
   };
 
   const handleCheckboxChange = (rowId, checked) => {
-    // Update input value for checkbox
     handleInputChange(rowId, "checkbox", checked);
-
-    // Update selected rows based on checkbox state
+    console.log(rowId, checked);
     setSelectedRows((prevSelected) =>
       checked
         ? [...prevSelected, rowId]
@@ -205,9 +201,11 @@ const Table = ({ columns, data, setParentState }) => {
                           checked={
                             inputValues[row.id]?.[column.accessor] || false
                           }
-                          onChange={(checked) =>
-                            handleCheckboxChange(row.id, checked)
-                          }
+                          onChange={(checked) => {
+                            console.log(column);
+                            column.onChange(row, checked);
+                            handleCheckboxChange(row.id, checked);
+                          }}
                         />
                       ) : column.type === "button" ? (
                         <Button
@@ -219,12 +217,11 @@ const Table = ({ columns, data, setParentState }) => {
                       ) : column.type === "checkbox" ? (
                         <Checkbox
                           label=""
-                          checked={
-                            inputValues[row.id]?.[column.accessor] || false
-                          }
-                          onChange={(checked) =>
-                            handleCheckboxChange(row.id, checked)
-                          }
+                          checked={!!inputValues[row.id]?.[column.accessor]}
+                          onChange={(e) => {
+                            console.log(column.type);
+                            column.onChange(row, e.target.checked);
+                          }}
                         />
                       ) : (
                         row[column.accessor]

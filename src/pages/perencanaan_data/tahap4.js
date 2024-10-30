@@ -6,40 +6,50 @@ import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
-import Button from "../../components/Button";
+import Button from "../../components/button";
 import axios from "axios";
 
 const Tahap4 = ({ onNext, onBack }) => {
   const fetchCommonInformation = useCallback(async () => {
-    const response = await fetch(
-      "https://api-ecatalogue-staging.online/api/perencanaan-data/perencanaan-data-result?id=1"
-    );
-    console.log("response", response);
-    const data = await response.json();
-    console.log("data", data);
-    const commonInformation = data?.data?.informasi_umum || {
-      kode_rup: "",
-      nama_balai: "",
-      nama_paket: "",
-      nama_ppk: "",
-      jabatan_ppk: "",
-      jenis_informasi: "",
-    };
-    const dataMaterial = data?.data?.material || [];
-    const dataPeralatan = data?.data?.peralatan || [];
-    const dataTenagaKerja = data?.data?.tenaga_kerja || [];
-    const dataVendor = data?.data?.shortlist_vendor || [];
-    setCommonInformation(commonInformation);
-    setDataMaterial(dataMaterial);
-    setDataPeralatan(dataPeralatan);
-    setDataTenagaKerja(dataTenagaKerja);
-    setDataVendor(dataVendor);
+    const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+
+    try {
+      const response = await fetch(
+        `https://api-ecatalogue-staging.online/api/perencanaan-data/perencanaan-data-result?id=${informasi_umum_id}`
+      );
+
+      if (!response.ok) {
+        console.error("Failed to fetch data:", response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      if (!data || !data.data) {
+        console.warn("Data tidak ditemukan atau kosong");
+        return;
+      }
+
+      const commonInformation = data.data.informasi_umum || {
+        kode_rup: "",
+        nama_balai: "",
+        nama_paket: "",
+        nama_ppk: "",
+        jabatan_ppk: "",
+        jenis_informasi: "",
+      };
+
+      setCommonInformation(commonInformation);
+      setDataMaterial(data.data.material || []);
+      setDataPeralatan(data.data.peralatan || []);
+      setDataTenagaKerja(data.data.tenaga_kerja || []);
+      setDataVendor(data.data.shortlist_vendor || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }, []);
 
   useEffect(() => {
-    fetchCommonInformation().catch((error) => {
-      console.error("Error fetching data:", error);
-    });
+    fetchCommonInformation();
   }, [fetchCommonInformation]);
 
   // State untuk setiap input form

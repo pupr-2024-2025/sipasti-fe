@@ -2,20 +2,29 @@ import React, { useState, useEffect } from "react";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
-import Button from "../../components/Button";
-import { Trash } from "iconsax-react";
+import Button from "../../components/button";
 import axios from "axios";
 
 const Tahap3 = ({ onNext, onBack }) => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState({
+    material: 1,
+    equipment: 1,
+    labor: 1,
+  });
   const itemsPerPage = 10;
   const [materialData, setMaterialData] = useState([]);
   const [equipmentData, setEquipmentData] = useState([]);
   const [laborData, setLaborData] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   const [selectedVendors, setSelectedVendors] = useState([]);
+  const [identifikasi_kebutuhan_id, setIdentifikasi_Kebutuhan_id] =
+    useState("");
 
   useEffect(() => {
+    const identifikasi_kebutuhan_id = localStorage.getItem(
+      "identifikasi_kebutuhan_id"
+    );
+    setIdentifikasi_Kebutuhan_id(identifikasi_kebutuhan_id);
     axios
       .get(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor"
@@ -38,29 +47,45 @@ const Tahap3 = ({ onNext, onBack }) => {
             (selectedVendor) =>
               selectedVendor.data_vendor_id !== vendor.data_vendor_id
           );
-
-      console.log("Selected Vendors:", updatedVendors);
       return updatedVendors;
     });
   };
 
-  const handleNext = () => {
-    // Validasi input sebelum melanjutkan
-    if (!validateInputs()) {
-      console.error(
-        "Ada kesalahan input. Silakan perbaiki sebelum melanjutkan."
-      );
-      return; // Jangan lanjut jika ada kesalahan
+  const handleSubmit = () => {
+    if (typeof onNext === "function") {
+      onNext();
+    } else {
+      console.error("onNext is not a function");
     }
+  };
 
-    // Cek jika shortlist_vendor tidak kosong
-    if (selectedVendors.length === 0) {
-      console.error("Silakan pilih vendor sebelum melanjutkan.");
-      return; // Jangan lanjut jika tidak ada vendor yang dipilih
+  const validateInputs = () => {
+    const newErrors = {};
+    let isValid = true;
+
+    [materialData, equipmentData, laborData].forEach((data, index) => {
+      const currentData = data.slice(
+        (currentPage[index] - 1) * itemsPerPage,
+        currentPage[index] * itemsPerPage
+      );
+      currentData.forEach((row) => {
+        newErrors[row.id] = {};
+        // Validasi bisa ditambahkan di sini jika diperlukan
+      });
+    });
+
+    setFormErrors(newErrors);
+    return isValid;
+  };
+
+  const handleNext = () => {
+    if (!validateInputs()) {
+      console.error("Input tidak valid, silakan periksa kembali.");
+      return;
     }
 
     const payload = {
-      informasi_umum_id: 1, // Ganti dengan ID yang sesuai
+      identifikasi_kebutuhan_id: identifikasi_kebutuhan_id,
       shortlist_vendor: selectedVendors.map((vendor) => ({
         data_vendor_id: vendor.data_vendor_id,
         nama_vendor: vendor.nama_vendor,
@@ -70,9 +95,14 @@ const Tahap3 = ({ onNext, onBack }) => {
       })),
     };
 
+    if (payload.shortlist_vendor.length === 0) {
+      console.error("Silakan pilih vendor sebelum melanjutkan.");
+      return;
+    }
+
     axios
       .post(
-        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
         payload
       )
       .then((response) => {
@@ -90,7 +120,7 @@ const Tahap3 = ({ onNext, onBack }) => {
       accessor: "select",
       type: "checkbox",
       width: "48px",
-      onChange: (vendor, isChecked) => handleCheckboxChange(vendor, isChecked),
+      onChange: handleCheckboxChange,
     },
     {
       title: "Responden/Vendor",
@@ -120,57 +150,25 @@ const Tahap3 = ({ onNext, onBack }) => {
     },
   ];
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-
-  // Validate inputs before proceeding
-  const validateInputs = () => {
-    const newErrors = {};
-    let isValid = true;
-
-    // Validate material data
-    const currentData = materialData.slice(
-      startIndex,
-      startIndex + itemsPerPage
-    );
-    currentData.forEach((row) => {
-      newErrors[row.id] = {};
-      columns.forEach((column) => {
-        if (column.required) {
-          const value = row[column.accessor];
-          if (!value) {
-            isValid = false;
-            newErrors[row.id][column.accessor] = `${column.title} wajib diisi`; // Set error message
-          }
-        }
-      });
-    });
-
-    setFormErrors(newErrors); // Update state with new errors
-    return isValid;
-  };
-
   // Tabs configuration
   const tabs = [
     {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <div className="rounded-[16px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table
-                columns={columns}
-                data={materialData}
-                errors={formErrors}
-                setParentState={() => {}}
-              />{" "}
-              {/* Pass errors to Table */}
-            </div>
-          </div>
+          <Table
+            columns={columns}
+            data={materialData}
+            errors={formErrors}
+            setParentState={() => {}}
+          />
           {materialData.length > 0 && (
             <Pagination
-              currentPage={currentPage}
+              currentPage={currentPage.material}
               totalPages={Math.ceil(materialData.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
+              onPageChange={(page) =>
+                setCurrentPage({ ...currentPage, material: page })
+              }
               totalData={materialData.length}
             />
           )}
@@ -181,22 +179,19 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Peralatan",
       content: (
         <div className="mt-3 space-y-8">
-          <div className="rounded-[16px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table
-                columns={columns}
-                data={equipmentData}
-                errors={formErrors}
-                setParentState={() => {}}
-              />{" "}
-              {/* Pass errors to Table */}
-            </div>
-          </div>
+          <Table
+            columns={columns}
+            data={equipmentData}
+            errors={formErrors}
+            setParentState={() => {}}
+          />
           {equipmentData.length > 0 && (
             <Pagination
-              currentPage={currentPage}
+              currentPage={currentPage.equipment}
               totalPages={Math.ceil(equipmentData.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
+              onPageChange={(page) =>
+                setCurrentPage({ ...currentPage, equipment: page })
+              }
               totalData={equipmentData.length}
             />
           )}
@@ -207,22 +202,19 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Tenaga Kerja",
       content: (
         <div className="mt-3 space-y-8">
-          <div className="rounded-[16px] overflow-hidden">
-            <div className="overflow-x-auto">
-              <Table
-                columns={columns}
-                data={laborData}
-                errors={formErrors}
-                setParentState={() => {}}
-              />{" "}
-              {/* Pass errors to Table */}
-            </div>
-          </div>
+          <Table
+            columns={columns}
+            data={laborData}
+            errors={formErrors}
+            setParentState={() => {}}
+          />
           {laborData.length > 0 && (
             <Pagination
-              currentPage={currentPage}
+              currentPage={currentPage.labor}
               totalPages={Math.ceil(laborData.length / itemsPerPage)}
-              onPageChange={setCurrentPage}
+              onPageChange={(page) =>
+                setCurrentPage({ ...currentPage, labor: page })
+              }
               totalData={laborData.length}
             />
           )}
@@ -243,8 +235,7 @@ const Tahap3 = ({ onNext, onBack }) => {
         <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
           Kembali
         </Button>
-
-        <Button variant="solid_blue" size="Medium" onClick={handleNext}>
+        <Button variant="solid_blue" size="Medium" onClick={handleSubmit}>
           Simpan & Lanjut
         </Button>
       </div>

@@ -126,7 +126,8 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [statePeralatan, setStatePeralatan] = useState(null);
   const [stateTenagaKerja, setStateTenagaKerja] = useState(null);
 
-  // Search logic per tab
+  let result = [];
+
   const handleSearch = (query, tab) => {
     const data =
       tab === "Material"
@@ -134,11 +135,17 @@ const Tahap2 = ({ onNext, onBack }) => {
         : tab === "Peralatan"
         ? dataPeralatan
         : dataTenagaKerja;
-    const result = data.filter((item) =>
-      Object.values(item).some((value) =>
-        value.toString().toLowerCase().includes(query.toLowerCase())
-      )
-    );
+
+    // Pastikan kita memiliki data untuk difilter
+    if (data) {
+      result = data.filter((item) =>
+        Object.values(item).some((value) =>
+          value.toString().toLowerCase().includes(query.toLowerCase())
+        )
+      );
+    }
+
+    // Update state berdasarkan tab yang aktif
     if (tab === "Material") {
       setFilteredDataMaterial(result);
     } else if (tab === "Peralatan") {
@@ -146,7 +153,8 @@ const Tahap2 = ({ onNext, onBack }) => {
     } else {
       setFilteredDataTenagaKerja(result);
     }
-    setCurrentPage(1); // Reset to the first page
+
+    setCurrentPage(1); // Reset ke halaman pertama
   };
 
   const handleDelete = (row, tab) => {
@@ -188,6 +196,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Nama Material",
       type: "textInput",
       width: "300px",
+      required: true,
     },
     {
       title: "Satuan",
@@ -195,6 +204,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       width: "154px",
       placeholder: "Masukkan Satuan",
+      tooltipText: "Contoh pengisian: m³, m²",
+      required: true,
     },
     {
       title: "Spesifikasi",
@@ -203,6 +214,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Spesifikasi",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: Silika, GI Medium - Socket ",
     },
     {
       title: "Ukuran",
@@ -211,6 +223,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Ukuran",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: Silika, GI Medium - Socket ",
     },
     {
       title: "Kodefikasi",
@@ -219,6 +232,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Kodefikasi",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: M304, M.114.e  ",
     },
     {
       title: "Kelompok Material",
@@ -286,6 +300,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       type: "textInput",
       width: "154px",
       required: true,
+      tooltipText: "Contoh pengisian: m³, m²",
     },
     {
       title: "Spesifikasi",
@@ -294,6 +309,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Spesifikasi",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: 80 HP, 20 HP",
     },
     {
       title: "Kapasitas",
@@ -302,6 +318,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Kapasitas",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: 0,9 m3, 0.6 m3",
     },
     {
       title: "Kodefikasi",
@@ -310,6 +327,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Kodefikasi",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: E10, E06 ",
     },
     {
       title: "Kelompok Peralatan",
@@ -374,11 +392,11 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Satuan",
       accessor: "satuan",
-      // jumlah_kebutuhan: "Masukkan Satuan",
       placeholder: "Masukkan Satuan",
       type: "textInput",
       width: "154px",
       required: true,
+      tooltipText: "Nama harus diisi sesuai KTP",
     },
     {
       title: "Jumlah Kebutuhan",
@@ -395,6 +413,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Kodefikasi",
       width: "240px",
       required: true,
+      tooltipText: "Contoh pengisian: L04,L02",
     },
     {
       title: "Provinsi",
@@ -621,8 +640,9 @@ const Tahap2 = ({ onNext, onBack }) => {
       const stateMaterialFirst = stateMaterial["1"];
       const statePeralatanFirst = statePeralatan["1"];
       const stateTenagaKerjaFirst = stateTenagaKerja["1"];
+      const informasi_umum_id = localStorage.getItem("informasi_umum_id");
       const requestData = {
-        informasi_umum_id: 1,
+        informasi_umum_id: informasi_umum_id,
         material: [
           {
             ...stateMaterialFirst,
@@ -656,6 +676,7 @@ const Tahap2 = ({ onNext, onBack }) => {
           body: JSON.stringify(requestData),
         }
       );
+      localStorage.setItem("identifikasi_kebutuhan_id", result.data?.id ?? 0);
 
       console.log(response.body);
 

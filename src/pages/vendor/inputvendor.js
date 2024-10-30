@@ -6,40 +6,48 @@ import Checkbox from "../../components/checkbox";
 import Button from "../../components/button";
 import Dropdown from "../../components/Dropdown";
 
-const Inputvendor = ({ onNext }) => {
-  const [selectedTypes, setSelectedTypes] = useState([]); // Store selected checkbox types
-  const [formValues, setFormValues] = useState({
-    vendorName: "",
-    category: "",
-    resources: "",
-    address: "",
-    phone: "",
-    mobile: "",
-    picName: "",
-    province: "",
-    city: "",
-  });
+const InputVendor = ({ onNext, onBack }) => {
+  const [selectedTypes, setSelectedTypes] = useState([]);
+  // const [formValues, setFormValues] = useState({
+  //   nama_vendor: "",
+  //   category: "",
+  //   resources: "",
+  //   address: "",
+  //   phone: "",
+  //   mobile: "",
+  //   picName: "",
+  //   province: "",
+  //   city: "",
+  //   latitude: "",
+  //   longitude: "",
+  // });
+  const [nama_vendor, setnama_vendor] = useState("");
+  const [jenis_vendor_id, setjenis_vendor_id] = useState("");
+  const [kategori_vendor_id, setkategori_vendor_id] = useState("");
+  const [alamat, setalamat] = useState("");
+  const [no_telepon, setno_telepon] = useState("");
+  const [no_hp, setno_hp] = useState("");
+  const [nama_pic, setnama_pic] = useState("");
+  const [provinsi_id, setprovinsi_id] = useState("");
+  const [kota_id, setkota_id] = useState("");
+  const [koordinat, setkoordinat] = useState("");
+  const [logo_url, setlogo_url] = useState("");
+  const [dok_pendukung_url, setdok_pendukung_url] = useState("");
 
   const handleCheckboxChange = (type) => {
-    setSelectedTypes(
-      (prev) =>
-        prev.includes(type)
-          ? prev.filter((item) => item !== type) // Remove if already selected
-          : [...prev, type] // Add if not selected
-    );
+    setSelectedTypes((prev) => {
+      const updatedTypes = prev.includes(type)
+        ? prev.filter((item) => item !== type)
+        : [...prev, type];
+
+      console.log(updatedTypes);
+      return updatedTypes;
+    });
   };
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploadState, setUploadState] = useState("default");
   const [progress, setProgress] = useState(0);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
 
   const handleFileSelect = (files) => {
     if (files.length > 0) {
@@ -65,37 +73,40 @@ const Inputvendor = ({ onNext }) => {
     setProgress(0);
   };
 
-  // Define options based on selected types
   const getOptions = () => {
     const options = {
-      Material: [
-        { value: "pedagang_grosir", label: "Pedagang Grosir" },
-        { value: "distributor", label: "Distributor" },
-        { value: "produsen", label: "Produsen" },
-        { value: "pedagang_campuran", label: "Pedagang Campuran" },
+      1: [
+        { value: "1-1", label: "Pedagang Grosir" },
+        { value: "1-2", label: "Distributor" },
+        { value: "1-3", label: "Produsen" },
+        { value: "1-4", label: "Pedagang Campuran" },
       ],
-      Peralatan: [
-        { value: "produsen", label: "Produsen" },
-        { value: "jasa_penyewaan", label: "Jasa Penyewaan Alat Berat" },
-        { value: "kontraktor", label: "Kontraktor" },
-        { value: "agen", label: "Agen" },
+      2: [
+        { value: "2-1", label: "Produsen" },
+        { value: "2-2", label: "Jasa Penyewaan Alat Berat" },
+        { value: "2-3", label: "Kontraktor" },
+        { value: "2-4", label: "Agen" },
       ],
-      TenagaKerja: [
-        { value: "kontraktor", label: "Kontraktor" },
-        { value: "pemerintah_daerah", label: "Pemerintah Daerah" },
+      3: [
+        { value: "3-1", label: "Kontraktor" },
+        { value: "3-2", label: "Pemerintah Daerah" },
       ],
     };
+    const consolidatedOptionsMap = new Map();
+    Object.values(options)
+      .flat()
+      .forEach((option) => {
+        if (!consolidatedOptionsMap.has(option.label)) {
+          consolidatedOptionsMap.set(option.label, { ...option });
+        }
+      });
 
-    // Combine options based on selected types
-    let combinedOptions = [];
-    selectedTypes.forEach((type) => {
-      // Check if options[type] exists and is an array
-      if (Array.isArray(options[type])) {
-        combinedOptions = [...combinedOptions, ...options[type]];
-      }
-    });
+    return Array.from(consolidatedOptionsMap.values());
+  };
 
-    return combinedOptions;
+  const labelToCategoriesMap = {
+    Produsen: ["1-3", "2-1"],
+    Kontraktor: ["2-3", "3-1"],
   };
 
   return (
@@ -111,31 +122,29 @@ const Inputvendor = ({ onNext }) => {
             <TextInput
               label="Nama Vendor/Perusahaan"
               placeholder="Masukkan nama vendor/perusahaan"
-              type="text"
               state="border"
               isRequired={true}
               errorMessage="Vendor/Perusahaan tidak boleh kosong."
-              name="vendorName"
-              value={formValues.vendorName}
-              onChange={handleChange}
+              value={nama_vendor}
+              onChange={(e) => setnama_vendor(e.target.value)}
             />
             <div className="space-b-1">
               <p className="text-B2">Jenis Responden/ Vendor</p>
               <div className="flex space-x-8">
                 <Checkbox
                   label="Material"
-                  checked={selectedTypes.includes("Material")}
-                  onChange={() => handleCheckboxChange("Material")}
+                  checked={selectedTypes.includes("1")}
+                  onChange={() => handleCheckboxChange("1")}
                 />
                 <Checkbox
                   label="Peralatan"
-                  checked={selectedTypes.includes("Peralatan")}
-                  onChange={() => handleCheckboxChange("Peralatan")}
+                  checked={selectedTypes.includes("2")}
+                  onChange={() => handleCheckboxChange("2")}
                 />
                 <Checkbox
                   label="Tenaga Kerja"
-                  checked={selectedTypes.includes("TenagaKerja")} // Updated key here
-                  onChange={() => handleCheckboxChange("TenagaKerja")} // Updated key here
+                  checked={selectedTypes.includes("3")}
+                  onChange={() => handleCheckboxChange("3")}
                 />
               </div>
             </div>
@@ -144,26 +153,15 @@ const Inputvendor = ({ onNext }) => {
               options={getOptions()}
               label="Kategori Vendor/Perusahaan"
               placeholder="Pilih kategori vendor/perusahaan"
-              value={formValues.category}
+              value={kategori_vendor_id}
               onSelect={(selectedOption) => {
-                setFormValues({
-                  ...formValues,
-                  category: selectedOption ? selectedOption.value : "",
-                });
+                const associatedValues = labelToCategoriesMap[
+                  selectedOption.label
+                ] || [selectedOption.value];
+
+                setkategori_vendor_id(associatedValues.join(","));
               }}
               isRequired={true}
-            />
-
-            {/* Other form fields remain unchanged */}
-
-            <TextInput
-              label="Sumber daya yang disediakan"
-              placeholder="Masukkan sumber daya, contoh: Scaffolding, excavator, semen"
-              type="text"
-              state="border"
-              name="resources"
-              value={formValues.resources}
-              onChange={handleChange}
             />
             <TextInput
               label="Alamat vendor atau perusahaan"
@@ -172,9 +170,8 @@ const Inputvendor = ({ onNext }) => {
               state="border"
               isRequired={true}
               errorMessage="Alamat tidak boleh kosong."
-              name="address"
-              value={formValues.address}
-              onChange={handleChange}
+              value={alamat}
+              onChange={(e) => setalamat(e.target.value)}
             />
             <div className="flex gap-8">
               <TextInput
@@ -185,8 +182,8 @@ const Inputvendor = ({ onNext }) => {
                 isRequired={true}
                 errorMessage="Nomor telepon tidak boleh kosong."
                 name="phone"
-                value={formValues.phone}
-                onChange={handleChange}
+                value={no_telepon}
+                onChange={(e) => setno_telepon(e.target.value)}
                 className="flex-1"
               />
               <TextInput
@@ -196,9 +193,8 @@ const Inputvendor = ({ onNext }) => {
                 state="border"
                 isRequired={true}
                 errorMessage="Nomor HP tidak boleh kosong."
-                name="mobile"
-                value={formValues.mobile}
-                onChange={handleChange}
+                value={no_hp}
+                onChange={(e) => setno_hp(e.target.value)}
                 className="flex-1"
               />
             </div>
@@ -209,9 +205,8 @@ const Inputvendor = ({ onNext }) => {
               state="border"
               isRequired={true}
               errorMessage="Nama PIC tidak boleh kosong."
-              name="picName"
-              value={formValues.picName}
-              onChange={handleChange}
+              value={nama_pic}
+              onChange={(e) => setnama_pic(e.target.value)}
             />
             <div className="flex gap-8">
               <TextInput
@@ -221,9 +216,8 @@ const Inputvendor = ({ onNext }) => {
                 state="border"
                 isRequired={true}
                 errorMessage="Provinsi tidak boleh kosong."
-                name="province"
-                value={formValues.province}
-                onChange={handleChange}
+                value={provinsi_id}
+                onChange={(e) => setprovinsi_id(e.target.value)}
               />
               <TextInput
                 label="Kabupaten/Kota"
@@ -232,9 +226,8 @@ const Inputvendor = ({ onNext }) => {
                 state="border"
                 isRequired={true}
                 errorMessage="Kabupaten/Kota tidak boleh kosong."
-                name="city"
-                value={formValues.city}
-                onChange={handleChange}
+                value={kota_id}
+                onChange={(e) => setkota_id(e.target.value)}
               />
             </div>
           </div>
@@ -242,27 +235,17 @@ const Inputvendor = ({ onNext }) => {
           <div className="flex-grow grid grid-cols-1 gap-4 py-8 px-6 rounded-[16px] bg-custom-neutral-100">
             <div className="space-y-6">
               <TextInput
-                label="Lattitude"
-                placeholder="Masukkan Lattitude"
+                label="Koordinat"
+                placeholder="Masukkan Koordinat"
                 type="text"
                 state="border"
-                name="latitude"
-                value={formValues.picName}
-                onChange={handleChange}
-              />
-              <TextInput
-                label="Longitude"
-                placeholder="Masukkan Longitude"
-                type="text"
-                state="border"
-                name="longitude"
-                value={formValues.province}
-                onChange={handleChange}
+                value={koordinat}
+                onChange={(e) => setkoordinat(e.target.value)}
               />
               <FileInput
                 onFileSelect={handleFileSelect}
                 buttonText="Pilih File"
-                selectedFile={selectedFile}
+                selectedFile={logo_url}
                 progress={progress}
                 state={uploadState}
                 onCancel={handleCancel}
@@ -274,21 +257,31 @@ const Inputvendor = ({ onNext }) => {
               <FileInput
                 onFileSelect={handleFileSelect}
                 buttonText="Pilih File"
-                selectedFile={selectedFile}
+                selectedFile={dok_pendukung_url}
                 progress={progress}
                 state={uploadState}
                 onCancel={handleCancel}
                 multiple={false}
                 accept=".jpg, .png"
-                Label="Dokumen pendukung"
+                Label="Dokumen Pendukung"
                 HelperText="Format .JPG, .PNG dan maksimal 512Kb"
               />
             </div>
-          </div>
-          <div className="flex flex-row w-full justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-            <Button variant="solid_blue" size="Medium" onClick={onNext}>
-              Simpan & Lanjut
-            </Button>
+
+            <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+              <Button
+                label="Kembali"
+                variant="secondary"
+                size="md"
+                onClick={onBack}
+              />
+              <Button
+                label="Simpan & Lanjut"
+                variant="primary"
+                size="md"
+                onClick={onNext}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -296,4 +289,4 @@ const Inputvendor = ({ onNext }) => {
   );
 };
 
-export default Inputvendor;
+export default InputVendor;
