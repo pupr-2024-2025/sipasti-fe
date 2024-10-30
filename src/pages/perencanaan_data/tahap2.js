@@ -676,7 +676,7 @@ const Tahap2 = ({ onNext, onBack }) => {
           body: JSON.stringify(requestData),
         }
       );
-      console.response(result);
+      console.log(response);
       localStorage.setItem(
         "identifikasi_kebutuhan_id",
         result.data?.material[0].identifikasi_kebutuhan_id ?? 0
@@ -690,6 +690,8 @@ const Tahap2 = ({ onNext, onBack }) => {
     } catch (error) {
       throw error;
     }
+    const responseData = await response.json();
+    console.log(responseData);
   };
 
   return (

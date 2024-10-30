@@ -296,7 +296,6 @@ const Tahap1 = () => {
               }}>
               Lanjut
             </Button>
-            y
           </div>
         )}
       </div>
