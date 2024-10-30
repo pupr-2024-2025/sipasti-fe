@@ -35,6 +35,7 @@ const Tahap1 = () => {
     "Perancangan Kuesioner",
   ];
   const handleSubmit = async (type) => {
+    console.log("fungi ini kepanggil.");
     const url =
       "http://api-ecatalogue-staging.online/api/perencanaan-data/store-informasi-umum";
     const data =
@@ -67,6 +68,7 @@ const Tahap1 = () => {
         const result = await response.json();
         console.log("Data berhasil dikirim:", result);
         alert("Data berhasil dikirim ke API.");
+        localStorage.setItem("informasi_umum_id", result.data.id);
       } else {
         console.error("Gagal mengirim data ke API:", response.statusText);
         alert("Gagal mengirim data ke API.");
@@ -210,7 +212,7 @@ const Tahap1 = () => {
 
   const handleNextStep = (type) => {
     if (areFieldsFilled()) {
-      handleSubmit(type);
+      // handleSubmit(type);
       nextStep();
     } else {
       alert("Pastikan semua field telah diisi dengan benar.");
@@ -283,14 +285,18 @@ const Tahap1 = () => {
               onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}>
               Kembali
             </Button>
-
             <Button
               variant="solid_blue"
               size="Medium"
               disabled={!areFieldsFilled()}
-              onClick={() => handleNextStep("manual")}>
+              onClick={() => {
+                // handleNextStep("manual");
+                handleSubmit();
+                handleNextStep();
+              }}>
               Lanjut
             </Button>
+            y
           </div>
         )}
       </div>

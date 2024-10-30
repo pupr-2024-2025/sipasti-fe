@@ -635,7 +635,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       if (!stateMaterial) throw new Error("Data material belum diisi!");
       if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
       if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
-      // Lakukan validasi stateMaterial
+
       console.log(JSON.stringify(stateMaterial));
       const stateMaterialFirst = stateMaterial["1"];
       const statePeralatanFirst = statePeralatan["1"];
@@ -676,7 +676,11 @@ const Tahap2 = ({ onNext, onBack }) => {
           body: JSON.stringify(requestData),
         }
       );
-      localStorage.setItem("identifikasi_kebutuhan_id", result.data?.id ?? 0);
+      console.response(result);
+      localStorage.setItem(
+        "identifikasi_kebutuhan_id",
+        result.data?.material[0].identifikasi_kebutuhan_id ?? 0
+      );
 
       console.log(response.body);
 
@@ -708,10 +712,9 @@ const Tahap2 = ({ onNext, onBack }) => {
             console.log("onNext called");
             try {
               await handleSubmitSecondStep();
-              onNext(); // This will only run if handleSubmitSecondStep succeeds
+              onNext();
             } catch (error) {
               alert(error.message);
-              // onNext() won't be called
             }
           }}>
           Simpan & Lanjut
