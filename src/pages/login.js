@@ -133,7 +133,7 @@ const Login = () => {
               value={username}
               onChange={(e) => setEmail(e.target.value)}
               isRequired={true}
-              errorMessage="Username tidak boleh kosong"
+              errorMessage="Email tidak boleh kosong"
             />
             {errors.username && (
               <p className="text-custom-red-500">{errors.username}</p>

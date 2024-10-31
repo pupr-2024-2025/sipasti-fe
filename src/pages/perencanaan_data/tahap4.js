@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Navbar from "../../components/navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Table from "../../components/table";

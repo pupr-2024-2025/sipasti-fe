@@ -14,7 +14,7 @@ const Navbar = () => {
   const links = [
     { href: "/dashboard", label: "Beranda" },
     { href: "/perencanaan_data/tahap1", label: "Perencanaan Data" },
-    { href: "/schedule", label: "Input Kuesioner" },
+    // { href: "/schedule", label: "Input Kuesioner" },
     { href: "/vendor/inputvendor", label: "Vendor" },
   ];
 

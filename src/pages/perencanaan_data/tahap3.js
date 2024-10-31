@@ -6,6 +6,7 @@ import Button from "../../components/button";
 import axios from "axios";
 
 const Tahap3 = ({ onNext, onBack }) => {
+  const [data, setData] = useState({ material: [], equipment: [], labor: [] });
   const [currentPage, setCurrentPage] = useState({
     material: 1,
     equipment: 1,
@@ -21,18 +22,24 @@ const Tahap3 = ({ onNext, onBack }) => {
     useState("");
 
   useEffect(() => {
-    const identifikasi_kebutuhan_id = localStorage.getItem(
-      "identifikasi_kebutuhan_id"
-    );
-    setIdentifikasi_Kebutuhan_id(identifikasi_kebutuhan_id);
+    const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
+    if (storedId) {
+      setIdentifikasi_Kebutuhan_id(storedId);
+    } else {
+      console.warn(
+        "identifikasi_kebutuhan_id tidak ditemukan di localStorage."
+      );
+    }
+
     axios
       .get(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor"
       )
       .then((response) => {
-        setMaterialData(response.data.data.material);
-        setEquipmentData(response.data.data.peralatan);
-        setLaborData(response.data.data.tenaga_kerja);
+        const { material, peralatan, tenaga_kerja } = response.data.data;
+        setMaterialData(material || []);
+        setEquipmentData(peralatan || []);
+        setLaborData(tenaga_kerja || []);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -42,43 +49,46 @@ const Tahap3 = ({ onNext, onBack }) => {
   const handleCheckboxChange = (vendor, isChecked) => {
     setSelectedVendors((prevSelectedVendors) => {
       const updatedVendors = isChecked
-        ? [...prevSelectedVendors, vendor]
+        ? [
+            ...prevSelectedVendors,
+            {
+              data_vendor_id: vendor.id,
+              nama_vendor: vendor.nama_vendor,
+              pemilik_vendor: vendor.pemilik_vendor,
+              alamat: vendor.alamat,
+              kontak: vendor.kontak,
+            },
+          ]
         : prevSelectedVendors.filter(
-            (selectedVendor) =>
-              selectedVendor.data_vendor_id !== vendor.data_vendor_id
+            (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
           );
       return updatedVendors;
     });
-  };
-
-  const handleSubmit = () => {
-    if (typeof onNext === "function") {
-      onNext();
-    } else {
-      console.error("onNext is not a function");
-    }
   };
 
   const validateInputs = () => {
     const newErrors = {};
     let isValid = true;
 
-    [materialData, equipmentData, laborData].forEach((data, index) => {
-      const currentData = data.slice(
-        (currentPage[index] - 1) * itemsPerPage,
-        currentPage[index] * itemsPerPage
-      );
-      currentData.forEach((row) => {
-        newErrors[row.id] = {};
-        // Validasi bisa ditambahkan di sini jika diperlukan
-      });
+    if (selectedVendors.length === 0) {
+      console.error("Silakan pilih minimal satu vendor.");
+      isValid = false;
+    }
+
+    selectedVendors.forEach((vendor, index) => {
+      if (!vendor.data_vendor_id) {
+        newErrors[`shortlist_vendor.${index}.data_vendor_id`] =
+          "ID Vendor diperlukan.";
+        isValid = false;
+      }
     });
 
     setFormErrors(newErrors);
     return isValid;
   };
 
-  const handleNext = () => {
+  const handleSubmit = async () => {
+    // Validasi input
     if (!validateInputs()) {
       console.error("Input tidak valid, silakan periksa kembali.");
       return;
@@ -91,27 +101,29 @@ const Tahap3 = ({ onNext, onBack }) => {
         nama_vendor: vendor.nama_vendor,
         pemilik_vendor: vendor.pemilik_vendor,
         alamat: vendor.alamat,
-        kontak: vendor.kontak,
+        kontak: vendor.kontak || "",
       })),
     };
+
+    console.log("Payload yang akan dikirim:", payload); // Tambahkan ini
 
     if (payload.shortlist_vendor.length === 0) {
       console.error("Silakan pilih vendor sebelum melanjutkan.");
       return;
     }
 
-    axios
-      .post(
-        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+    try {
+      const response = await axios.post(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
         payload
-      )
-      .then((response) => {
-        console.log("Data berhasil dikirim:", response.data);
+      );
+      console.log("Data berhasil dikirim:", response.data);
+      if (typeof onNext === "function") {
         onNext();
-      })
-      .catch((error) => {
-        console.error("Error posting data:", error);
-      });
+      }
+    } catch (error) {
+      console.error("Error posting data:", error);
+    }
   };
 
   const columns = [
@@ -150,7 +162,6 @@ const Tahap3 = ({ onNext, onBack }) => {
     },
   ];
 
-  // Tabs configuration
   const tabs = [
     {
       label: "Material",

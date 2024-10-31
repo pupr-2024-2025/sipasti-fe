@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
@@ -54,13 +54,12 @@ const Tahap2 = ({ onNext, onBack }) => {
       provinsi: "",
       kabupatenKota: "",
     },
-    // Tambahkan data lainnya sesuai kebutuhan
   ]);
 
   const handleAddRowMaterial = () => {
     const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
-      id: dataMaterial.length + index + 1, // Unique ID
-      namaMaterial: "", // Default value, adjust as needed
+      id: dataMaterial.length + index + 1,
+      namaMaterial: "",
       satuan: "",
       spesifikasi: "",
       ukuran: "",
@@ -72,16 +71,16 @@ const Tahap2 = ({ onNext, onBack }) => {
       kelompokMaterial: "",
     }));
 
-    setDataMaterial((prevData) => [...prevData, ...newRows]);
-    setFilteredDataMaterial((prevData) => [...prevData, ...newRows]);
-    setRowsToAdd(0); // Reset input
-    setIsModalOpen(false); // Close modal
+    setDataMaterial((prevData) => [...newRows, ...prevData]);
+    setFilteredDataMaterial((prevData) => [...newRows, ...prevData]);
+    setRowsToAdd(0);
+    setIsModalOpen(false);
   };
 
   const handleAddRowsPeralatan = () => {
     const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
-      id: dataPeralatan.length + index + 1, // Unique ID
-      namaPeralatan: "", // Default value, adjust as needed
+      id: dataPeralatan.length + index + 1,
+      namaPeralatan: "",
       satuan: "",
       tipe: "",
       merk: "",
@@ -91,16 +90,16 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
     }));
 
-    setDataPeralatan((prevData) => [...prevData, ...newRows]);
-    setFilteredDataPeralatan((prevData) => [...prevData, ...newRows]);
-    setRowsToAdd(0); // Reset input
-    setIsModalOpen(false); // Close modal
+    setDataPeralatan((prevData) => [...newRows, ...prevData]);
+    setFilteredDataPeralatan((prevData) => [...newRows, ...prevData]);
+    setRowsToAdd(0);
+    setIsModalOpen(false);
   };
 
   const handleAddRowsTenagaKerja = () => {
     const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
-      id: dataTenagaKerja.length + index + 1, // Unique ID
-      namaPekerja: "", // Default value, adjust as needed
+      id: dataTenagaKerja.length + index + 1,
+      namaPekerja: "",
       kategori: "",
       upah: "",
       jumlahKebutuhan: "",
@@ -108,13 +107,12 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
     }));
 
-    setDataTenagaKerja((prevData) => [...prevData, ...newRows]);
-    setFilteredDataTenagaKerja((prevData) => [...prevData, ...newRows]);
-    setRowsToAdd(0); // Reset input
-    setIsModalOpen(false); // Close
+    setDataTenagaKerja((prevData) => [...newRows, ...prevData]);
+    setFilteredDataTenagaKerja((prevData) => [...newRows, ...prevData]);
+    setRowsToAdd(0);
+    setIsModalOpen(false);
   };
 
-  // State untuk data yang difilter per tab
   const [filteredDataMaterial, setFilteredDataMaterial] =
     useState(dataMaterial);
   const [filteredDataPeralatan, setFilteredDataPeralatan] =
@@ -238,7 +236,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Kelompok Material",
       accessor: "kelompok_material",
       type: "dropdown",
-      options: ["Kelompok A", "Kelompok B", "Kelompok C"],
+      options: ["Bahan Baku", "Bahan Olahan", "Bahan Jadi"],
       width: "240px",
       required: true,
     },
@@ -333,7 +331,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Kelompok Peralatan",
       accessor: "kelompok_peralatan",
       type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      options: ["Mekanis", "Semi Mekanis"],
       placeholder: "Masukkan Kelompok Peralatan",
       width: "240px",
       required: true,
@@ -666,32 +664,61 @@ const Tahap2 = ({ onNext, onBack }) => {
         ],
       };
       console.log(JSON.stringify(requestData));
-      const response = await fetch(
-        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
+      // const response = await fetch(
+      //   "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify(requestData),
+      //   }
+      // );
+      // localStorage.setItem(
+      //   "identifikasi_kebutuhan_id",
+      //   response.body.data?.material[0].identifikasi_kebutuhan_id ?? 0
+      // );
+
+      // const responseData = await response.json(); // Parse the JSON data
+      // console.log(responseData);
+
+      // if (!response.ok) {
+      //   throw new Error("Submit tahap 2 gagal");
+      // }
+
+      try {
+        const response = await fetch(
+          "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          }
+        );
+
+        // Memeriksa apakah response berhasil
+        if (!response.ok) {
+          throw new Error("Submit tahap 2 gagal: " + response.statusText);
         }
-      );
-      console.log(response);
-      localStorage.setItem(
-        "identifikasi_kebutuhan_id",
-        result.data?.material[0].identifikasi_kebutuhan_id ?? 0
-      );
 
-      console.log(response.body);
+        // Mengambil dan mem-parsing response data
+        const responseData = await response.json(); // Parse the JSON data
+        console.log(responseData);
 
-      if (!response.ok) {
-        throw new Error("Submit tahap 2 gagal");
+        // Mengambil data identifikasi_kebutuhan_id dari response dan menyimpannya ke localStorage
+        localStorage.setItem(
+          "identifikasi_kebutuhan_id",
+          responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
+        );
+      } catch (error) {
+        console.error(error); // Mencetak error ke konsol untuk debugging
+        throw error; // Melempar kembali error jika diperlukan
       }
     } catch (error) {
       throw error;
     }
-    const responseData = await response.json();
-    console.log(responseData);
   };
 
   return (
