@@ -326,11 +326,26 @@ const Tahap4 = ({ onNext, onBack }) => {
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
       <Table
         columns={[
-          { title: "Responden/Vendor", accessor: "nama_vendor" },
-          { title: "Pemilik Vendor", accessor: "pemilik_vendor" },
-          { title: "Alamat", accessor: "alamat" },
-          { title: "Kontak", accessor: "kontak" },
-          { title: "Rancangan Kuesioner", accessor: "url_kuisioner" },
+          {
+            title: "Responden/Vendor",
+            accessor: "nama_vendor",
+            width: "252px",
+          },
+          {
+            title: "Pemilik Vendor",
+            accessor: "pemilik_vendor",
+            width: "260px",
+          },
+          { title: "Alamat", accessor: "alamat", width: "340px" },
+          { title: "Kontak", accessor: "kontak", width: "200px" },
+          {
+            title: "Rancangan Kuesioner",
+            accessor: "url_kuisioner",
+            type: "button",
+            buttonLabel: "Lihat PDF",
+            alignment: "center",
+            width: "300px",
+          },
         ]}
         data={dataVendor.slice(
           (currentPage - 1) * itemsPerPage,
@@ -354,10 +369,9 @@ const Tahap4 = ({ onNext, onBack }) => {
             console.log("onNext called");
             try {
               // await handleSubmitSecondStep();
-              onNext(); // This will only run if handleSubmitSecondStep succeeds
+              onNext();
             } catch (error) {
               alert(error.message);
-              // onNext() won't be called
             }
           }}>
           Simpan & Lanjut

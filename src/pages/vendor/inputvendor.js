@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Navbar from "../../components/navigationbar";
+import Navbar from "../../components/Navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Checkbox from "../../components/checkbox";
@@ -8,19 +8,6 @@ import Dropdown from "../../components/Dropdown";
 
 const InputVendor = ({ onNext, onBack }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
-  // const [formValues, setFormValues] = useState({
-  //   nama_vendor: "",
-  //   category: "",
-  //   resources: "",
-  //   address: "",
-  //   phone: "",
-  //   mobile: "",
-  //   picName: "",
-  //   province: "",
-  //   city: "",
-  //   latitude: "",
-  //   longitude: "",
-  // });
   const [nama_vendor, setnama_vendor] = useState("");
   const [jenis_vendor_id, setjenis_vendor_id] = useState("");
   const [kategori_vendor_id, setkategori_vendor_id] = useState("");
@@ -74,6 +61,7 @@ const InputVendor = ({ onNext, onBack }) => {
   };
 
   const getOptions = () => {
+    if (selectedTypes.length === 0) return [];
     const options = {
       1: [
         { value: "1-1", label: "Pedagang Grosir" },
@@ -92,16 +80,22 @@ const InputVendor = ({ onNext, onBack }) => {
         { value: "3-2", label: "Pemerintah Daerah" },
       ],
     };
-    const consolidatedOptionsMap = new Map();
-    Object.values(options)
-      .flat()
+    const combinedOptionsMap = new Map();
+
+    selectedTypes
+      .flatMap((type) => options[type] || [])
       .forEach((option) => {
-        if (!consolidatedOptionsMap.has(option.label)) {
-          consolidatedOptionsMap.set(option.label, { ...option });
+        if (combinedOptionsMap.has(option.label)) {
+          // Gabungkan value jika label sudah ada
+          const existingOption = combinedOptionsMap.get(option.label);
+          existingOption.value += `,${option.value}`;
+        } else {
+          // Jika label belum ada, tambahkan sebagai opsi baru
+          combinedOptionsMap.set(option.label, { ...option });
         }
       });
 
-    return Array.from(consolidatedOptionsMap.values());
+    return Array.from(combinedOptionsMap.values());
   };
 
   const labelToCategoriesMap = {
@@ -283,6 +277,18 @@ const InputVendor = ({ onNext, onBack }) => {
               />
             </div>
           </div>
+        </div>
+        <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+          <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+            Kembali
+          </Button>
+          <Button
+            variant="solid_blue"
+            size="Medium"
+            // onClick={handleSubmit}
+          >
+            Simpan & Lanjut
+          </Button>
         </div>
       </div>
     </div>

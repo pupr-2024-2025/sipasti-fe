@@ -10,7 +10,7 @@ const TextInput = ({
   variant = "border",
   value,
   onChange,
-  disabledActive = false, // Ganti nama prop menjadi disabledActive
+  disabledActive = false,
   className = "",
   type = "text",
   isRequired = false,

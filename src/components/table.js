@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import TextInput from "../components/input";
 import Dropdown from "../components/Dropdown";
 import Button from "../components/button";
-import Checkbox from "../components/checkbox"; // Import the Checkbox component
+import Checkbox from "../components/checkbox";
 import Image from "next/image";
-import QuestionMark from "../../public/images/question_mark.svg"; // Your question mark SVG
+import QuestionMark from "../../public/images/question_mark.svg";
 import Tooltip from "./tooltip";
 
 const Table = ({ columns, data, setParentState }) => {
@@ -22,11 +22,9 @@ const Table = ({ columns, data, setParentState }) => {
     }, {})
   );
 
-  // State to track selected row IDs for background color change
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleInputChange = (rowId, columnAccessor, value) => {
-    // Set input value
     const dropdownFields = [
       "kelompok_material",
       "kelompok_peralatan",
@@ -46,7 +44,6 @@ const Table = ({ columns, data, setParentState }) => {
 
     setParentState(inputValues);
 
-    // Reset error if there is a change in the field
     setErrors((prevErrors) => ({
       ...prevErrors,
       [rowId]: {
@@ -58,7 +55,6 @@ const Table = ({ columns, data, setParentState }) => {
 
   const handleCheckboxChange = (rowId, checked) => {
     handleInputChange(rowId, "checkbox", checked);
-    console.log(rowId, checked);
     setSelectedRows((prevSelected) =>
       checked
         ? [...prevSelected, rowId]
@@ -76,13 +72,13 @@ const Table = ({ columns, data, setParentState }) => {
           const value = inputValues[row.id]?.[column.accessor];
           if (!value) {
             isValid = false;
-            newErrors[row.id][column.accessor] = `${column.title} wajib diisi`; // Set error message
+            newErrors[row.id][column.accessor] = `${column.title} wajib diisi`;
           }
         });
       }
     });
 
-    setErrors(newErrors); // Set error state
+    setErrors(newErrors);
     return isValid;
   };
 
@@ -128,7 +124,7 @@ const Table = ({ columns, data, setParentState }) => {
                   key={row.id}
                   className={`${
                     selectedRows.includes(row.id)
-                      ? "bg-custom-blue-200" // Highlight selected rows
+                      ? "bg-custom-blue-200"
                       : index % 2 === 0
                       ? "bg-custom-neutral-0"
                       : "bg-custom-neutral-100"
@@ -136,7 +132,9 @@ const Table = ({ columns, data, setParentState }) => {
                   {columns.map((column) => (
                     <td
                       key={column.accessor}
-                      className="px-3 py-6 text-base font-normal">
+                      className={`px-3 py-6 text-base font-normal ${
+                        column.type === "button" ? "text-center" : "text-left"
+                      }`}>
                       {column.type === "textInput" ? (
                         <>
                           <TextInput
@@ -202,27 +200,19 @@ const Table = ({ columns, data, setParentState }) => {
                             inputValues[row.id]?.[column.accessor] || false
                           }
                           onChange={(checked) => {
-                            console.log(column);
                             column.onChange(row, checked);
                             handleCheckboxChange(row.id, checked);
                           }}
                         />
                       ) : column.type === "button" ? (
-                        <Button
-                          size="Small"
-                          variant="solid_blue" // Use the appropriate variant for a regular button
-                          onClick={() => column.onClick(row)}>
-                          {column.buttonLabel} {/* Render the button label */}
-                        </Button>
-                      ) : column.type === "checkbox" ? (
-                        <Checkbox
-                          label=""
-                          checked={!!inputValues[row.id]?.[column.accessor]}
-                          onChange={(e) => {
-                            console.log(column.type);
-                            column.onChange(row, e.target.checked);
-                          }}
-                        />
+                        <div className="flex justify-center">
+                          <Button
+                            size="Small"
+                            variant="solid_blue"
+                            onClick={() => column.onClick(row)}>
+                            {column.buttonLabel}
+                          </Button>
+                        </div>
                       ) : (
                         row[column.accessor]
                       )}
