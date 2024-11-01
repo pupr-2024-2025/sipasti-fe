@@ -14,12 +14,20 @@ const InputVendor = ({ onNext, onBack }) => {
   const [alamat, setalamat] = useState("");
   const [no_telepon, setno_telepon] = useState("");
   const [no_hp, setno_hp] = useState("");
+  const [sumber_daya, setsumber_daya] = useState("");
   const [nama_pic, setnama_pic] = useState("");
   const [provinsi_id, setprovinsi_id] = useState("");
   const [kota_id, setkota_id] = useState("");
   const [koordinat, setkoordinat] = useState("");
-  const [logo_url, setlogo_url] = useState("");
-  const [dok_pendukung_url, setdok_pendukung_url] = useState("");
+  const [logoUploadState, setLogoUploadState] = useState("default");
+  const [dok_pendukung_url, setDokPendukungUrl] = useState(null);
+  const [logoUploadProgress, setLogoUploadProgress] = useState(0);
+  const [logo_url, setLogoUrl] = useState(null);
+
+  const [dokPendukungUploadState, setDokPendukungUploadState] =
+    useState("default");
+  const [dokPendukungUploadProgress, setDokPendukungUploadProgress] =
+    useState(0);
 
   const handleCheckboxChange = (type) => {
     setSelectedTypes((prev) => {
@@ -27,57 +35,104 @@ const InputVendor = ({ onNext, onBack }) => {
         ? prev.filter((item) => item !== type)
         : [...prev, type];
 
-      console.log(updatedTypes);
+      setjenis_vendor_id(updatedTypes.join(","));
+      console.log("Updated jenis_vendor_id:", updatedTypes.join(","));
+
       return updatedTypes;
     });
   };
 
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [uploadState, setUploadState] = useState("default");
-  const [progress, setProgress] = useState(0);
-
-  const handleFileSelect = (files) => {
-    if (files.length > 0) {
-      setSelectedFile(files[0]);
-      setUploadState("processing");
-
-      const uploadInterval = setInterval(() => {
-        setProgress((prevProgress) => {
-          if (prevProgress >= 100) {
-            clearInterval(uploadInterval);
-            setUploadState("done");
-            return 100;
-          }
-          return prevProgress + 10;
-        });
-      }, 500);
-    }
+  const handleLogoFileSelect = (files) => {
+    console.log("Selected logo file:", files);
+    setLogoUrl(files[0]);
+    setLogoUploadState("processing");
+    const interval = setInterval(() => {
+      setLogoUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setLogoUploadState("done");
+        }
+        return prev + 10;
+      });
+    }, 500);
   };
 
-  const handleCancel = () => {
-    setUploadState("default");
-    setSelectedFile(null);
-    setProgress(0);
+  const saveVendorData = () => {
+    const payload = {
+      nama_vendor,
+      jenis_vendor_id: selectedTypes.map((type) => parseInt(type)),
+      kategori_vendor_id: selectedTypes.map((type) => parseInt(type)),
+      alamat,
+      no_telepon,
+      no_hp,
+      sumber_daya,
+      nama_pic,
+      provinsi_id,
+      kota_id,
+      koordinat,
+      logo_url,
+      dok_pendukung_url,
+    };
+
+    const jsonPayload = JSON.stringify(payload);
+
+    console.log("Payload for API:", payload);
+
+    fetch("https://api-ecatalogue-staging.online/api/input-vendor", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: jsonPayload,
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Response from API:", data))
+      .catch((error) => console.error("API error:", error));
+  };
+
+  const handleDokPendukungFileSelect = (files) => {
+    console.log("Selected dok pendukung file:", files);
+    setDokPendukungUrl(files[0]);
+    setDokPendukungUploadState("processing");
+    const interval = setInterval(() => {
+      setDokPendukungUploadProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setDokPendukungUploadState("done");
+        }
+        return prev + 10;
+      });
+    }, 500);
+  };
+
+  const handleLogoCancel = () => {
+    console.log("Logo upload canceled");
+    setLogoUploadState("default");
+    setLogoUploadProgress(0);
+  };
+
+  const handleDokPendukungCancel = () => {
+    console.log("Dok pendukung upload canceled");
+    setDokPendukungUploadState("default");
+    setDokPendukungUploadProgress(0);
   };
 
   const getOptions = () => {
     if (selectedTypes.length === 0) return [];
     const options = {
       1: [
-        { value: "1-1", label: "Pedagang Grosir" },
-        { value: "1-2", label: "Distributor" },
-        { value: "1-3", label: "Produsen" },
-        { value: "1-4", label: "Pedagang Campuran" },
+        { value: "1", label: "Pedagang Grosir" },
+        { value: "2", label: "Distributor" },
+        { value: "3", label: "Produsen" },
+        { value: "4", label: "Pedagang Campuran" },
       ],
       2: [
-        { value: "2-1", label: "Produsen" },
-        { value: "2-2", label: "Jasa Penyewaan Alat Berat" },
-        { value: "2-3", label: "Kontraktor" },
-        { value: "2-4", label: "Agen" },
+        { value: "1", label: "Produsen" },
+        { value: "2", label: "Jasa Penyewaan Alat Berat" },
+        { value: "3", label: "Kontraktor" },
+        { value: "4", label: "Agen" },
       ],
       3: [
-        { value: "3-1", label: "Kontraktor" },
-        { value: "3-2", label: "Pemerintah Daerah" },
+        { value: "1", label: "Kontraktor" },
+        { value: "2", label: "Pemerintah Daerah" },
       ],
     };
     const combinedOptionsMap = new Map();
@@ -86,11 +141,9 @@ const InputVendor = ({ onNext, onBack }) => {
       .flatMap((type) => options[type] || [])
       .forEach((option) => {
         if (combinedOptionsMap.has(option.label)) {
-          // Gabungkan value jika label sudah ada
           const existingOption = combinedOptionsMap.get(option.label);
           existingOption.value += `,${option.value}`;
         } else {
-          // Jika label belum ada, tambahkan sebagai opsi baru
           combinedOptionsMap.set(option.label, { ...option });
         }
       });
@@ -142,11 +195,11 @@ const InputVendor = ({ onNext, onBack }) => {
                 />
               </div>
             </div>
-
             <Dropdown
               options={getOptions()}
               label="Kategori Vendor/Perusahaan"
               placeholder="Pilih kategori vendor/perusahaan"
+              errorMessage="Kategori tidak boleh kosong."
               value={kategori_vendor_id}
               onSelect={(selectedOption) => {
                 const associatedValues = labelToCategoriesMap[
@@ -156,6 +209,16 @@ const InputVendor = ({ onNext, onBack }) => {
                 setkategori_vendor_id(associatedValues.join(","));
               }}
               isRequired={true}
+            />{" "}
+            <TextInput
+              label="Sumber daya yang dimiliki"
+              placeholder="Masukkan sumber daya"
+              type="text"
+              state="border"
+              isRequired={true}
+              errorMessage="Sumber daya tidak boleh kosong."
+              value={sumber_daya}
+              onChange={(e) => setsumber_daya(e.target.value)}
             />
             <TextInput
               label="Alamat vendor atau perusahaan"
@@ -237,24 +300,24 @@ const InputVendor = ({ onNext, onBack }) => {
                 onChange={(e) => setkoordinat(e.target.value)}
               />
               <FileInput
-                onFileSelect={handleFileSelect}
+                onFileSelect={handleLogoFileSelect}
                 buttonText="Pilih File"
                 selectedFile={logo_url}
-                progress={progress}
-                state={uploadState}
-                onCancel={handleCancel}
+                progress={logoUploadProgress}
+                state={logoUploadState}
+                onCancel={handleLogoCancel}
                 multiple={false}
                 accept=".jpg, .png"
                 Label="Logo"
                 HelperText="Format .JPG, .PNG dan maksimal 512Kb"
               />
               <FileInput
-                onFileSelect={handleFileSelect}
+                onFileSelect={handleDokPendukungFileSelect}
                 buttonText="Pilih File"
                 selectedFile={dok_pendukung_url}
-                progress={progress}
-                state={uploadState}
-                onCancel={handleCancel}
+                progress={dokPendukungUploadProgress}
+                state={dokPendukungUploadState}
+                onCancel={handleDokPendukungCancel}
                 multiple={false}
                 accept=".jpg, .png"
                 Label="Dokumen Pendukung"
@@ -282,11 +345,7 @@ const InputVendor = ({ onNext, onBack }) => {
           <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
             Kembali
           </Button>
-          <Button
-            variant="solid_blue"
-            size="Medium"
-            // onClick={handleSubmit}
-          >
+          <Button variant="solid_blue" size="Medium" onClick={saveVendorData}>
             Simpan & Lanjut
           </Button>
         </div>
