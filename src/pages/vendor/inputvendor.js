@@ -59,30 +59,31 @@ const InputVendor = ({ onNext, onBack }) => {
 
   const saveVendorData = () => {
     const jsonVendorTypes = selectedTypes.map((type) => parseInt(type));
-    const jsonCategories = selectedTypes.map((type) => parseInt(type));
-
+    // const jsonCategories = jenis_vendor_id.map((type) => parseInt(type));
     const payload = {
-      nama_vendor,
-      jenis_vendor_id: jsonVendorTypes,
-      kategori_vendor_id: jsonCategories,
-      alamat,
-      no_telepon,
-      no_hp,
-      sumber_daya,
-      nama_pic,
-      provinsi_id,
-      kota_id,
-      koordinat,
-      logo_url,
-      dok_pendukung_url,
+      nama_vendor: "1",
+      jenis_vendor_id: jenis_vendor_id, // Use a string or integer instead of an array
+      kategori_vendor_id: "1", // Same as above
+      alamat: "1",
+      no_telepon: "1",
+      koordinat: "1",
+      kota_id: "1111",
+      // logo_url: logoFile, // Ensure proper handling as a file if multipart or URL if required
+      // dok_pendukung_url: dokPendukungFile, // Same handling as logo_url
+      nama_pic: "1",
+      no_hp: "1",
+      provinsi_id: "1",
+      sumber_daya: "1",
     };
+
+    const jsonPayload = JSON.stringify(payload);
 
     console.log("Payload for API:", payload);
 
     fetch("https://api-ecatalogue-staging.online/api/input-vendor", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: jsonPayload,
     })
       .then((response) => response.json())
       .then((data) => console.log("Response from API:", data))
