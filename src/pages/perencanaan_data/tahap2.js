@@ -26,7 +26,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
       kelompokMaterial: "",
     },
-    // Tambahkan data lainnya sesuai kebutuhan
   ]);
 
   const [dataPeralatan, setDataPeralatan] = useState([
