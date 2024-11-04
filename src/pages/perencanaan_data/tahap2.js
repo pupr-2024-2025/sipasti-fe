@@ -171,9 +171,9 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
     useState(dataTenagaKerja);
 
-  const [stateMaterial, setStateMaterial] = useState(null);
+  const [stateMaterial, setStateMaterial] = useState([]);
   const [statePeralatan, setStatePeralatan] = useState([]);
-  const [stateTenagaKerja, setStateTenagaKerja] = useState(null);
+  const [stateTenagaKerja, setStateTenagaKerja] = useState([]);
 
   let result = [];
 
@@ -827,44 +827,39 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const handleSubmitSecondStep = async () => {
     try {
-      if (!stateMaterial) throw new Error("Data material belum diisi!");
-      if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
-      if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
+      if (!stateMaterial) throw new Error("Data material belum diisi! ");
+      if (!statePeralatan) throw new Error("Data peralatan belum diisi! ");
+      if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi! ");
 
-      console.log(JSON.stringify(stateMaterial));
-      const stateMaterialFirst = stateMaterial["1"];
-      const statePeralatanFirst = statePeralatan["1"];
-      const stateTenagaKerjaFirst = stateTenagaKerja["1"];
       const informasi_umum_id = localStorage.getItem("informasi_umum_id");
-
+      console.log("stateMaterial:", stateMaterial);
+      console.log("statePeralatan:", statePeralatan);
+      console.log("stateTenagaKerja:", stateTenagaKerja);
       const requestData = {
         informasi_umum_id: informasi_umum_id,
-        material: [
-          {
-            ...stateMaterialFirst,
-            provincies_id: 1,
-            cities_id: 1,
-          },
-        ],
-        peralatan: [
-          {
-            ...statePeralatanFirst,
-            provincies_id: 1,
-            cities_id: 1,
-          },
-        ],
-        tenaga_kerja: [
-          {
-            ...stateTenagaKerjaFirst,
-            provincies_id: 1,
-            cities_id: 1,
-          },
-        ],
+        material: Array.isArray(stateMaterial)
+          ? stateMaterial.map((item) => ({
+              ...item,
+              kelompok_material: item.kelompok_material,
+              merk: item.merk,
+            }))
+          : [], // Jika bukan array, kirim array kosong
+        peralatan: Array.isArray(statePeralatan)
+          ? statePeralatan.map((item) => ({
+              ...item,
+              // Pastikan semua field yang diperlukan ada di sini
+            }))
+          : [],
+        tenaga_kerja: Array.isArray(stateTenagaKerja)
+          ? stateTenagaKerja.map((item) => ({
+              ...item,
+              // Pastikan semua field yang diperlukan ada di sini
+            }))
+          : [],
       };
 
       console.log(JSON.stringify(requestData));
 
-      // Kirim data ke API
       const response = await fetch(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
         {
@@ -880,17 +875,16 @@ const Tahap2 = ({ onNext, onBack }) => {
         throw new Error("Submit tahap 2 gagal");
       }
 
-      const responseData = await response.json(); // Parse the JSON data
+      const responseData = await response.json();
       console.log(responseData);
 
-      // Menyimpan identifikasi_kebutuhan_id ke localStorage jika responsnya ada
       localStorage.setItem(
         "identifikasi_kebutuhan_id",
         responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
       );
     } catch (error) {
       console.error("Error saat mengirim data:", error);
-      alert(error.message); // Menampilkan pesan kesalahan kepada pengguna
+      alert(error.message);
     }
   };
   return (

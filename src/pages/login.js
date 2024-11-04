@@ -6,6 +6,7 @@ import PuprLogo from "../../public/images/pu-logo.svg";
 import SipastiLogo from "../../public/images/sipasti-logo.svg";
 import LoginImage from "../../public/images/login-asset.svg";
 
+import CustomAlert from "../components/alert";
 import Register from "./register";
 import TextInput from "../components/input";
 import Button from "../components/button";
@@ -16,6 +17,9 @@ const Login = () => {
   const [username, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("error");
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] =
     useState(false);
@@ -23,13 +27,13 @@ const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    // Redirect to dashboard if user is already logged in
     if (token && router.pathname === "/login") {
       router.replace("/dashboard");
     }
   }, [router]);
 
   const handleLogin = async () => {
+    setErrors({});
     try {
       const response = await fetch(
         "https://api-ecatalogue-staging.online/api/login",
@@ -42,23 +46,31 @@ const Login = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error(
-          "Login gagal. Periksa kembali email dan kata sandi Anda."
-        );
+      const data = await response.json();
+
+      // Cek status dari API
+      if (data.status !== "success") {
+        throw new Error(data.message || "Login failed.");
       }
 
-      const data = await response.json();
       localStorage.setItem("token", data.token);
+      setAlertMessage("Login berhasil!");
+      setAlertSeverity("success");
+      setAlertOpen(true);
       router.push("/dashboard");
     } catch (error) {
-      setErrors({ username: error.message });
+      setAlertMessage(error.message);
+      setAlertSeverity("error");
+      setAlertOpen(true);
     }
   };
 
-  // Function to handle SSO login
+  const handleAlertClose = () => {
+    setAlertOpen(false);
+  };
+
   const handleSSOLogin = async () => {
-    const token = "YOUR_SSO_TOKEN"; // Update with your logic for SSO token
+    const token = "YOUR_SSO_TOKEN";
 
     try {
       const response = await fetch(
@@ -78,7 +90,10 @@ const Login = () => {
 
       const data = await response.json();
       if (data.success) {
-        localStorage.setItem("token", data.token); // Save the token received from SSO
+        localStorage.setItem("token", data.token);
+        setAlertMessage("Login SSO berhasil!");
+        setAlertSeverity("success");
+        setAlertOpen(true);
         router.push("/dashboard");
       } else {
         setErrors({ username: "Login SSO gagal." });
@@ -226,6 +241,12 @@ const Login = () => {
               Syarat dan Ketentuan
             </Button>
           </div>
+          <CustomAlert
+            message={alertMessage}
+            severity={alertSeverity}
+            openInitially={alertOpen}
+            onClose={handleAlertClose}
+          />
         </div>
       </div>
 
