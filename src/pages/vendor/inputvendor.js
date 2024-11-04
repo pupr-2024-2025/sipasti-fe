@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/Navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Checkbox from "../../components/checkbox";
 import Button from "../../components/button";
 import Dropdown from "../../components/Dropdown";
+import axios from "axios";
 
 const InputVendor = ({ onNext, onBack }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -18,16 +19,84 @@ const InputVendor = ({ onNext, onBack }) => {
   const [nama_pic, setnama_pic] = useState("");
   const [provinsi_id, setprovinsi_id] = useState("");
   const [kota_id, setkota_id] = useState("");
+  const [provinsiOptions, setProvinsiOptions] = useState([]);
+  const [kotaOptions, setKotaOptions] = useState([]);
   const [koordinat, setkoordinat] = useState("");
   const [logoUploadState, setLogoUploadState] = useState("default");
-  const [dok_pendukung_url, setDokPendukungUrl] = useState(null);
+  const [dok_pendukung_url, setDokPendukungUrl] = useState("null");
   const [logoUploadProgress, setLogoUploadProgress] = useState(0);
-  const [logo_url, setLogoUrl] = useState(null);
+  const [logo_url, setLogoUrl] = useState("null");
+
+  const handleLogoFileSelect = (files) =>
+    handleFileSelect(
+      files,
+      setLogoUrl,
+      setLogoUploadState,
+      setLogoUploadProgress
+    );
+  const handleDokPendukungFileSelect = (files) =>
+    handleFileSelect(
+      files,
+      setDokPendukungUrl,
+      setDokPendukungUploadState,
+      setDokPendukungUploadProgress
+    );
 
   const [dokPendukungUploadState, setDokPendukungUploadState] =
     useState("default");
   const [dokPendukungUploadProgress, setDokPendukungUploadProgress] =
     useState(0);
+
+  useEffect(() => {
+    const fetchProvinsi = async () => {
+      try {
+        const response = await axios.get(
+          "https://api-ecatalogue-staging.online/api/provinces-and-cities"
+        );
+        // console.log("API Response:", response.data.data);
+
+        if (response.data.data && Array.isArray(response.data.data)) {
+          const formattedProvinsi = response.data.data.map((provinsi) => ({
+            value: provinsi.id_province.toString(),
+            label: provinsi.province_name,
+            cities: provinsi.cities,
+          }));
+
+          setProvinsiOptions(formattedProvinsi);
+          console.log(provinsi_id);
+        } else {
+          console.error("Provinces not found in the response");
+        }
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    fetchProvinsi();
+  }, [provinsi_id]);
+
+  const handleProvinsiChange = (selectedOption) => {
+    setprovinsi_id(selectedOption.value);
+
+    setKotaOptions([]);
+    setkota_id("");
+
+    console.log(kotaOptions);
+    console.log(kota_id);
+
+    const selectedProvinsi = provinsiOptions.find(
+      (provinsi) => provinsi.value === selectedOption.value
+    );
+
+    setKotaOptions(
+      selectedProvinsi?.cities.map((city) => ({
+        value: city.cities_id,
+        label: city.cities_name,
+      })) || []
+    );
+
+    console.log(selectedProvinsi);
+  };
 
   const handleCheckboxChange = (type) => {
     setSelectedTypes((prev) => {
@@ -42,15 +111,15 @@ const InputVendor = ({ onNext, onBack }) => {
     });
   };
 
-  const handleLogoFileSelect = (files) => {
-    console.log("Selected logo file:", files);
-    setLogoUrl(files[0]);
-    setLogoUploadState("processing");
+  const handleFileSelect = (files, setFileUrl, setUploadState, setProgress) => {
+    console.log("Selected file:", files);
+    setFileUrl(files[0]);
+    setUploadState("processing");
     const interval = setInterval(() => {
-      setLogoUploadProgress((prev) => {
+      setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
-          setLogoUploadState("done");
+          setUploadState("done");
         }
         return prev + 10;
       });
@@ -59,26 +128,33 @@ const InputVendor = ({ onNext, onBack }) => {
 
   const saveVendorData = () => {
     const jsonVendorTypes = selectedTypes.map((type) => parseInt(type));
-    // const jsonCategories = jenis_vendor_id.map((type) => parseInt(type));
+    const jsonCategories = selectedTypes.map((type) => parseInt(type));
+
+    const stringLogoUrl = Array.isArray(logo_url)
+      ? logo_url.join(", ")
+      : logo_url || "";
+    const stringDokPendukungUrl = Array.isArray(dok_pendukung_url)
+      ? dok_pendukung_url.join(", ")
+      : dok_pendukung_url || "";
+
     const payload = {
-      nama_vendor: "1",
-      jenis_vendor_id: jenis_vendor_id, // Use a string or integer instead of an array
-      kategori_vendor_id: "1", // Same as above
-      alamat: "1",
-      no_telepon: "1",
-      koordinat: "1",
-      kota_id: "1111",
-      // logo_url: logoFile, // Ensure proper handling as a file if multipart or URL if required
-      // dok_pendukung_url: dokPendukungFile, // Same handling as logo_url
-      nama_pic: "1",
-      no_hp: "1",
-      provinsi_id: "1",
-      sumber_daya: "1",
+      nama_vendor,
+      jenis_vendor_id: JSON.stringify(jsonVendorTypes),
+      kategori_vendor_id: JSON.stringify(jsonCategories),
+      alamat,
+      no_telepon,
+      no_hp,
+      sumber_daya,
+      nama_pic,
+      provinsi_id,
+      kota_id,
+      koordinat,
+      logo_url: logo_url.name,
+      dok_pendukung_url: dok_pendukung_url.name,
     };
-
+    console.log("Payload for API:", logo_url);
     const jsonPayload = JSON.stringify(payload);
-
-    console.log("Payload for API:", payload);
+    console.log("Payload for API:", jsonPayload);
 
     fetch("https://api-ecatalogue-staging.online/api/input-vendor", {
       method: "POST",
@@ -88,21 +164,6 @@ const InputVendor = ({ onNext, onBack }) => {
       .then((response) => response.json())
       .then((data) => console.log("Response from API:", data))
       .catch((error) => console.error("API error:", error));
-  };
-
-  const handleDokPendukungFileSelect = (files) => {
-    console.log("Selected dok pendukung file:", files);
-    setDokPendukungUrl(files[0]);
-    setDokPendukungUploadState("processing");
-    const interval = setInterval(() => {
-      setDokPendukungUploadProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setDokPendukungUploadState("done");
-        }
-        return prev + 10;
-      });
-    }, 500);
   };
 
   const handleLogoCancel = () => {
@@ -156,6 +217,15 @@ const InputVendor = ({ onNext, onBack }) => {
   const labelToCategoriesMap = {
     Produsen: ["1-3", "2-1"],
     Kontraktor: ["2-3", "3-1"],
+  };
+  // const handleProvinsiChange = (selectedOption) => {
+  //   setprovinsi_id(selectedOption ? selectedOption.value : "");
+  //   setKotaOptions([]);
+  //   setkota_id("");
+  // };
+
+  const handleKotaChange = (selectedOption) => {
+    setkota_id(selectedOption ? selectedOption.value : "");
   };
 
   return (
@@ -268,25 +338,25 @@ const InputVendor = ({ onNext, onBack }) => {
               onChange={(e) => setnama_pic(e.target.value)}
             />
             <div className="flex gap-8">
-              <TextInput
-                label="Provinsi"
-                placeholder="Masukkan provinsi"
-                type="text"
-                state="border"
-                isRequired={true}
-                errorMessage="Provinsi tidak boleh kosong."
-                value={provinsi_id}
-                onChange={(e) => setprovinsi_id(e.target.value)}
+              <Dropdown
+                options={provinsiOptions}
+                label="Pilih Provinsi"
+                placeholder="Pilih Provinsi"
+                onSelect={handleProvinsiChange}
+                value={provinsiOptions.find(
+                  (option) => option.value === provinsi_id
+                )}
+                isRequired
+                errorMessage="Provinsi harus dipilih"
               />
-              <TextInput
-                label="Kabupaten/Kota"
-                placeholder="Masukkan kabupaten/kota"
-                type="text"
-                state="border"
-                isRequired={true}
-                errorMessage="Kabupaten/Kota tidak boleh kosong."
-                value={kota_id}
-                onChange={(e) => setkota_id(e.target.value)}
+              <Dropdown
+                options={kotaOptions}
+                label="Pilih Kota"
+                placeholder="Pilih Kota"
+                onSelect={handleKotaChange}
+                value={kotaOptions.find((option) => option.value === kota_id)}
+                isRequired
+                errorMessage="Kota harus dipilih"
               />
             </div>
           </div>

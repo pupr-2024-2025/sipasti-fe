@@ -5,12 +5,18 @@ import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
 import { Trash } from "iconsax-react";
 import SearchBox from "../../components/searchbox";
+import axios from "axios";
+import Dropdown from "../../components/Dropdown";
 
 const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowsToAdd, setRowsToAdd] = useState(0);
+  const [kota_id, setkota_id] = useState("");
+  const [provinsi_id, setprovinsi_id] = useState("");
+  const [provinsiOptions, setProvinsiOptions] = useState([]);
+  const [kotaOptions, setKotaOptions] = useState([]);
 
   const [dataMaterial, setDataMaterial] = useState([
     {
@@ -40,7 +46,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       provinsi: "",
       kabupatenKota: "",
     },
-    // Tambahkan data lainnya sesuai kebutuhan
   ]);
 
   const [dataTenagaKerja, setDataTenagaKerja] = useState([
@@ -54,6 +59,53 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
     },
   ]);
+
+  useEffect(() => {
+    const fetchProvinsi = async () => {
+      try {
+        const response = await axios.get(
+          "https://api-ecatalogue-staging.online/api/provinces-and-cities"
+        );
+        console.log("API Response:", response.data.data);
+
+        if (response.data.data && Array.isArray(response.data.data)) {
+          const formattedProvinsi = response.data.data.map((provinsi) => ({
+            value: provinsi.id_province.toString(),
+            label: provinsi.province_name,
+            cities: provinsi.cities,
+          }));
+
+          setProvinsiOptions(formattedProvinsi);
+        } else {
+          console.error("Provinces not found in the response");
+        }
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    fetchProvinsi();
+  }, []); // Runs only once on mount
+
+  const handleProvinsiChange = (selectedOption) => {
+    setprovinsi_id(selectedOption.value);
+    setkota_id(""); // Reset kota_id when the province changes
+
+    const selectedProvinsi = provinsiOptions.find(
+      (provinsi) => provinsi.value === selectedOption.value
+    );
+
+    // Set kotaOptions based on selected province
+    setKotaOptions(
+      selectedProvinsi?.cities.map((city) => ({
+        value: city.cities_id.toString(), // Ensure cities_id is a string
+        label: city.cities_name,
+      })) || []
+    );
+
+    console.log("Selected Provinsi:", selectedProvinsi);
+    console.log("Updated Kota Options:", selectedProvinsi?.cities);
+  };
 
   const handleAddRowMaterial = () => {
     const newRows = Array.from({ length: rowsToAdd }, (_, index) => ({
@@ -120,7 +172,7 @@ const Tahap2 = ({ onNext, onBack }) => {
     useState(dataTenagaKerja);
 
   const [stateMaterial, setStateMaterial] = useState(null);
-  const [statePeralatan, setStatePeralatan] = useState(null);
+  const [statePeralatan, setStatePeralatan] = useState([]);
   const [stateTenagaKerja, setStateTenagaKerja] = useState(null);
 
   let result = [];
@@ -133,7 +185,6 @@ const Tahap2 = ({ onNext, onBack }) => {
         ? dataPeralatan
         : dataTenagaKerja;
 
-    // Pastikan kita memiliki data untuk difilter
     if (data) {
       result = data.filter((item) =>
         Object.values(item).some((value) =>
@@ -142,7 +193,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       );
     }
 
-    // Update state berdasarkan tab yang aktif
     if (tab === "Material") {
       setFilteredDataMaterial(result);
     } else if (tab === "Peralatan") {
@@ -151,7 +201,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       setFilteredDataTenagaKerja(result);
     }
 
-    setCurrentPage(1); // Reset ke halaman pertama
+    setCurrentPage(1);
   };
 
   const handleDelete = (row, tab) => {
@@ -235,7 +285,12 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Kelompok Material",
       accessor: "kelompok_material",
       type: "dropdown",
-      options: ["Bahan Baku", "Bahan Olahan", "Bahan Jadi"],
+      // options: ["Bahan Baku", "Bahan Olahan", "Bahan Jadi"],
+      options: [
+        { value: "Bahan Baku", label: "Bahan Baku" },
+        { value: "Bahan Olahan", label: "Bahan Olahan" },
+        { value: "Bahan Jadi", label: "Bahan Jadi" },
+      ],
       width: "240px",
       required: true,
     },
@@ -259,17 +314,20 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Provinsi",
       accessor: "provinsi",
       type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      // options: provinsiOptions.map((option) => option.label),
+      options: provinsiOptions,
       width: "200px",
       required: true,
+      errorMessage: "Provinsi harus dipilih",
     },
     {
       title: "Kabupaten/Kota",
       accessor: "kabupatenKota",
       type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "300px",
+      // options: kotaOptions.map((option) => option.label),
+      options: kotaOptions,
       required: true,
+      errorMessage: "Kota harus dipilih",
     },
     {
       title: "Aksi",
@@ -330,8 +388,11 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Kelompok Peralatan",
       accessor: "kelompok_peralatan",
       type: "dropdown",
-      options: ["Mekanis", "Semi Mekanis"],
-      placeholder: "Masukkan Kelompok Peralatan",
+      options: [
+        { value: "Mekanis", label: "Mekanis" },
+        { value: "Semi Mekanis", label: "Semi Mekanis" },
+      ],
+      // placeholder: "Masukkan Kelompok Peralatan",
       width: "240px",
       required: true,
     },
@@ -353,19 +414,22 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Provinsi",
-      accessor: "provincies_id",
+      accessor: "provinsi",
       type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      // options: provinsiOptions.map((option) => option.label),
+      options: provinsiOptions,
       width: "200px",
       required: true,
+      errorMessage: "Provinsi harus dipilih",
     },
     {
       title: "Kabupaten/Kota",
-      accessor: "cities_id",
+      accessor: "kabupatenKota",
       type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "200px",
+      // options: kotaOptions.map((option) => option.label),
+      options: kotaOptions,
       required: true,
+      errorMessage: "Kota harus dipilih",
     },
     {
       title: "Aksi",
@@ -414,19 +478,22 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Provinsi",
-      accessor: "provincies_id",
+      accessor: "provinsi",
       type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      // options: provinsiOptions.map((option) => option.label),
+      options: provinsiOptions,
       width: "200px",
       required: true,
+      errorMessage: "Provinsi harus dipilih",
     },
     {
       title: "Kabupaten/Kota",
-      accessor: "cities_id",
+      accessor: "kabupatenKota",
       type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "200px",
+      // options: kotaOptions.map((option) => option.label),
+      options: kotaOptions,
       required: true,
+      errorMessage: "Kota harus dipilih",
     },
     {
       title: "Aksi",
@@ -490,7 +557,43 @@ const Tahap2 = ({ onNext, onBack }) => {
               currentPage * itemsPerPage
             )}
             setParentState={setStateMaterial}
+            //
+            renderCell={(column, row) => {
+              if (column.type === "dropdown") {
+                const value =
+                  column.accessor === "provinsi" ? provinsi_id : kota_id;
+
+                return (
+                  <Dropdown
+                    options={column.options}
+                    placeholder={`Pilih ${column.title}`}
+                    onSelect={(selected) => {
+                      if (column.accessor === "provinsi") {
+                        handleProvinsiChange(selected);
+                      } else if (column.accessor === "kabupatenKota") {
+                        setkota_id(selected.value);
+                      }
+                    }}
+                    value={
+                      column.accessor === "provinsi"
+                        ? column.options.find(
+                            (option) => option.value === provinsi_id
+                          )
+                        : column.accessor === "kabupatenKota"
+                        ? column.options.find(
+                            (option) => option.value === kota_id
+                          )
+                        : null
+                    }
+                    isRequired={column.required}
+                    errorMessage={column.errorMessage}
+                  />
+                );
+              }
+              return row[column.accessor];
+            }}
           />
+
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(filteredDataMaterial.length / itemsPerPage)}
@@ -552,6 +655,62 @@ const Tahap2 = ({ onNext, onBack }) => {
               currentPage * itemsPerPage
             )}
             setParentState={setStatePeralatan}
+            renderCell={(column, row) => {
+              if (column.type === "dropdown") {
+                const value =
+                  column.accessor === "provinsi"
+                    ? provinsi_id
+                    : column.accessor === "kabupatenKota"
+                    ? kota_id
+                    : row[column.accessor];
+
+                return (
+                  <Dropdown
+                    options={column.options}
+                    placeholder={`Pilih ${column.title}`}
+                    onSelect={(selected) => {
+                      if (column.accessor === "provinsi") {
+                        handleProvinsiChange(selected);
+                      } else if (column.accessor === "kabupatenKota") {
+                        setkota_id(selected.value);
+                      } else if (column.accessor === "kelompok_peralatan") {
+                        setStatePeralatan(
+                          (prevState) =>
+                            Array.isArray(prevState)
+                              ? prevState.map((item, index) =>
+                                  index === rowIndex // Pastikan rowIndex didefinisikan di scope ini
+                                    ? {
+                                        ...item,
+                                        kelompok_peralatan: selected.value,
+                                      }
+                                    : item
+                                )
+                              : [{ kelompok_peralatan: selected.value }] // Jika `prevState` null, mulai dengan item baru
+                        );
+                      }
+                    }}
+                    value={
+                      column.accessor === "provinsi"
+                        ? column.options.find(
+                            (option) => option.value === provinsi_id
+                          )
+                        : column.accessor === "kabupatenKota"
+                        ? column.options.find(
+                            (option) => option.value === kota_id
+                          )
+                        : column.accessor === "kelompok_peralatan"
+                        ? column.options.find(
+                            (option) => option.value === row[column.accessor]
+                          )
+                        : null
+                    }
+                    isRequired={column.required}
+                    errorMessage={column.errorMessage}
+                  />
+                );
+              }
+              return row[column.accessor];
+            }}
           />
           <Pagination
             currentPage={currentPage}
@@ -614,7 +773,46 @@ const Tahap2 = ({ onNext, onBack }) => {
               currentPage * itemsPerPage
             )}
             setParentState={setStateTenagaKerja}
+            renderCell={(column, row) => {
+              if (column.type === "dropdown") {
+                const value =
+                  column.accessor === "provinsi"
+                    ? provinsi_id
+                    : column.accessor === "kabupatenKota"
+                    ? kota_id
+                    : row[column.accessor];
+
+                return (
+                  <Dropdown
+                    options={column.options}
+                    placeholder={`Pilih ${column.title}`}
+                    onSelect={(selected) => {
+                      if (column.accessor === "provinsi") {
+                        handleProvinsiChange(selected);
+                      } else if (column.accessor === "kabupatenKota") {
+                        setkota_id(selected.value);
+                      }
+                    }}
+                    value={
+                      column.accessor === "provinsi"
+                        ? column.options.find(
+                            (option) => option.value === provinsi_id
+                          )
+                        : column.accessor === "kabupatenKota"
+                        ? column.options.find(
+                            (option) => option.value === kota_id
+                          )
+                        : null
+                    }
+                    isRequired={column.required}
+                    errorMessage={column.errorMessage}
+                  />
+                );
+              }
+              return row[column.accessor];
+            }}
           />
+
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(
@@ -638,6 +836,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       const statePeralatanFirst = statePeralatan["1"];
       const stateTenagaKerjaFirst = stateTenagaKerja["1"];
       const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+
       const requestData = {
         informasi_umum_id: informasi_umum_id,
         material: [
@@ -662,64 +861,38 @@ const Tahap2 = ({ onNext, onBack }) => {
           },
         ],
       };
+
       console.log(JSON.stringify(requestData));
-      // const response = await fetch(
-      //   "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(requestData),
-      //   }
-      // );
-      // localStorage.setItem(
-      //   "identifikasi_kebutuhan_id",
-      //   response.body.data?.material[0].identifikasi_kebutuhan_id ?? 0
-      // );
 
-      // const responseData = await response.json(); // Parse the JSON data
-      // console.log(responseData);
-
-      // if (!response.ok) {
-      //   throw new Error("Submit tahap 2 gagal");
-      // }
-
-      try {
-        const response = await fetch(
-          "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-          }
-        );
-
-        // Memeriksa apakah response berhasil
-        if (!response.ok) {
-          throw new Error("Submit tahap 2 gagal: " + response.statusText);
+      // Kirim data ke API
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
         }
+      );
 
-        // Mengambil dan mem-parsing response data
-        const responseData = await response.json(); // Parse the JSON data
-        console.log(responseData);
-
-        // Mengambil data identifikasi_kebutuhan_id dari response dan menyimpannya ke localStorage
-        localStorage.setItem(
-          "identifikasi_kebutuhan_id",
-          responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
-        );
-      } catch (error) {
-        console.error(error); // Mencetak error ke konsol untuk debugging
-        throw error; // Melempar kembali error jika diperlukan
+      if (!response.ok) {
+        throw new Error("Submit tahap 2 gagal");
       }
+
+      const responseData = await response.json(); // Parse the JSON data
+      console.log(responseData);
+
+      // Menyimpan identifikasi_kebutuhan_id ke localStorage jika responsnya ada
+      localStorage.setItem(
+        "identifikasi_kebutuhan_id",
+        responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
+      );
     } catch (error) {
-      throw error;
+      console.error("Error saat mengirim data:", error);
+      alert(error.message); // Menampilkan pesan kesalahan kepada pengguna
     }
   };
-
   return (
     <div>
       <h4 className="text-H4 text-emphasis-on_surface-high">

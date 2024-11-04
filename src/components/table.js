@@ -7,7 +7,7 @@ import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg";
 import Tooltip from "./tooltip";
 
-const Table = ({ columns, data, setParentState }) => {
+const Table = ({ columns, data, setParentState, renderCell }) => {
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -159,26 +159,33 @@ const Table = ({ columns, data, setParentState }) => {
                             )}
                         </>
                       ) : column.type === "dropdown" ? (
+                        // (
+                        //   <>
+                        //     <Dropdown
+                        //       options={column.options.map((option) => ({
+                        //         value: option,
+                        //         label: option,
+                        //       }))}
+                        //       placeholder="Pilih Opsi"
+                        //       value={inputValues[row.id]?.[column.accessor] || ""}
+                        //       onSelect={(value) =>
+                        //         handleInputChange(row.id, column.accessor, value)
+                        //       }
+                        //       isRequired={column.required}
+                        //       errorMessage={errors[row.id]?.[column.accessor]}
+                        //     />
+                        //     {errors[row.id] &&
+                        //       errors[row.id][column.accessor] && (
+                        //         <span className="text-custom-red-500 text-sm">
+                        //           {errors[row.id][column.accessor]}
+                        //         </span>
+                        //       )}
+                        //   </>
+                        // )
                         <>
-                          <Dropdown
-                            options={column.options.map((option) => ({
-                              value: option,
-                              label: option,
-                            }))}
-                            placeholder="Pilih Opsi"
-                            value={inputValues[row.id]?.[column.accessor] || ""}
-                            onSelect={(value) =>
-                              handleInputChange(row.id, column.accessor, value)
-                            }
-                            isRequired={column.required}
-                            errorMessage={errors[row.id]?.[column.accessor]}
-                          />
-                          {errors[row.id] &&
-                            errors[row.id][column.accessor] && (
-                              <span className="text-custom-red-500 text-sm">
-                                {errors[row.id][column.accessor]}
-                              </span>
-                            )}
+                          {renderCell
+                            ? renderCell(column, row)
+                            : row[column.accessor]}
                         </>
                       ) : column.type === "iconButton" ? (
                         <Button
@@ -220,6 +227,29 @@ const Table = ({ columns, data, setParentState }) => {
                   ))}
                 </tr>
               ))}
+              {/* {data.map((row, index) => (
+                <tr
+                  key={row.id}
+                  className={`${
+                    selectedRows.includes(row.id)
+                      ? "bg-custom-blue-200"
+                      : index % 2 === 0
+                      ? "bg-custom-neutral-0"
+                      : "bg-custom-neutral-100"
+                  }`}>
+                  {columns.map((column) => (
+                    <td
+                      key={column.accessor}
+                      className={`px-3 py-6 text-base font-normal ${
+                        column.type === "button" ? "text-center" : "text-left"
+                      }`}>
+                      {renderCell
+                        ? renderCell(column, row)
+                        : row[column.accessor]}
+                    </td>
+                  ))}
+                </tr>
+              ))} */}
             </tbody>
           </table>
         </div>
