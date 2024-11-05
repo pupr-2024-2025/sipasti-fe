@@ -14,25 +14,47 @@ const FileInput = ({
   Label = "",
   HelperText = "",
   state = "default",
-  progress = 0,
+  initialProgress = 0,
   onCancel,
   selectedFile,
   required = false,
+  maxFiles = Infinity,
+  maxSizeMB = Infinity,
 }) => {
   const fileInputRef = useRef(null);
   const startTimeRef = useRef(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [errorMessage, setErrorMessage] = useState("");
+  const [progress, setProgress] = useState(initialProgress);
+
+  const handleCancelUpload = () => {
+    setProgress(0);
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    if (onCancel) {
+      onCancel();
+    }
+  };
 
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
-    const files = event.target.files;
+    const files = Array.from(event.target.files);
+    let totalSize =
+      files.reduce((acc, file) => acc + file.size, 0) / (1024 * 1024);
 
     if (required && files.length === 0) {
-      setErrorMessage("File wajib dipilih.");
+      setErrorMessage("Berkas wajib dipilih.");
+    } else if (files.length > maxFiles) {
+      setErrorMessage(`Anda hanya dapat memilih maksimal ${maxFiles} file.`);
+    } else if (totalSize > maxSizeMB) {
+      setErrorMessage(
+        `Ukuran total berkas tidak boleh melebihi ${maxSizeMB} MB.`
+      );
     } else {
       setErrorMessage("");
       if (onFileSelect) {
@@ -50,7 +72,6 @@ const FileInput = ({
 
       return () => clearInterval(interval);
     } else {
-      // Reset elapsed time when not processing
       setElapsedTime(0);
     }
   }, [state]);
@@ -71,12 +92,6 @@ const FileInput = ({
             {Label} {required && <span className="text-red-500">*</span>}
           </p>
         )}
-
-        {/* Tampilkan pesan kesalahan */}
-        {errorMessage && (
-          <p className="text-custom-red-500 text-Small">{errorMessage}</p>
-        )}
-
         {state === "default" && (
           <div className="border-2 border-dashed border-emphasis-on_surface-small px-3 py-2 rounded-[16px] flex justify-left items-center space-x-3">
             <Button
@@ -92,7 +107,6 @@ const FileInput = ({
             </p>
           </div>
         )}
-
         {state === "processing" && selectedFile && (
           <div className="bg-custom-neutral-100 px-3 py-2 rounded-[16px] flex flex-col space-y-2">
             <div className="flex items-start content-start space-x-3 w-full">
@@ -108,7 +122,7 @@ const FileInput = ({
                   {onCancel && (
                     <div
                       className="custom-padding cursor-pointer"
-                      onClick={onCancel}>
+                      onClick={handleCancelUpload}>
                       <CloseCircle
                         size="32"
                         color={colors.Emphasis.Light.On_Surface.High}
@@ -118,8 +132,10 @@ const FileInput = ({
                 </div>
                 <div className="flex justify-between items-center w-full custom-padding">
                   <div className="inline-flex items-center gap-1">
-                    <p className="text-Small text-emphasis-on_surface-small">
-                      {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                    <p className="text-Small">
+                      {(selectedFile?.size / (1024 * 1024)).toFixed(2) ||
+                        "0.00"}{" "}
+                      MB
                     </p>
                   </div>
                   <div className="ml-auto flex items-center">
@@ -164,7 +180,8 @@ const FileInput = ({
                 </div>
                 <div className="items-center gap-1 inline-flex">
                   <p className="text-Small">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                    {(selectedFile?.size / (1024 * 1024)).toFixed(2) || "0.00"}{" "}
+                    MB
                   </p>
                   <p className="text-Small text-custom-blue-500">
                     Berkas berhasil diunggah.
@@ -174,11 +191,23 @@ const FileInput = ({
             </div>
           </div>
         )}
-
         {HelperText && (
           <p className="text-Small text-emphasis-on_surface-medium">
             {HelperText}
           </p>
+        )}
+        {errorMessage && (
+          <div className="flex items-center mt-1">
+            <CloseCircle
+              color={colors.Solid.Basic.Red[500]}
+              variant="Linear"
+              size={16}
+              className="mr-1"
+            />
+            <span className="text-custom-red-500 text-ExtraSmall">
+              {errorMessage}
+            </span>
+          </div>
         )}
       </div>
     </div>

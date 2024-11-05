@@ -5,6 +5,7 @@ import FileInput from "../components/FileInput";
 import IconCheckbox from "../components/checkbox";
 import { CloseCircle } from "iconsax-react";
 import Dropdown from "../components/Dropdown";
+import CustomAlert from "../components/alert";
 
 const Register = ({ onClose }) => {
   const [email, setEmail] = useState("");
@@ -21,6 +22,9 @@ const Register = ({ onClose }) => {
   const [errorMessages, setErrorMessages] = useState({});
   const [generalError, setGeneralError] = useState("");
   const [error, setError] = useState("");
+  const [alertMessage, setAlertMessage] = useState(null); // State for alert message
+  const [alertSeverity, setAlertSeverity] = useState("info"); // State for alert severity
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const labels = {
     nama_lengkap: "Nama Lengkap",
@@ -40,15 +44,21 @@ const Register = ({ onClose }) => {
   };
 
   const handleFileSelect = (files) => {
-    const file = files[0];
-    setSelectedFile(file);
-    setUploadState("processing");
-    setError("");
     if (files.length === 0) {
       setError("File wajib dipilih.");
       return;
     }
-    setSelectedFile(files[0]);
+
+    const file = files[0];
+
+    if (file.size > 512 * 1024) {
+      setError("Ukuran berkas tidak boleh lebih dari 2 MB.");
+      return;
+    }
+
+    setSelectedFile(file);
+    setUploadState("processing");
+    setError("");
 
     const interval = setInterval(() => {
       setProgress((prev) => {
@@ -117,24 +127,24 @@ const Register = ({ onClose }) => {
         }
       );
 
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(
-          errorResponse.message || "Terjadi kesalahan saat registrasi."
-        );
+      const result = await response.json();
+
+      // Check the response status
+      if (!response.ok || result.status === "error") {
+        throw new Error(result.message || "Terjadi kesalahan saat registrasi.");
       }
 
-      const result = await response.json();
-      console.log("Registration successful:", result);
+      setAlertMessage(result.message || "Registrasi berhasil!");
+      setAlertSeverity("success");
+      setAlertOpen(true);
 
-      // Menampilkan hasil return dari API di alert box
-      alert(result.message || "Registrasi berhasil!");
-
-      onClose(); // Menutup modal atau menandakan sukses
+      if (result.status === "success") {
+        onClose();
+      }
     } catch (error) {
-      setGeneralError(error.message);
-      console.error("Error:", error.message);
-      alert("Error: " + error.message);
+      setAlertMessage(error.message);
+      setAlertSeverity("error");
+      setAlertOpen(true);
     }
   };
 
@@ -230,19 +240,37 @@ const Register = ({ onClose }) => {
         </div>
       </div>
       <div>
-        <FileInput
+        {/* <FileInput
           onFileSelect={handleFileSelect}
           selectedFile={surat_penugasan_url}
           state={uploadState}
           progress={progress}
-          // onCancel={handleCancel}
           required={true}
           Label="Upload SK/Surat Penugasan"
           HelperText="Format .JPG, .PNG dan maksimal 512Kb"
           errorMessage="Upload SK/Surat Penugasan tidak boleh kosong"
-          onCancel={() => setSelectedFile(null)}
+          onCancel={() => {
+            setSelectedFile(null);
+            setUploadState("default");
+            setProgress(0);
+          }}
+        /> */}
+        <FileInput
+          onFileSelect={handleFileSelect}
+          buttonText="Unggah"
+          iconLeft={null}
+          iconRight={null}
+          multiple={false}
+          accept=".jpg,.png,.pdf"
+          Label="Unggah SK/Surat Penugasan"
+          HelperText="Format .JPG, .PNG dan maksimal 2MB"
+          state={uploadState}
+          onCancel={handleCancel}
+          selectedFile={surat_penugasan_url}
+          required={true}
+          maxFiles={1}
+          maxSizeMB={2}
         />
-        {error && <p className="text-red-500">{error}</p>}
       </div>
       <div>
         <IconCheckbox
@@ -266,6 +294,12 @@ const Register = ({ onClose }) => {
           disabled={!isChecked}>
           Buat Akun
         </Button>
+        <CustomAlert
+          message={alertMessage}
+          severity={alertSeverity}
+          openInitially={alertOpen}
+          onClose={() => setAlertOpen(false)}
+        />
       </div>
     </div>
   );
