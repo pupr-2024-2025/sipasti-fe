@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/Navigationbar";
+import Navbar from "../../components/navigationbar";
 import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Checkbox from "../../components/checkbox";

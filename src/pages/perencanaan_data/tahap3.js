@@ -22,28 +22,30 @@ const Tahap3 = ({ onNext, onBack }) => {
     useState("");
 
   useEffect(() => {
+    // Ambil identifikasi_kebutuhan_id dari localStorage
     const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
     if (storedId) {
       setIdentifikasi_Kebutuhan_id(storedId);
+
+      // Request ke API dengan ID langsung di URL
+      axios
+        .get(
+          `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${storedId}`
+        )
+        .then((response) => {
+          const { material, peralatan, tenaga_kerja } = response.data.data;
+          setMaterialData(material || []);
+          setEquipmentData(peralatan || []);
+          setLaborData(tenaga_kerja || []);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
     } else {
       console.warn(
         "identifikasi_kebutuhan_id tidak ditemukan di localStorage."
       );
     }
-
-    axios
-      .get(
-        "https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor"
-      )
-      .then((response) => {
-        const { material, peralatan, tenaga_kerja } = response.data.data;
-        setMaterialData(material || []);
-        setEquipmentData(peralatan || []);
-        setLaborData(tenaga_kerja || []);
-      })
-      .catch((error) => {
-        console.error("Error fetching data:", error);
-      });
   }, []);
 
   const handleCheckboxChange = (vendor, isChecked) => {

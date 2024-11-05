@@ -7,7 +7,7 @@ import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg";
 import Tooltip from "./tooltip";
 
-const Table = ({ columns, data, setParentState }) => {
+const Table = ({ columns, data, setParentState, renderCell }) => {
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -21,9 +21,11 @@ const Table = ({ columns, data, setParentState }) => {
       return acc;
     }, {})
   );
+
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleInputChange = (rowId, columnAccessor, value) => {
+    console.log(columnAccessor, value);
     const dropdownFields = [
       "kelompok_material",
       "kelompok_peralatan",
@@ -40,8 +42,9 @@ const Table = ({ columns, data, setParentState }) => {
           : value,
       },
     }));
-
+    console.log(inputValues);
     setParentState(inputValues);
+
     setErrors((prevErrors) => ({
       ...prevErrors,
       [rowId]: {
@@ -75,6 +78,7 @@ const Table = ({ columns, data, setParentState }) => {
         });
       }
     });
+
     setErrors(newErrors);
     return isValid;
   };
@@ -177,7 +181,12 @@ const Table = ({ columns, data, setParentState }) => {
                               </span>
                             )}
                         </>
-                      ) : column.type === "iconButton" ? (
+                      ) : // <>
+                      //   {renderCell
+                      //     ? renderCell(column, row)
+                      //     : row[column.accessor]}
+                      // </>
+                      column.type === "iconButton" ? (
                         <Button
                           size="Small"
                           variant="outlined_icon"
@@ -217,6 +226,29 @@ const Table = ({ columns, data, setParentState }) => {
                   ))}
                 </tr>
               ))}
+              {/* {data.map((row, index) => (
+                <tr
+                  key={row.id}
+                  className={`${
+                    selectedRows.includes(row.id)
+                      ? "bg-custom-blue-200"
+                      : index % 2 === 0
+                      ? "bg-custom-neutral-0"
+                      : "bg-custom-neutral-100"
+                  }`}>
+                  {columns.map((column) => (
+                    <td
+                      key={column.accessor}
+                      className={`px-3 py-6 text-base font-normal ${
+                        column.type === "button" ? "text-center" : "text-left"
+                      }`}>
+                      {renderCell
+                        ? renderCell(column, row)
+                        : row[column.accessor]}
+                    </td>
+                  ))}
+                </tr>
+              ))} */}
             </tbody>
           </table>
         </div>
