@@ -85,10 +85,25 @@ const Dropdown = ({
             top: "100%",
             left: 0,
             width: "100%",
+            padding: "8px",
           }),
-          option: (base) => ({
+          option: (base, state) => ({
             ...base,
+            fontSize: "0.875rem",
             textAlign: "left",
+            padding: "8px",
+            borderRadius: "8px",
+            marginBottom: "4px",
+            backgroundColor: state.isSelected
+              ? colors.Solid.Basic.Blue[500]
+              : state.isFocused
+              ? colors.Solid.Basic.Blue[50]
+              : base.backgroundColor,
+            color: state.isSelected
+              ? "white"
+              : state.isFocused
+              ? colors.Solid.Basic.Blue[500]
+              : base.color,
           }),
         }}
       />

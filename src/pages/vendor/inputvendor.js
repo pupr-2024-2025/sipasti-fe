@@ -26,6 +26,11 @@ const InputVendor = ({ onNext, onBack }) => {
   const [dok_pendukung_url, setDokPendukungUrl] = useState("null");
   const [logoUploadProgress, setLogoUploadProgress] = useState(0);
   const [logo_url, setLogoUrl] = useState("null");
+  const [inputValues, setInputValues] = useState([]);
+
+  const handleInputChange = (newValues) => {
+    setInputValues(newValues); // This will be an array of values
+  };
 
   const handleLogoFileSelect = (files) =>
     handleFileSelect(
@@ -245,7 +250,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Vendor/Perusahaan tidak boleh kosong."
               value={nama_vendor}
-              onChange={(e) => setnama_vendor(e.target.value)}
+              onChange={(e) => setnama_vendor(e)}
             />
             <div className="space-b-1">
               <p className="text-B2">Jenis Responden/ Vendor</p>
@@ -290,7 +295,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Sumber daya tidak boleh kosong."
               value={sumber_daya}
-              onChange={(e) => setsumber_daya(e.target.value)}
+              onChange={(e) => setsumber_daya(e)}
             />
             <TextInput
               label="Alamat vendor atau perusahaan"
@@ -300,7 +305,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Alamat tidak boleh kosong."
               value={alamat}
-              onChange={(e) => setalamat(e.target.value)}
+              onChange={(e) => setalamat(e)}
             />
             <div className="flex gap-8">
               <TextInput
@@ -312,7 +317,7 @@ const InputVendor = ({ onNext, onBack }) => {
                 errorMessage="Nomor telepon tidak boleh kosong."
                 name="phone"
                 value={no_telepon}
-                onChange={(e) => setno_telepon(e.target.value)}
+                onChange={(e) => setno_telepon(e)}
                 className="flex-1"
               />
               <TextInput
@@ -323,7 +328,7 @@ const InputVendor = ({ onNext, onBack }) => {
                 isRequired={true}
                 errorMessage="Nomor HP tidak boleh kosong."
                 value={no_hp}
-                onChange={(e) => setno_hp(e.target.value)}
+                onChange={(e) => setno_hp(e)}
                 className="flex-1"
               />
             </div>
@@ -335,7 +340,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Nama PIC tidak boleh kosong."
               value={nama_pic}
-              onChange={(e) => setnama_pic(e.target.value)}
+              onChange={(e) => setnama_pic(e)}
             />
             <div className="flex gap-8">
               <Dropdown
@@ -367,9 +372,9 @@ const InputVendor = ({ onNext, onBack }) => {
                 label="Koordinat"
                 placeholder="Masukkan Koordinat"
                 type="text"
-                state="border"
                 value={koordinat}
-                onChange={(e) => setkoordinat(e.target.value)}
+                onChange={(e) => setkoordinat(e)}
+                state="border"
               />
               <FileInput
                 onFileSelect={handleLogoFileSelect}
@@ -382,6 +387,13 @@ const InputVendor = ({ onNext, onBack }) => {
                 accept=".jpg, .png"
                 Label="Logo"
                 HelperText="Format .JPG, .PNG dan maksimal 512Kb"
+              />
+              <TextInput
+                label="Enter multiple values"
+                value={inputValues}
+                onChange={handleInputChange}
+                variant="multipleInput"
+                isRequired={true}
               />
               <FileInput
                 onFileSelect={handleDokPendukungFileSelect}

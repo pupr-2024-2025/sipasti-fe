@@ -146,7 +146,7 @@ const Login = () => {
               placeholder="Masukkan Email"
               state="border"
               value={username}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e)}
               isRequired={true}
               errorMessage="Email tidak boleh kosong"
             />
@@ -158,7 +158,7 @@ const Login = () => {
                 label="Kata Sandi"
                 placeholder="Masukkan kata sandi"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => setPassword(e)}
                 type="password"
                 state="border"
                 isRequired={true}

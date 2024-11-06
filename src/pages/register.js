@@ -42,7 +42,6 @@ const Register = ({ onClose }) => {
   const handleCheckboxChange = () => {
     setIsChecked((prev) => !prev);
   };
-
   const handleFileSelect = (files) => {
     if (files.length === 0) {
       setError("File wajib dipilih.");
@@ -60,6 +59,7 @@ const Register = ({ onClose }) => {
     setUploadState("processing");
     setError("");
 
+    // Simulate upload progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -71,7 +71,6 @@ const Register = ({ onClose }) => {
       });
     }, 200);
   };
-
   const handleCancel = () => {
     setUploadState("default");
     setSelectedFile(null);
@@ -257,18 +256,18 @@ const Register = ({ onClose }) => {
         /> */}
         <FileInput
           onFileSelect={handleFileSelect}
+          setSelectedFile={setSelectedFile} // Pass the setter function here
           buttonText="Unggah"
           iconLeft={null}
           iconRight={null}
           multiple={false}
-          accept=".jpg,.png,.pdf"
+          accept=".pdf"
           Label="Unggah SK/Surat Penugasan"
-          HelperText="Format .JPG, .PNG dan maksimal 2MB"
+          HelperText="Format .PDF dan maksimal 2MB"
           state={uploadState}
           onCancel={handleCancel}
           selectedFile={surat_penugasan_url}
           required={true}
-          maxFiles={1}
           maxSizeMB={2}
         />
       </div>

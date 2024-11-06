@@ -7,12 +7,17 @@ import Stepper from "../../components/stepper";
 import Tahap2 from "./tahap2";
 import Tahap3 from "./tahap3";
 import Tahap4 from "./tahap4";
+import CustomAlert from "../../components/alert";
+import axios from "axios";
 
 const Tahap1 = () => {
   const [koderupSipasti, setKodeRUPSipasti] = useState("");
   const [namaPaketSipasti, setNamaPaketSipasti] = useState("");
   const [namaPPKSipasti, setNamaPPKSipasti] = useState("");
   const [jabatanPPKSipasti, setJabatanPPKSipasti] = useState("");
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState("info");
 
   // State for Input Manual tab
   const [koderupManual, setKodeRUPManual] = useState("");
@@ -35,7 +40,6 @@ const Tahap1 = () => {
     "Perancangan Kuesioner",
   ];
   const handleSubmit = async (type) => {
-    console.log("fungi ini kepanggil.");
     const url =
       "http://api-ecatalogue-staging.online/api/perencanaan-data/store-informasi-umum";
     const data =
@@ -56,7 +60,6 @@ const Tahap1 = () => {
             jabatan_ppk: jabatanPPKManual,
             nama_balai: namaBalaiManual,
           };
-    console.log("Data yang akan dikirim:", data);
 
     try {
       const response = await fetch(url, {
@@ -65,21 +68,32 @@ const Tahap1 = () => {
         body: JSON.stringify(data),
       });
 
-      if (response.ok) {
-        const result = await response.json();
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
         console.log("Data berhasil dikirim:", result);
-        alert("Data berhasil dikirim ke API.");
+        setAlertMessage("Data berhasil dikirim ke API.");
+        setAlertSeverity("success");
+        setAlertOpen(true);
         localStorage.setItem("informasi_umum_id", result.data.id);
+        return true;
       } else {
-        console.error("Gagal mengirim data ke API:", response.statusText);
-        alert("Gagal mengirim data ke API.");
+        // Menampilkan pesan error dari API
+        const errorMessage = result.message || "Gagal mengirim data ke API.";
+        console.error("Gagal mengirim data ke API:", errorMessage);
+        setAlertMessage(errorMessage);
+        setAlertSeverity("error");
+        setAlertOpen(true);
+        return false;
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan saat menghubungkan ke API.");
+      setAlertMessage("Terjadi kesalahan saat menghubungkan ke API.");
+      setAlertSeverity("error");
+      setAlertOpen(true);
+      return false;
     }
   };
-
   const tabs = [
     {
       label: "Sinkron data dari SIPASTI",
@@ -106,10 +120,7 @@ const Tahap1 = () => {
               onChange={(e) => setNamaPaketSipasti(e.target.value)}
             />
             <div className="px-[236px]">
-              <Button
-                variant="solid_blue"
-                size="Medium"
-                onClick={handleCariData}>
+              <Button variant="disabled" size="Medium" onClick={handleCariData}>
                 Cari Data di SIPASTI
               </Button>
             </div>
@@ -210,15 +221,22 @@ const Tahap1 = () => {
       setCurrentStep((prevStep) => prevStep + 1);
     }
   };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNextStep = (type) => {
+  const handleNextStep = async (type) => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     if (areFieldsFilled()) {
-      // handleSubmit(type);
-      nextStep();
+      const isSubmitSuccessful = await handleSubmit(type);
+      if (isSubmitSuccessful) {
+        nextStep();
+      }
     } else {
-      alert("Pastikan semua field telah diisi dengan benar.");
+      setAlertMessage("Pastikan semua field telah diisi dengan benar.");
+      setAlertSeverity("warning");
+      setAlertOpen(true);
     }
-    console.log();
+    setIsSubmitting(false);
   };
 
   return (
@@ -290,16 +308,18 @@ const Tahap1 = () => {
               variant="solid_blue"
               size="Medium"
               disabled={!areFieldsFilled()}
-              onClick={() => {
-                // handleNextStep("manual");
-                handleSubmit();
-                handleNextStep();
-              }}>
+              onClick={() => handleNextStep("manual")}>
               Lanjut
             </Button>
           </div>
         )}
       </div>
+      <CustomAlert
+        message={alertMessage}
+        severity={alertSeverity}
+        openInitially={alertOpen}
+        onClose={() => setAlertOpen(false)}
+      />
     </div>
   );
 };

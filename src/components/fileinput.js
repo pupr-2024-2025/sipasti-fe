@@ -16,7 +16,8 @@ const FileInput = ({
   state = "default",
   initialProgress = 0,
   onCancel,
-  selectedFile,
+  selectedFile, // <- Parameter `selectedFile`
+  setSelectedFile, // <- Parameter `setSelectedFile`
   required = false,
   maxFiles = Infinity,
   maxSizeMB = Infinity,
@@ -31,7 +32,7 @@ const FileInput = ({
     setProgress(0);
     setSelectedFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = null;
     }
     if (onCancel) {
       onCancel();
@@ -50,16 +51,22 @@ const FileInput = ({
     if (required && files.length === 0) {
       setErrorMessage("Berkas wajib dipilih.");
     } else if (files.length > maxFiles) {
-      setErrorMessage(`Anda hanya dapat memilih maksimal ${maxFiles} file.`);
+      setErrorMessage(`Anda hanya dapat memilih maksimal ${maxFiles} berkas.`);
     } else if (totalSize > maxSizeMB) {
       setErrorMessage(
         `Ukuran total berkas tidak boleh melebihi ${maxSizeMB} MB.`
       );
     } else {
       setErrorMessage("");
+      setSelectedFile(files[0]); // Menggunakan `setSelectedFile` dari parameter
       if (onFileSelect) {
         onFileSelect(files);
       }
+    }
+
+    // Reset input setelah pemilihan file selesai
+    if (fileInputRef.current) {
+      fileInputRef.current.value = null;
     }
   };
 
