@@ -50,10 +50,10 @@ const Register = ({ onClose }) => {
 
     const file = files[0];
 
-    if (file.size > 512 * 1024) {
-      setError("Ukuran berkas tidak boleh lebih dari 2 MB.");
-      return;
-    }
+    // if (file.size > 512 * 1024) {
+    //   setError("Ukuran berkas tidak boleh lebih dari 2 MB.");
+    //   return;
+    // }
 
     setSelectedFile(file);
     setUploadState("processing");

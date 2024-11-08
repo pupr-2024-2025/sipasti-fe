@@ -7,8 +7,25 @@ import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
+import Modal from "../../components/Modal";
 
 const Tahap4 = ({ onNext, onBack }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [commonInformation, setCommonInformation] = useState({
+    kode_rup: "",
+    nama_balai: "",
+    nama_paket: "",
+    nama_ppk: "",
+    jabatan_ppk: "",
+    jenis_informasi: "",
+  });
+  const [dataMaterial, setDataMaterial] = useState([]);
+  const [dataPeralatan, setDataPeralatan] = useState([]);
+  const [dataTenagaKerja, setDataTenagaKerja] = useState([]);
+  const [dataVendor, setDataVendor] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   const fetchCommonInformation = useCallback(async () => {
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
 
@@ -28,16 +45,7 @@ const Tahap4 = ({ onNext, onBack }) => {
         return;
       }
 
-      const commonInformation = data.data.informasi_umum || {
-        kode_rup: "",
-        nama_balai: "",
-        nama_paket: "",
-        nama_ppk: "",
-        jabatan_ppk: "",
-        jenis_informasi: "",
-      };
-
-      setCommonInformation(commonInformation);
+      setCommonInformation(data.data.informasi_umum || {});
       setDataMaterial(data.data.material || []);
       setDataPeralatan(data.data.peralatan || []);
       setDataTenagaKerja(data.data.tenaga_kerja || []);
@@ -51,138 +59,24 @@ const Tahap4 = ({ onNext, onBack }) => {
     fetchCommonInformation();
   }, [fetchCommonInformation]);
 
-  // State untuk setiap input form
-  const [formValues, setFormValues] = useState({
-    vendorName: "",
-    category: "",
-    resources: "",
-    address: "",
-    phone: "",
-    mobile: "",
-    picName: "",
-    province: "",
-    city: "",
-  });
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
 
-  const [commonInformation, setCommonInformation] = useState({
-    kode_rup: "",
-    nama_balai: "",
-    nama_paket: "",
-    nama_ppk: "",
-    jabatan_ppk: "",
-  });
-
-  const [dataMaterial, setDataMaterial] = useState([
-    {
-      id: 1,
-      nama_material: "Pasir",
-      satuan: "mÂ³",
-      spesifikasi: "",
-      ukuran: "",
-      kodefikasi: "",
-      jumlah_kebutuhan: "",
-      merk: "",
-      provinsi: "",
-      kabupatenKota: "",
-      kelompok_material: "",
-    },
-    // Tambahkan data lainnya sesuai kebutuhan
-  ]);
-
-  const [dataPeralatan, setDataPeralatan] = useState([
-    {
-      id: 1,
-      nama_peralatan: "Excavator",
-      satuan: "unit",
-      tipe: "",
-      merk: "",
-      kapasitas: "",
-      jumlah_kebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
-    },
-    // Tambahkan data lainnya sesuai kebutuhan
-  ]);
-
-  const [dataTenagaKerja, setDataTenagaKerja] = useState([
-    {
-      id: 1,
-      jenis_tenaga_kerja: "Tukang Batu",
-      kategori: "Pekerja Harian",
-      upah: "",
-      jumlah_kebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
-    },
-    // Tambahkan data lainnya sesuai kebutuhan
-  ]);
-
-  const [dataVendor, setDataVendor] = useState([
-    {
-      id: 1,
-      nama_vendor: "PT. Vendor 1",
-      pemilik_vendor: "Budi",
-      alamat: "Jl. Vendor 1 No. 1",
-      kontak: "08123456789",
-      url_kuisioner: "https://example.com",
-    },
-  ]);
-
-  // State tambahan untuk pagination dan pencarian
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Ubah sesuai kebutuhan
-  const [searchQueryMaterial, setSearchQueryMaterial] = useState("");
-  const [searchQueryPeralatan, setSearchQueryPeralatan] = useState("");
-  const [searchQueryTenagaKerja, setSearchQueryTenagaKerja] = useState("");
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const handleSearchMaterial = (query) => {
-    setSearchQueryMaterial(query);
-    setCurrentPage(1);
+    // Implement search functionality for material
   };
 
   const handleSearchPeralatan = (query) => {
-    setSearchQueryPeralatan(query);
-    setCurrentPage(1);
+    // Implement search functionality for peralatan
   };
 
   const handleSearchTenagaKerja = (query) => {
-    setSearchQueryTenagaKerja(query);
-    setCurrentPage(1);
-  };
-
-  // Filter data berdasarkan pencarian
-  const filteredDataMaterial = dataMaterial.filter((item) =>
-    item.nama_material.toLowerCase().includes(searchQueryMaterial.toLowerCase())
-  );
-
-  const filteredDataPeralatan = dataPeralatan.filter((item) =>
-    item.nama_peralatan
-      .toLowerCase()
-      .includes(searchQueryPeralatan.toLowerCase())
-  );
-
-  const filteredDataTenagaKerja = dataTenagaKerja.filter((item) =>
-    item.jenis_tenaga_kerja
-      .toLowerCase()
-      .includes(searchQueryTenagaKerja.toLowerCase())
-  );
-
-  // Fungsi onChange untuk mengupdate nilai form
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-  };
-
-  // Fungsi untuk menangani file yang dipilih
-  const handleFileSelect = (files) => {
-    // Logika untuk menangani file upload
-  };
-
-  const handleCancel = () => {
-    // Logika untuk membatalkan upload file
+    // Implement search functionality for tenaga kerja
   };
 
   return (
@@ -251,16 +145,15 @@ const Tahap4 = ({ onNext, onBack }) => {
                     { title: "Satuan", accessor: "satuan" },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
-                  data={filteredDataMaterial.slice(
+                  data={dataMaterial.slice(
                     (currentPage - 1) * itemsPerPage,
                     currentPage * itemsPerPage
                   )}
                 />
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={Math.ceil(
-                    filteredDataMaterial.length / itemsPerPage
-                  )}
+                  itemsPerPage={itemsPerPage}
+                  totalData={dataVendor.length} // Adjust this
                   onPageChange={setCurrentPage}
                 />
               </div>
@@ -280,7 +173,7 @@ const Tahap4 = ({ onNext, onBack }) => {
                     { title: "Satuan", accessor: "satuan" },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
-                  data={filteredDataPeralatan.slice(
+                  data={dataPeralatan.slice(
                     (currentPage - 1) * itemsPerPage,
                     currentPage * itemsPerPage
                   )}
@@ -308,7 +201,7 @@ const Tahap4 = ({ onNext, onBack }) => {
                     { title: "Upah", accessor: "upah" },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                   ]}
-                  data={filteredDataTenagaKerja.slice(
+                  data={dataTenagaKerja.slice(
                     (currentPage - 1) * itemsPerPage,
                     currentPage * itemsPerPage
                   )}
@@ -342,9 +235,10 @@ const Tahap4 = ({ onNext, onBack }) => {
             title: "Rancangan Kuesioner",
             accessor: "url_kuisioner",
             type: "button",
-            buttonLabel: "Lihat PDF",
+            buttonLabel: "Sunting PDF",
             alignment: "center",
             width: "300px",
+            onClick: handleOpenModal,
           },
         ]}
         data={dataVendor.slice(
@@ -354,21 +248,25 @@ const Tahap4 = ({ onNext, onBack }) => {
       />
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(dataPeralatan.length / itemsPerPage)}
+        totalPages={Math.ceil(dataVendor.length / itemsPerPage)}
         onPageChange={setCurrentPage}
       />
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+        <div className="p-4">
+          <h3 className="text-H3">Edit PDF</h3>
+          <FileInput label="Upload PDF" />
+          <Button onClick={handleCloseModal}>Close</Button>
+        </div>
+      </Modal>
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
         <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
           Kembali
         </Button>
-
         <Button
           variant="solid_blue"
           size="Medium"
           onClick={async () => {
-            console.log("onNext called");
             try {
-              // await handleSubmitSecondStep();
               onNext();
             } catch (error) {
               alert(error.message);
@@ -377,7 +275,6 @@ const Tahap4 = ({ onNext, onBack }) => {
           Simpan & Lanjut
         </Button>
       </div>
-      ,
     </div>
   );
 };
