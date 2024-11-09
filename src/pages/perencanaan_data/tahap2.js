@@ -11,7 +11,9 @@ const Tahap2 = ({ onNext, onBack }) => {
   const itemsPerPage = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowsToAdd, setRowsToAdd] = useState(0);
-
+  const [provinsiOptions, setProvinsiOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
+  const [selectedProvinsi, setSelectedProvinsi] = useState("");
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
@@ -26,8 +28,48 @@ const Tahap2 = ({ onNext, onBack }) => {
       kabupatenKota: "",
       kelompokMaterial: "",
     },
-    // Tambahkan data lainnya sesuai kebutuhan
   ]);
+
+  useEffect(() => {
+    const fetchProvincesAndCities = async () => {
+      try {
+        const response = await fetch(
+          "https://api-ecatalogue-staging.online/api/provinces-and-cities"
+        );
+        const result = await response.json();
+        if (result.status === "success" && Array.isArray(result.data)) {
+          const provinces = result.data.map((province) => ({
+            label: province.province_name,
+            value: province.id_province,
+            cities: province.cities.map((city) => ({
+              label: city.cities_name,
+              value: city.cities_id,
+            })),
+          }));
+          setProvinsiOptions(provinces);
+        } else {
+          console.error("Unexpected data format:", result);
+        }
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    };
+
+    fetchProvincesAndCities();
+  }, []);
+  const handleProvinsiChange = (selectedProvinsiId) => {
+    // Find the selected province from the options
+    const selectedProvinsi = provinsiOptions.find(
+      (option) => option.id_province === selectedProvinsiId
+    );
+
+    // If the province is found, update the cities options for Kabupaten/Kota
+    if (selectedProvinsi) {
+      setCitiesOptions(selectedProvinsi.cities); // Assuming setCitiesOptions is the function to update the cities dropdown options
+    }
+  };
+
+  console.log(provinsiOptions[0]);
 
   const [dataPeralatan, setDataPeralatan] = useState([
     {
@@ -260,16 +302,17 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Provinsi",
       accessor: "provinsi",
       type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      options: provinsiOptions.map((option) => option.label), // Provinsi dropdown options
       width: "200px",
       required: true,
+      onChange: (value) => handleProvinceChange(value), // Trigger when province changes
     },
     {
       title: "Kabupaten/Kota",
       accessor: "kabupatenKota",
       type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
-      width: "300px",
+      options: cityOptions, // Opsi kota dinamis berdasarkan provinsi yang dipilih
+      width: "200px",
       required: true,
     },
     {
@@ -610,10 +653,7 @@ const Tahap2 = ({ onNext, onBack }) => {
           )}
           <Table
             columns={columnsTenagaKerja}
-            data={filteredDataTenagaKerja.slice(
-              (currentPage - 1) * itemsPerPage,
-              currentPage * itemsPerPage
-            )}
+            data={dataMaterial}
             setParentState={setStateTenagaKerja}
           />
           <Pagination
