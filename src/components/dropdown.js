@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CloseCircle } from "iconsax-react";
 import Select from "react-select";
 import colors from "../styles/colors";
@@ -14,7 +14,14 @@ const Dropdown = ({
 }) => {
   const [selectedValue, setSelectedValue] = useState(value || null);
   const [error, setError] = useState("");
+  const [isBrowser, setIsBrowser] = useState(false);
 
+  useEffect(() => {
+    // Set isBrowser to true when the component is mounted on the client side
+    setIsBrowser(typeof window !== "undefined");
+  }, []);
+
+  // Map options to match react-select's format
   const formattedOptions = options.map((option) => ({
     value: option.value,
     label: option.label,
@@ -80,7 +87,7 @@ const Dropdown = ({
           }),
           menu: (base) => ({
             ...base,
-            zIndex: 9999,
+            zIndex: 100000, // Ensuring the dropdown menu appears above other elements
             position: "absolute",
             top: "100%",
             left: 0,
@@ -106,6 +113,8 @@ const Dropdown = ({
               : base.color,
           }),
         }}
+        menuPortalTarget={isBrowser ? document.body : null} // Only set in the browser
+        menuPosition="fixed" // Ensure menu is displayed as a fixed position
       />
       {error && (
         <div className="flex items-center mt-1">
