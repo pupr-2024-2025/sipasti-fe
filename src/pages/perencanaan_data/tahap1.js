@@ -107,7 +107,7 @@ const Tahap1 = () => {
               size="Medium"
               value={koderupSipasti}
               errorMessage="Kode RUP tidak boleh kosong"
-              onChange={(e) => setKodeRUPSipasti(e.target.value)}
+              onChange={(e) => setKodeRUPSipasti(e)}
             />
             <TextInput
               label="Nama Paket"
@@ -117,7 +117,7 @@ const Tahap1 = () => {
               isRequired="true"
               value={namaPaketSipasti}
               errorMessage="Nama paket tidak boleh kosong"
-              onChange={(e) => setNamaPaketSipasti(e.target.value)}
+              onChange={(e) => setNamaPaketSipasti(e)}
             />
             <div className="px-[236px]">
               <Button variant="disabled" size="Medium" onClick={handleCariData}>
@@ -132,7 +132,7 @@ const Tahap1 = () => {
               isRequired="true"
               value={namaPPKSipasti}
               errorMessage="Nama PPK tidak boleh kosong"
-              onChange={(e) => setNamaPPKSipasti(e.target.value)}
+              onChange={(e) => setNamaPPKSipasti(e)}
             />
             <TextInput
               label="Jabatan PPK"
@@ -142,7 +142,7 @@ const Tahap1 = () => {
               isRequired="true"
               value={jabatanPPKSipasti}
               errorMessage="Jabatan PPK tidak boleh kosong"
-              onChange={(e) => setJabatanPPKSipasti(e.target.value)}
+              onChange={(e) => setJabatanPPKSipasti(e)}
             />
           </div>
         </div>
@@ -159,7 +159,7 @@ const Tahap1 = () => {
             size="Medium"
             value={koderupManual}
             errorMessage="Kode RUP tidak boleh kosong"
-            onChange={(e) => setKodeRUPManual(e.target.value)}
+            onChange={(e) => setKodeRUPManual(e)}
           />
           <TextInput
             label="Nama Balai"
@@ -169,7 +169,7 @@ const Tahap1 = () => {
             isRequired="true"
             value={namaBalaiManual}
             errorMessage="Nama balai tidak boleh kosong"
-            onChange={(e) => setNamaBalaiManual(e.target.value)}
+            onChange={(e) => setNamaBalaiManual(e)}
           />
 
           <TextInput
@@ -180,7 +180,7 @@ const Tahap1 = () => {
             isRequired="true"
             value={namaPaketManual}
             errorMessage="Nama paket tidak boleh kosong"
-            onChange={(e) => setNamaPaketManual(e.target.value)}
+            onChange={(e) => setNamaPaketManual(e)}
           />
           <TextInput
             label="Nama PPK"
@@ -190,7 +190,7 @@ const Tahap1 = () => {
             isRequired="true"
             value={namaPPKManual}
             errorMessage="Nama PPK tidak boleh kosong"
-            onChange={(e) => setNamaPPKManual(e.target.value)}
+            onChange={(e) => setNamaPPKManual(e)}
           />
           <TextInput
             label="Jabatan PPK"
@@ -200,7 +200,7 @@ const Tahap1 = () => {
             isRequired="true"
             value={jabatanPPKManual}
             errorMessage="Jabatan PPK tidak boleh kosong"
-            onChange={(e) => setJabatanPPKManual(e.target.value)}
+            onChange={(e) => setJabatanPPKManual(e)}
           />
         </div>
       ),
@@ -227,8 +227,9 @@ const Tahap1 = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     if (areFieldsFilled()) {
-      const isSubmitSuccessful = await handleSubmit(type);
-      if (isSubmitSuccessful) {
+      // const isSubmitSuccessful = await handleSubmit(type);
+      // if (isSubmitSuccessful) {
+      if (true) {
         nextStep();
       }
     } else {
@@ -271,7 +272,7 @@ const Tahap1 = () => {
                   placeholder="Masukkan kriteria filter"
                   size="Medium"
                   value={filterCriteria}
-                  onChange={(e) => setFilterCriteria(e.target.value)}
+                  onChange={(e) => setFilterCriteria(e)}
                 />
               )}
             </>

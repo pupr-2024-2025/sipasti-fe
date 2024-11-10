@@ -161,11 +161,7 @@ const Table = ({ columns, data, setParentState }) => {
                             placeholder={column.placeholder}
                             value={inputValues[row.id]?.[column.accessor] || ""}
                             onChange={(e) =>
-                              handleInputChange(
-                                row.id,
-                                column.accessor,
-                                e.target.value
-                              )
+                              handleInputChange(row.id, column.accessor, e)
                             }
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
@@ -189,6 +185,30 @@ const Table = ({ columns, data, setParentState }) => {
                             onSelect={(value) =>
                               handleInputChange(row.id, column.accessor, value)
                             }
+                            isRequired={column.required}
+                            errorMessage={errors[row.id]?.[column.accessor]}
+                          />
+                          {errors[row.id] &&
+                            errors[row.id][column.accessor] && (
+                              <span className="text-custom-red-500 text-sm">
+                                {errors[row.id][column.accessor]}
+                              </span>
+                            )}
+                        </>
+                      ) : column.type === "dropdown API" ? (
+                        <>
+                          <Dropdown
+                            options={column.options.map((option) => ({
+                              value: option.value,
+                              label: option.label,
+                            }))}
+                            placeholder="Pilih Opsi"
+                            value={inputValues[row.id]?.[column.accessor] || ""}
+                            onSelect={(value) => {
+                              handleInputChange(row.id, column.accessor, value);
+                              column.onChange(value);
+                              console.log(row.id);
+                            }}
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
                           />

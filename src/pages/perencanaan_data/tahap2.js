@@ -57,15 +57,17 @@ const Tahap2 = ({ onNext, onBack }) => {
 
     fetchProvincesAndCities();
   }, []);
-
+  console.log(provinsiOptions);
+  console.log(cityOptions);
   // Handle province change to update city options
   const handleProvinceChange = (selectedProvinsiId) => {
     console.log("Selected Province ID:", selectedProvinsiId); // Debugging the province ID
 
     // Find the selected province in the list of province options
     const selectedProvinsi = provinsiOptions.find(
-      (option) => option.value === selectedProvinsiId
+      (option) => option.value === selectedProvinsiId.value
     );
+    console.log("Selected Province ID:", selectedProvinsi);
 
     if (selectedProvinsi) {
       console.log("Selected Province Object:", selectedProvinsi); // Debugging the selected province object
@@ -307,8 +309,8 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Provinsi",
       accessor: "provinsi",
-      type: "dropdown",
-      options: provinsiOptions.map((option) => option.label), // Map the province options
+      type: "dropdown API",
+      options: provinsiOptions, // Map the province options
       width: "200px",
       required: true,
       onChange: handleProvinceChange, // Update city options when province is selected
@@ -316,10 +318,11 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Kabupaten/Kota",
       accessor: "kabupatenKota",
-      type: "dropdown",
-      options: cityOptions.map((city) => city.label), // City options depend on selected province
+      type: "dropdown API",
+      options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
+      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
@@ -676,9 +679,9 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const handleSubmitSecondStep = async () => {
     try {
-      if (!stateMaterial) throw new Error("Data material belum diisi!");
-      if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
-      if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
+      // if (!stateMaterial) throw new Error("Data material belum diisi!");
+      // if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
+      // if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
 
       console.log(JSON.stringify(stateMaterial));
       const stateMaterialFirst = stateMaterial["1"];
@@ -690,8 +693,8 @@ const Tahap2 = ({ onNext, onBack }) => {
         material: [
           {
             ...stateMaterialFirst,
-            provincies_id: 1,
-            cities_id: 1,
+            provincies_id: "",
+            cities_id: "",
           },
         ],
         peralatan: [
