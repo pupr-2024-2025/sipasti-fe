@@ -7,7 +7,7 @@ import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
-import Modal from "../../components/Modal";
+import Modal from "../../components/modal";
 
 const Tahap4 = ({ onNext, onBack }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
@@ -60,6 +60,7 @@ const Tahap4 = ({ onNext, onBack }) => {
   }, [fetchCommonInformation]);
 
   const handleOpenModal = () => {
+    console.log("Modal opened");
     setIsModalOpen(true);
   };
 
@@ -253,8 +254,119 @@ const Tahap4 = ({ onNext, onBack }) => {
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div className="p-4">
-          <h3 className="text-H3">Edit PDF</h3>
-          <FileInput label="Upload PDF" />
+          <h3 className="text-H3">Edit PDF - Data Material</h3>
+          {/* <Table
+            columns={[
+              { title: "Responder/Vendor", accessor: "nama_material" },
+              { title: "Pemilik Vendor", accessor: "satuan" },
+              { title: "Alamat", accessor: "jumlah_kebutuhan" },
+              { title: "Kontak", accessor: "jumlah_kebutuhan" },
+            ]}
+            data={dataMaterial} // Display all material data in modal table
+          /> */}
+          <Tabs
+            tabs={[
+              {
+                label: "Material",
+                content: (
+                  <div className="mt-3 space-y-4">
+                    <SearchBox
+                      placeholder="Cari Material..."
+                      onSearch={handleSearchMaterial}
+                    />
+                    <Table
+                      columns={[
+                        { title: "Nama Material", accessor: "nama_material" },
+                        { title: "Satuan", accessor: "satuan" },
+                        {
+                          title: "Jumlah Kebutuhan",
+                          accessor: "jumlah_kebutuhan",
+                        },
+                      ]}
+                      data={dataMaterial.slice(
+                        (currentPage - 1) * itemsPerPage,
+                        currentPage * itemsPerPage
+                      )}
+                    />
+                    <Pagination
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                      totalData={dataVendor.length} // Adjust this
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                ),
+              },
+              {
+                label: "Peralatan",
+                content: (
+                  <div className="mt-3 space-y-4">
+                    <SearchBox
+                      placeholder="Cari Peralatan..."
+                      onSearch={handleSearchPeralatan}
+                    />
+                    <Table
+                      columns={[
+                        { title: "Nama Peralatan", accessor: "nama_peralatan" },
+                        { title: "Satuan", accessor: "satuan" },
+                        {
+                          title: "Jumlah Kebutuhan",
+                          accessor: "jumlah_kebutuhan",
+                        },
+                      ]}
+                      data={dataPeralatan.slice(
+                        (currentPage - 1) * itemsPerPage,
+                        currentPage * itemsPerPage
+                      )}
+                    />
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(
+                        dataPeralatan.length / itemsPerPage
+                      )}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                ),
+              },
+              {
+                label: "Tenaga Kerja",
+                content: (
+                  <div className="mt-3 space-y-4">
+                    <SearchBox
+                      placeholder="Cari Tenaga Kerja..."
+                      onSearch={handleSearchTenagaKerja}
+                    />
+                    <Table
+                      columns={[
+                        {
+                          title: "Nama Pekerja",
+                          accessor: "jenis_tenaga_kerja",
+                        },
+                        { title: "Kategori", accessor: "kategori" },
+                        { title: "Upah", accessor: "upah" },
+                        {
+                          title: "Jumlah Kebutuhan",
+                          accessor: "jumlah_kebutuhan",
+                        },
+                      ]}
+                      data={dataTenagaKerja.slice(
+                        (currentPage - 1) * itemsPerPage,
+                        currentPage * itemsPerPage
+                      )}
+                    />
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={Math.ceil(
+                        dataTenagaKerja.length / itemsPerPage
+                      )}
+                      onPageChange={setCurrentPage}
+                    />
+                  </div>
+                ),
+              },
+            ]}
+          />
           <Button onClick={handleCloseModal}>Close</Button>
         </div>
       </Modal>
