@@ -31,15 +31,20 @@ const Table = ({ columns, data, setParentState }) => {
       "kabupaten_kota",
     ];
 
-    setInputValues((prev) => ({
-      ...prev,
-      [rowId]: {
-        ...prev[rowId],
-        [columnAccessor]: dropdownFields.includes(columnAccessor)
-          ? value?.value
-          : value,
-      },
-    }));
+    setInputValues((prev) => {
+      // Ensure prev[rowId] is always defined before spreading
+      const updatedRow = prev[rowId] || {}; // Default to an empty object if it doesn't exist
+
+      return {
+        ...prev,
+        [rowId]: {
+          ...updatedRow, // Ensure we don't access undefined properties
+          [columnAccessor]: dropdownFields.includes(columnAccessor)
+            ? value?.value
+            : value,
+        },
+      };
+    });
 
     setParentState(inputValues);
     setErrors((prevErrors) => ({
@@ -50,6 +55,23 @@ const Table = ({ columns, data, setParentState }) => {
       },
     }));
   };
+
+  // setParentState(inputValues);
+  // setErrors((prevErrors) => ({
+  //   ...prevErrors,
+  //   [rowId]: {
+  //     ...prevErrors[rowId],
+  //     [columnAccessor]: "",
+  //   },
+  // }));
+  // setParentState((prevState) => ({
+  //   ...prevState,
+  //   [rowId]: {
+  //     ...prevState[rowId],
+  //     [columnAccessor]: value?.value,
+  //   },
+  // }));
+  // };
 
   const handleCheckboxChange = (rowId, checked) => {
     handleInputChange(rowId, "checkbox", checked);

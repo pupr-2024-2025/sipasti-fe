@@ -29,6 +29,7 @@ const Dropdown = ({
 
   const handleChange = (selectedOption) => {
     setSelectedValue(selectedOption);
+    console.log("Selected Option:", selectedOption); // Add this for debugging
     onSelect(selectedOption);
 
     if (isRequired && !selectedOption) {

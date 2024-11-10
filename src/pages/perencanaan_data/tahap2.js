@@ -46,7 +46,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               value: city.cities_id,
             })),
           }));
-          setProvinsiOptions(provinces);
+          setProvinsiOptions(provinces); // Set the province options
         } else {
           console.error("Unexpected data format:", result);
         }
@@ -57,19 +57,25 @@ const Tahap2 = ({ onNext, onBack }) => {
 
     fetchProvincesAndCities();
   }, []);
-  const handleProvinsiChange = (selectedProvinsiId) => {
-    // Find the selected province from the options
+
+  // Handle province change to update city options
+  const handleProvinceChange = (selectedProvinsiId) => {
+    console.log("Selected Province ID:", selectedProvinsiId); // Debugging the province ID
+
+    // Find the selected province in the list of province options
     const selectedProvinsi = provinsiOptions.find(
-      (option) => option.id_province === selectedProvinsiId
+      (option) => option.value === selectedProvinsiId
     );
 
-    // If the province is found, update the cities options for Kabupaten/Kota
     if (selectedProvinsi) {
-      setCitiesOptions(selectedProvinsi.cities); // Assuming setCitiesOptions is the function to update the cities dropdown options
+      console.log("Selected Province Object:", selectedProvinsi); // Debugging the selected province object
+      setCityOptions(selectedProvinsi.cities); // Update city options based on selected province
+    } else {
+      console.error("Province not found!");
     }
   };
 
-  console.log(provinsiOptions[0]);
+  // console.log(provinsiOptions[0]);
 
   const [dataPeralatan, setDataPeralatan] = useState([
     {
@@ -302,16 +308,16 @@ const Tahap2 = ({ onNext, onBack }) => {
       title: "Provinsi",
       accessor: "provinsi",
       type: "dropdown",
-      options: provinsiOptions.map((option) => option.label), // Provinsi dropdown options
+      options: provinsiOptions.map((option) => option.label), // Map the province options
       width: "200px",
       required: true,
-      onChange: (value) => handleProvinceChange(value), // Trigger when province changes
+      onChange: handleProvinceChange, // Update city options when province is selected
     },
     {
       title: "Kabupaten/Kota",
       accessor: "kabupatenKota",
       type: "dropdown",
-      options: cityOptions, // Opsi kota dinamis berdasarkan provinsi yang dipilih
+      options: cityOptions.map((city) => city.label), // City options depend on selected province
       width: "200px",
       required: true,
     },
