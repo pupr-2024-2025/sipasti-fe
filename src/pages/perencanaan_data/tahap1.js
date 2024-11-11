@@ -225,19 +225,34 @@ const Tahap1 = () => {
 
   const handleNextStep = async (type) => {
     if (isSubmitting) return;
+
     setIsSubmitting(true);
+
     if (areFieldsFilled()) {
-      const isSubmitSuccessful = await handleSubmit(type);
+      const isSubmitSuccessful = await submitAndProceed(type);
       if (isSubmitSuccessful) {
-        // if (true) {
         nextStep();
       }
     } else {
-      setAlertMessage("Pastikan semua field telah diisi dengan benar.");
-      setAlertSeverity("warning");
-      setAlertOpen(true);
+      showAlert("Pastikan semua field telah diisi dengan benar.", "warning");
     }
+
     setIsSubmitting(false);
+  };
+
+  const submitAndProceed = async (type) => {
+    try {
+      return await handleSubmit(type);
+    } catch (error) {
+      console.error("Submission failed:", error);
+      return false;
+    }
+  };
+
+  const showAlert = (message, severity) => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setAlertOpen(true);
   };
 
   return (

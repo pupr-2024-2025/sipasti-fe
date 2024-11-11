@@ -27,26 +27,28 @@ const Table = ({ columns, data, setParentState }) => {
     const dropdownFields = [
       "kelompok_material",
       "kelompok_peralatan",
-      "provinsi",
+      "provincies_id",
       "kabupaten_kota",
+      "cities_id",
     ];
 
     setInputValues((prev) => {
-      // Ensure prev[rowId] is always defined before spreading
-      const updatedRow = prev[rowId] || {}; // Default to an empty object if it doesn't exist
-
-      return {
+      const updatedRow = prev[rowId] || {};
+      const updatedInputValues = {
         ...prev,
         [rowId]: {
-          ...updatedRow, // Ensure we don't access undefined properties
+          ...updatedRow,
           [columnAccessor]: dropdownFields.includes(columnAccessor)
             ? value?.value
             : value,
         },
       };
+
+      // Update the parent state after inputValues is updated
+      setParentState(updatedInputValues);
+      return updatedInputValues;
     });
 
-    setParentState(inputValues);
     setErrors((prevErrors) => ({
       ...prevErrors,
       [rowId]: {

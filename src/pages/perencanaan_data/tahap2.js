@@ -11,9 +11,9 @@ const Tahap2 = ({ onNext, onBack }) => {
   const itemsPerPage = 10;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [rowsToAdd, setRowsToAdd] = useState(0);
-  const [provinsiOptions, setProvinsiOptions] = useState([]);
+  const [provincies_idOptions, setprovincies_idOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
-  const [selectedProvinsi, setSelectedProvinsi] = useState("");
+  const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
@@ -24,8 +24,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       kodefikasi: "",
       jumlahKebutuhan: "",
       merk: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
       kelompokMaterial: "",
     },
   ]);
@@ -46,7 +46,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               value: city.cities_id,
             })),
           }));
-          setProvinsiOptions(provinces); // Set the province options
+          setprovincies_idOptions(provinces); // Set the province options
         } else {
           console.error("Unexpected data format:", result);
         }
@@ -57,27 +57,27 @@ const Tahap2 = ({ onNext, onBack }) => {
 
     fetchProvincesAndCities();
   }, []);
-  console.log(provinsiOptions);
+  console.log(provincies_idOptions);
   console.log(cityOptions);
   // Handle province change to update city options
-  const handleProvinceChange = (selectedProvinsiId) => {
-    console.log("Selected Province ID:", selectedProvinsiId); // Debugging the province ID
+  const handleProvinceChange = (selectedprovincies_idId) => {
+    console.log("Selected Province ID:", selectedprovincies_idId); // Debugging the province ID
 
     // Find the selected province in the list of province options
-    const selectedProvinsi = provinsiOptions.find(
-      (option) => option.value === selectedProvinsiId.value
+    const selectedprovincies_id = provincies_idOptions.find(
+      (option) => option.value === selectedprovincies_idId.value
     );
-    console.log("Selected Province ID:", selectedProvinsi);
+    console.log("Selected Province ID:", selectedprovincies_id);
 
-    if (selectedProvinsi) {
-      console.log("Selected Province Object:", selectedProvinsi); // Debugging the selected province object
-      setCityOptions(selectedProvinsi.cities); // Update city options based on selected province
+    if (selectedprovincies_id) {
+      console.log("Selected Province Object:", selectedprovincies_id); // Debugging the selected province object
+      setCityOptions(selectedprovincies_id.cities); // Update city options based on selected province
     } else {
       console.error("Province not found!");
     }
   };
 
-  // console.log(provinsiOptions[0]);
+  // console.log(provincies_idOptions[0]);
 
   const [dataPeralatan, setDataPeralatan] = useState([
     {
@@ -88,8 +88,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       merk: "",
       kapasitas: "",
       jumlahKebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
     },
     // Tambahkan data lainnya sesuai kebutuhan
   ]);
@@ -101,8 +101,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       kategori: "Pekerja Harian",
       upah: "",
       jumlahKebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
     },
   ]);
 
@@ -116,8 +116,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       kodefikasi: "",
       jumlahKebutuhan: "",
       merk: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
       kelompokMaterial: "",
     }));
 
@@ -136,8 +136,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       merk: "",
       kapasitas: "",
       jumlahKebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
     }));
 
     setDataPeralatan((prevData) => [...newRows, ...prevData]);
@@ -153,8 +153,8 @@ const Tahap2 = ({ onNext, onBack }) => {
       kategori: "",
       upah: "",
       jumlahKebutuhan: "",
-      provinsi: "",
-      kabupatenKota: "",
+      provincies_id: "",
+      cities_id: "",
     }));
 
     setDataTenagaKerja((prevData) => [...newRows, ...prevData]);
@@ -308,16 +308,16 @@ const Tahap2 = ({ onNext, onBack }) => {
     },
     {
       title: "Provinsi",
-      accessor: "provinsi",
+      accessor: "provincies_id",
       type: "dropdown API",
-      options: provinsiOptions, // Map the province options
+      options: provincies_idOptions, // Map the province options
       width: "200px",
       required: true,
       onChange: handleProvinceChange, // Update city options when province is selected
     },
     {
       title: "Kabupaten/Kota",
-      accessor: "kabupatenKota",
+      accessor: "cities_id",
       type: "dropdown API",
       options: cityOptions, // City options depend on selected province
       width: "200px",
@@ -407,18 +407,20 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Provinsi",
       accessor: "provincies_id",
-      type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      type: "dropdown API",
+      options: provincies_idOptions, // Map the province options
       width: "200px",
       required: true,
+      onChange: handleProvinceChange, // Update city options when province is selected
     },
     {
       title: "Kabupaten/Kota",
       accessor: "cities_id",
-      type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
+      type: "dropdown API",
+      options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
+      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
@@ -468,18 +470,20 @@ const Tahap2 = ({ onNext, onBack }) => {
     {
       title: "Provinsi",
       accessor: "provincies_id",
-      type: "dropdown",
-      options: ["Jawa Barat", "Jawa Timur", "DKI Jakarta"],
+      type: "dropdown API",
+      options: provincies_idOptions, // Map the province options
       width: "200px",
       required: true,
+      onChange: handleProvinceChange, // Update city options when province is selected
     },
     {
       title: "Kabupaten/Kota",
       accessor: "cities_id",
-      type: "dropdown",
-      options: ["Bandung", "Surabaya", "Jakarta"],
+      type: "dropdown API",
+      options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
+      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
