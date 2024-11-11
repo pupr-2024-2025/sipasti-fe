@@ -13,7 +13,7 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [rowsToAdd, setRowsToAdd] = useState(0);
   const [provincies_idOptions, setprovincies_idOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
-  const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
+  // const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: 1,
@@ -139,6 +139,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       provincies_id: "",
       cities_id: "",
     }));
+    console.log(handleAddRowsPeralatan);
 
     setDataPeralatan((prevData) => [...newRows, ...prevData]);
     setFilteredDataPeralatan((prevData) => [...newRows, ...prevData]);
@@ -156,7 +157,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       provincies_id: "",
       cities_id: "",
     }));
-
+    console.log(handleAddRowsTenagaKerja);
     setDataTenagaKerja((prevData) => [...newRows, ...prevData]);
     setFilteredDataTenagaKerja((prevData) => [...newRows, ...prevData]);
     setRowsToAdd(0);
@@ -322,7 +323,9 @@ const Tahap2 = ({ onNext, onBack }) => {
       options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
-      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
+      onChange: (value) => {
+        setCityOptions([]);
+      }, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
@@ -420,7 +423,9 @@ const Tahap2 = ({ onNext, onBack }) => {
       options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
-      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
+      onChange: (value) => {
+        setCityOptions([]);
+      }, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
@@ -483,7 +488,9 @@ const Tahap2 = ({ onNext, onBack }) => {
       options: cityOptions, // City options depend on selected province
       width: "200px",
       required: true,
-      onChange: (value) => {}, // Menggunakan => untuk fungsi panah
+      onChange: (value) => {
+        setCityOptions([]);
+      }, // Menggunakan => untuk fungsi panah
     },
     {
       title: "Aksi",
@@ -514,7 +521,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
                 <label className="block mb-2">
                   <p className="text-Medium font-bold text-emphasis-on_surface-high">
-                    Tambah Data
+                    Tambah Data Material
                   </p>
                   <p className="text-Small text-emphasis-on_surface-medium">
                     Masukkan jumlah baris yang ingin ditambahkan:
@@ -577,7 +584,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
                 <label className="block mb-2">
                   <p className="text-Medium font-bold text-emphasis-on_surface-high">
-                    Tambah Data
+                    Tambah Data Peralatan
                   </p>
                   <p className="text-Small text-emphasis-on_surface-medium">
                     Masukkan jumlah baris yang ingin ditambahkan:
@@ -639,7 +646,7 @@ const Tahap2 = ({ onNext, onBack }) => {
               <div className="bg-white p-6 shadow-md w-96 rounded-[12px]">
                 <label className="block mb-2">
                   <p className="text-Medium font-bold text-emphasis-on_surface-high">
-                    Tambah Data
+                    Tambah Data Tenaga Kerja
                   </p>
                   <p className="text-Small text-emphasis-on_surface-medium">
                     Masukkan jumlah baris yang ingin ditambahkan:
@@ -666,7 +673,10 @@ const Tahap2 = ({ onNext, onBack }) => {
           )}
           <Table
             columns={columnsTenagaKerja}
-            data={dataMaterial}
+            data={filteredDataTenagaKerja.slice(
+              (currentPage - 1) * itemsPerPage,
+              currentPage * itemsPerPage
+            )}
             setParentState={setStateTenagaKerja}
           />
           <Pagination
@@ -687,35 +697,41 @@ const Tahap2 = ({ onNext, onBack }) => {
       // if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
       // if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
 
-      console.log(JSON.stringify(stateMaterial));
-      const stateMaterialFirst = stateMaterial["1"];
-      const statePeralatanFirst = statePeralatan["1"];
-      const stateTenagaKerjaFirst = stateTenagaKerja["1"];
+      // console.log(JSON.stringify(stateMaterial));
+      // console.log(JSON.stringify(statePeralatan));
+      // console.log(JSON.stringify(stateTenagaKerja));
       const informasi_umum_id = localStorage.getItem("informasi_umum_id");
       const requestData = {
         informasi_umum_id: informasi_umum_id,
-        material: [
-          {
-            ...stateMaterialFirst,
-            provincies_id: "",
-            cities_id: "",
-          },
-        ],
-        peralatan: [
-          {
-            ...statePeralatanFirst,
-            provincies_id: 1,
-            cities_id: 1,
-          },
-        ],
-        tenaga_kerja: [
-          {
-            ...stateTenagaKerjaFirst,
-            provincies_id: 1,
-            cities_id: 1,
-          },
-        ],
+        material: stateMaterial,
+        peralatan: statePeralatan,
+        tenaga_kerja: stateTenagaKerja,
       };
+
+      // const requestData = {
+      //   informasi_umum_id: informasi_umum_id,
+      //   material: [
+      //     {
+      //       ...stateMaterialFirst,
+      //       provincies_id: "",
+      //       cities_id: "",
+      //     },
+      //   ],
+      //   peralatan: [
+      //     {
+      //       ...statePeralatanFirst,
+      //       provincies_id: "",
+      //       cities_id: "",
+      //     },
+      //   ],
+      //   tenaga_kerja: [
+      //     {
+      //       ...stateTenagaKerjaFirst,
+      //       provincies_id: "",
+      //       cities_id: "",
+      //     },
+      //   ],
+      // };
       console.log(JSON.stringify(requestData));
       // const response = await fetch(
       //   "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",

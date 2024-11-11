@@ -442,7 +442,10 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             ]}
           />
           <div className="flex flex-row justify-end items-right space-x-4 mt-3 ">
-            <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+            <Button
+              variant="outlined_yellow"
+              size="Medium"
+              onClick={handleCloseModal}>
               Kembali
             </Button>
             <Button

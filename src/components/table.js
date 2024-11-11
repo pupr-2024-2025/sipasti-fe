@@ -31,6 +31,7 @@ const Table = ({ columns, data, setParentState }) => {
       "kabupaten_kota",
       "cities_id",
     ];
+    console.log(value, columnAccessor);
 
     setInputValues((prev) => {
       const updatedRow = prev[rowId] || {};
@@ -43,6 +44,7 @@ const Table = ({ columns, data, setParentState }) => {
             : value,
         },
       };
+      console.log(inputValues);
 
       // Update the parent state after inputValues is updated
       setParentState(updatedInputValues);

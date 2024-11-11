@@ -223,7 +223,11 @@ const Tahap1 = () => {
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleNextStep = async (type) => {
+  const handleNextStep = async (type, step) => {
+    if (step > 1) {
+      nextStep();
+      return;
+    }
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -294,19 +298,25 @@ const Tahap1 = () => {
           )}
           {currentStep === 1 && (
             <Tahap2
-              onNext={handleNextStep}
+              onNext={() => {
+                handleNextStep("manual", 2);
+              }}
               onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
             />
           )}
           {currentStep === 2 && (
             <Tahap3
-              onNext={handleNextStep}
+              onNext={() => {
+                handleNextStep("manual", 3);
+              }}
               onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
             />
           )}
           {currentStep === 3 && (
             <Tahap4
-              onNext={handleNextStep}
+              onNext={() => {
+                handleNextStep("manual", 4);
+              }}
               onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
             />
           )}
@@ -324,7 +334,7 @@ const Tahap1 = () => {
               variant="solid_blue"
               size="Medium"
               disabled={!areFieldsFilled()}
-              onClick={() => handleNextStep("manual")}>
+              onClick={() => handleNextStep("manual", 1)}>
               Lanjut
             </Button>
           </div>
