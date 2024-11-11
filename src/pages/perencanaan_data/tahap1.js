@@ -227,9 +227,9 @@ const Tahap1 = () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     if (areFieldsFilled()) {
-      // const isSubmitSuccessful = await handleSubmit(type);
-      // if (isSubmitSuccessful) {
-      if (true) {
+      const isSubmitSuccessful = await handleSubmit(type);
+      if (isSubmitSuccessful) {
+        // if (true) {
         nextStep();
       }
     } else {

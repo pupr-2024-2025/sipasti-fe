@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import TextInput from "../../components/input";
-import FileInput from "../../components/FileInput";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
@@ -8,8 +7,8 @@ import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
 import Modal from "../../components/modal";
-
-const Tahap4 = ({ onNext, onBack }) => {
+import { CloseCircle } from "iconsax-react";
+const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const [commonInformation, setCommonInformation] = useState({
     kode_rup: "",
@@ -19,6 +18,31 @@ const Tahap4 = ({ onNext, onBack }) => {
     jabatan_ppk: "",
     jenis_informasi: "",
   });
+  const [selectedVendors, setSelectedVendors] = useState([]);
+  const isVendorSelected = (vendorId) => {
+    return selectedVendors.some(
+      (selectedVendor) => selectedVendor.data_vendor_id === vendorId
+    );
+  };
+  const handleCheckboxChange = (vendor, isChecked) => {
+    setSelectedVendors((prevSelectedVendors) => {
+      const updatedVendors = isChecked
+        ? [
+            ...prevSelectedVendors,
+            {
+              data_vendor_id: vendor.id,
+              nama_vendor: vendor.nama_vendor,
+              pemilik_vendor: vendor.pemilik_vendor,
+              alamat: vendor.alamat,
+              kontak: vendor.kontak,
+            },
+          ]
+        : prevSelectedVendors.filter(
+            (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
+          );
+      return updatedVendors;
+    });
+  };
   const [dataMaterial, setDataMaterial] = useState([]);
   const [dataPeralatan, setDataPeralatan] = useState([]);
   const [dataTenagaKerja, setDataTenagaKerja] = useState([]);
@@ -69,11 +93,17 @@ const Tahap4 = ({ onNext, onBack }) => {
   };
 
   const handleSearchMaterial = (query) => {
-    // Implement search functionality for material
+    const filteredMaterials = allDataMaterial.filter((item) =>
+      item.nama_material.toLowerCase().includes(query.toLowerCase())
+    );
+    setDataMaterial(filteredMaterials);
   };
 
   const handleSearchPeralatan = (query) => {
-    // Implement search functionality for peralatan
+    const filteredPeralatan = allDataPeralatan.filter((item) =>
+      item.nama_peralatan.toLowerCase().includes(query.toLowerCase())
+    );
+    setDataPeralatan(filteredPeralatan);
   };
 
   const handleSearchTenagaKerja = (query) => {
@@ -254,7 +284,14 @@ const Tahap4 = ({ onNext, onBack }) => {
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div className="p-4">
-          <h3 className="text-H3">Edit PDF - Data Material</h3>
+          <div className="flex justify-between items-center mb-4">
+            <h5 className="text-H5">Seleksi</h5>
+            <button
+              className="text-emphasis-on_surface-high"
+              onClick={handleCloseModal}>
+              <CloseCircle size="24" />
+            </button>
+          </div>
           {/* <Table
             columns={[
               { title: "Responder/Vendor", accessor: "nama_material" },
@@ -276,17 +313,30 @@ const Tahap4 = ({ onNext, onBack }) => {
                     />
                     <Table
                       columns={[
+                        {
+                          title: "",
+                          accessor: "select",
+                          type: "checkbox",
+                          width: "48px",
+                          onChange: (vendor) =>
+                            handleCheckboxChange(
+                              vendor,
+                              !isVendorSelected(vendor.id)
+                            ),
+                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                        },
                         { title: "Nama Material", accessor: "nama_material" },
                         { title: "Satuan", accessor: "satuan" },
                         {
-                          title: "Jumlah Kebutuhan",
-                          accessor: "jumlah_kebutuhan",
+                          title: "Spesifikasi",
+                          accessor: "spesifikasi",
                         },
                       ]}
                       data={dataMaterial.slice(
                         (currentPage - 1) * itemsPerPage,
                         currentPage * itemsPerPage
                       )}
+                      setParentState={setCommonInformation}
                     />
                     <Pagination
                       currentPage={currentPage}
@@ -307,7 +357,22 @@ const Tahap4 = ({ onNext, onBack }) => {
                     />
                     <Table
                       columns={[
-                        { title: "Nama Peralatan", accessor: "nama_peralatan" },
+                        {
+                          title: "",
+                          accessor: "select",
+                          type: "checkbox",
+                          width: "48px",
+                          onChange: (vendor) =>
+                            handleCheckboxChange(
+                              vendor,
+                              !isVendorSelected(vendor.id)
+                            ),
+                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                        },
+                        {
+                          title: "Nama Peralatan",
+                          accessor: "nama_peralatan",
+                        },
                         { title: "Satuan", accessor: "satuan" },
                         {
                           title: "Jumlah Kebutuhan",
@@ -318,6 +383,7 @@ const Tahap4 = ({ onNext, onBack }) => {
                         (currentPage - 1) * itemsPerPage,
                         currentPage * itemsPerPage
                       )}
+                      setParentState={setCommonInformation}
                     />
                     <Pagination
                       currentPage={currentPage}
@@ -340,16 +406,24 @@ const Tahap4 = ({ onNext, onBack }) => {
                     <Table
                       columns={[
                         {
+                          title: "",
+                          accessor: "select",
+                          type: "checkbox",
+                          width: "48px",
+                          onChange: (vendor) =>
+                            handleCheckboxChange(
+                              vendor,
+                              !isVendorSelected(vendor.id)
+                            ),
+                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                        },
+                        {
                           title: "Nama Pekerja",
                           accessor: "jenis_tenaga_kerja",
                         },
-                        { title: "Kategori", accessor: "kategori" },
-                        { title: "Upah", accessor: "upah" },
-                        {
-                          title: "Jumlah Kebutuhan",
-                          accessor: "jumlah_kebutuhan",
-                        },
+                        { title: "Satuan", accessor: "satuan" },
                       ]}
+                      setParentState={setCommonInformation}
                       data={dataTenagaKerja.slice(
                         (currentPage - 1) * itemsPerPage,
                         currentPage * itemsPerPage
@@ -367,7 +441,24 @@ const Tahap4 = ({ onNext, onBack }) => {
               },
             ]}
           />
-          <Button onClick={handleCloseModal}>Close</Button>
+          <div className="flex flex-row justify-end items-right space-x-4 mt-3 ">
+            <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+              Kembali
+            </Button>
+            <Button
+              variant="solid_blue"
+              size="Medium"
+              // onClick={async () => {
+              //   try {
+              //     onNext();
+              //   } catch (error) {
+              //     alert(error.message);
+              //   }
+              // }}
+            >
+              Hapus & Lanjut
+            </Button>
+          </div>
         </div>
       </Modal>
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
