@@ -388,13 +388,13 @@ const InputVendor = ({ onNext, onBack }) => {
                 Label="Logo"
                 HelperText="Format .JPG, .PNG dan maksimal 512Kb"
               />
-              <TextInput
+              {/* <TextInput
                 label="Enter multiple values"
                 value={inputValues}
                 onChange={handleInputChange}
                 variant="multipleInput"
                 isRequired={true}
-              />
+              /> */}
               <FileInput
                 onFileSelect={handleDokPendukungFileSelect}
                 buttonText="Pilih File"

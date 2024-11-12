@@ -71,8 +71,8 @@ const Tahap1 = () => {
       const result = await response.json();
 
       if (response.ok && result.status === "success") {
-        console.log("Data berhasil dikirim:", result);
-        setAlertMessage("Data berhasil dikirim ke API.");
+        console.log("Data berhasil dikirim ke API:", result);
+        setAlertMessage("Data berhasil Disimpan.");
         setAlertSeverity("success");
         setAlertOpen(true);
         localStorage.setItem("informasi_umum_id", result.data.id);

@@ -57,6 +57,7 @@ const Tahap3 = ({ onNext, onBack }) => {
               data_vendor_id: vendor.id,
               nama_vendor: vendor.nama_vendor,
               pemilik_vendor: vendor.pemilik_vendor,
+              sumber_daya: vendor.sumber_daya,
               alamat: vendor.alamat,
               kontak: vendor.kontak,
             },
@@ -101,6 +102,7 @@ const Tahap3 = ({ onNext, onBack }) => {
       shortlist_vendor: selectedVendors.map((vendor) => ({
         data_vendor_id: vendor.data_vendor_id,
         nama_vendor: vendor.nama_vendor,
+        sumber_daya: vendor.sumber_daya,
         pemilik_vendor: vendor.pemilik_vendor,
         alamat: vendor.alamat,
         kontak: vendor.kontak || "",
@@ -139,6 +141,12 @@ const Tahap3 = ({ onNext, onBack }) => {
     {
       title: "Responden/Vendor",
       accessor: "nama_vendor",
+      type: "text",
+      width: "408px",
+    },
+    {
+      title: "Sumber Daya",
+      accessor: "sumber_daya",
       type: "text",
       width: "408px",
     },
