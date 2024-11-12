@@ -43,6 +43,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       return updatedVendors;
     });
   };
+  const [selectedVendorId, setSelectedVendorId] = useState(null);
+  const [vendorDetail, setVendorDetail] = useState([]);
   const [dataMaterial, setDataMaterial] = useState([]);
   const [dataPeralatan, setDataPeralatan] = useState([]);
   const [dataTenagaKerja, setDataTenagaKerja] = useState([]);
@@ -83,13 +85,15 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     fetchCommonInformation();
   }, [fetchCommonInformation]);
 
-  const handleOpenModal = () => {
-    console.log("Modal opened");
+  const handleOpenModal = (id) => {
+    setSelectedVendorId(id);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setSelectedVendorId(null);
+    setVendorDetail(null);
   };
 
   const handleSearchMaterial = (query) => {
@@ -105,6 +109,25 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     );
     setDataPeralatan(filteredPeralatan);
   };
+  useEffect(() => {
+    if (selectedVendorId && isModalOpen) {
+      const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+      axios
+        .get(
+          `https://api-ecatalogue-staging.online/api/perencanaan-data/shortlist-detail-identifikasi?id=${selectedVendorId}&informasi_umum_id=${informasi_umum_id}`
+        )
+        .then((response) => {
+          console.log(
+            "Vendor Detail Data (JSON):",
+            JSON.stringify(response.data, null, 2)
+          ); // Menampilkan data dalam format JSON
+          setVendorDetail(response.data.data); // Memastikan respons diatur ke vendorDetail
+        })
+        .catch((error) =>
+          console.error("Failed to fetch vendor details:", error)
+        );
+    }
+  }, [selectedVendorId, isModalOpen]);
 
   const handleSearchTenagaKerja = (query) => {
     // Implement search functionality for tenaga kerja
@@ -269,7 +292,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             buttonLabel: "Sunting PDF",
             alignment: "center",
             width: "300px",
-            onClick: handleOpenModal,
+            onClick: (row) => handleOpenModal(row.id), // Pass the vendor ID to handleOpenModal
           },
         ]}
         data={dataVendor.slice(
@@ -301,6 +324,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             ]}
             data={dataMaterial} // Display all material data in modal table
           /> */}
+          {console.log("Vendor Detail in Modal:", vendorDetail)}{" "}
+          {/* Check vendorDetail data */}
           <Tabs
             tabs={[
               {
@@ -318,30 +343,40 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           accessor: "select",
                           type: "checkbox",
                           width: "48px",
-                          onChange: (vendor) =>
+                          onChange: (material) =>
                             handleCheckboxChange(
-                              vendor,
-                              !isVendorSelected(vendor.id)
+                              material,
+                              !isVendorSelected(material.id)
                             ),
-                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                          isChecked: (material) =>
+                            isVendorSelected(material.id),
                         },
-                        { title: "Nama Material", accessor: "nama_material" },
+                        {
+                          title: "Nama Material",
+                          accessor: "nama_material",
+                        },
                         { title: "Satuan", accessor: "satuan" },
                         {
                           title: "Spesifikasi",
                           accessor: "spesifikasi",
                         },
                       ]}
-                      data={dataMaterial.slice(
-                        (currentPage - 1) * itemsPerPage,
-                        currentPage * itemsPerPage
-                      )}
+                      data={
+                        // vendorDetail?.identifikasi_kebutuhan?.material?.slice(
+                        //   (currentPage - 1) * itemsPerPage,
+                        //   currentPage * itemsPerPage
+                        // ) || []
+                        vendorDetail?.identifikasi_kebutuhan?.material ?? []
+                      }
                       setParentState={setCommonInformation}
                     />
                     <Pagination
                       currentPage={currentPage}
                       itemsPerPage={itemsPerPage}
-                      totalData={dataVendor.length} // Adjust this
+                      totalData={
+                        vendorDetail?.identifikasi_kebutuhan?.material
+                          ?.length || 0
+                      }
                       onPageChange={setCurrentPage}
                     />
                   </div>
@@ -362,16 +397,17 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           accessor: "select",
                           type: "checkbox",
                           width: "48px",
-                          onChange: (vendor) =>
+                          onChange: (equipment) =>
                             handleCheckboxChange(
-                              vendor,
-                              !isVendorSelected(vendor.id)
+                              equipment,
+                              !isVendorSelected(equipment.id)
                             ),
-                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                          isChecked: (equipment) =>
+                            isVendorSelected(equipment.id),
                         },
                         {
                           title: "Nama Peralatan",
-                          accessor: "nama_peralatan",
+                          accessor: "jenis_peralatan",
                         },
                         { title: "Satuan", accessor: "satuan" },
                         {
@@ -379,17 +415,23 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           accessor: "jumlah_kebutuhan",
                         },
                       ]}
-                      data={dataPeralatan.slice(
-                        (currentPage - 1) * itemsPerPage,
-                        currentPage * itemsPerPage
-                      )}
+                      data={
+                        vendorDetail?.identifikasi_kebutuhan?.peralatan
+                          ? vendorDetail.identifikasi_kebutuhan.peralatan.slice(
+                              (currentPage - 1) * itemsPerPage,
+                              currentPage * itemsPerPage
+                            )
+                          : []
+                      }
                       setParentState={setCommonInformation}
                     />
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={Math.ceil(
-                        dataPeralatan.length / itemsPerPage
-                      )}
+                      itemsPerPage={itemsPerPage}
+                      totalData={
+                        vendorDetail?.identifikasi_kebutuhan?.peralatan
+                          ?.length || 0
+                      }
                       onPageChange={setCurrentPage}
                     />
                   </div>
@@ -410,12 +452,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           accessor: "select",
                           type: "checkbox",
                           width: "48px",
-                          onChange: (vendor) =>
+                          onChange: (worker) =>
                             handleCheckboxChange(
-                              vendor,
-                              !isVendorSelected(vendor.id)
+                              worker,
+                              !isVendorSelected(worker.id)
                             ),
-                          isChecked: (vendor) => isVendorSelected(vendor.id),
+                          isChecked: (worker) => isVendorSelected(worker.id),
                         },
                         {
                           title: "Nama Pekerja",
@@ -423,17 +465,21 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                         { title: "Satuan", accessor: "satuan" },
                       ]}
+                      data={
+                        vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja?.slice(
+                          (currentPage - 1) * itemsPerPage,
+                          currentPage * itemsPerPage
+                        ) || []
+                      }
                       setParentState={setCommonInformation}
-                      data={dataTenagaKerja.slice(
-                        (currentPage - 1) * itemsPerPage,
-                        currentPage * itemsPerPage
-                      )}
                     />
                     <Pagination
                       currentPage={currentPage}
-                      totalPages={Math.ceil(
-                        dataTenagaKerja.length / itemsPerPage
-                      )}
+                      itemsPerPage={itemsPerPage}
+                      totalData={
+                        vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja
+                          ?.length || 0
+                      }
                       onPageChange={setCurrentPage}
                     />
                   </div>

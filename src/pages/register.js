@@ -54,7 +54,10 @@ const Register = ({ onClose }) => {
     //   setError("Ukuran berkas tidak boleh lebih dari 2 MB.");
     //   return;
     // }
-
+    const handleBalaiSelect = (selectedOption) => {
+      console.log("Selected Option:", selectedOption);
+      setBalai(selectedOption.value);
+    };
     setSelectedFile(file);
     setUploadState("processing");
     setError("");
@@ -208,6 +211,17 @@ const Register = ({ onClose }) => {
               isRequired={true}
               errorMessage="Balai tidak boleh kosong"
             />
+            {/* <Dropdown
+              options={balaiOptions}
+              label="Balai"
+              placeholder="Pilih Balai"
+              onSelect={(selectedOption) => setBalai(selectedOption.value)}
+              value={balaiOptions.find(
+                (option) => option.value === balai_kerja_id
+              )}
+              isRequired={true}
+              errorMessage="Balai tidak boleh kosong"
+            /> */}
           </div>
 
           <div className="flex-1 space-y-4">
@@ -219,7 +233,7 @@ const Register = ({ onClose }) => {
               errorMessage="Email tidak boleh kosong"
               onChange={(e) => setEmail(e.target.value)}
             />
-            <Dropdown
+            {/* <Dropdown
               options={satuanKerjaOptions}
               label="Satuan Kerja"
               placeholder="Pilih Satuan Kerja"
@@ -227,6 +241,36 @@ const Register = ({ onClose }) => {
               isRequired={true}
               errorMessage="Satuan Kerja tidak boleh kosong"
             />
+            <Dropdown
+              options={getOptions()}
+              label="Kategori Vendor/Perusahaan"
+              placeholder="Pilih kategori vendor/perusahaan"
+              errorMessage="Kategori tidak boleh kosong."
+              value={kategori_vendor_id}
+              onSelect={(selectedOption) => {
+                const associatedValues = labelToCategoriesMap[
+                  selectedOption.label
+                ] || [selectedOption.value];
+
+                setkategori_vendor_id(associatedValues.join(","));
+              }}
+              isRequired={true}
+            />{" "} */}
+            <Dropdown
+              options={satuanKerjaOptions}
+              label="Kategori Vendor/Perusahaan"
+              placeholder="Pilih kategori vendor/perusahaan"
+              errorMessage="Kategori tidak boleh kosong."
+              value={satuan_kerja_id}
+              onSelect={(selectedOption) => {
+                const associatedValues = labelToCategoriesMap[
+                  selectedOption.label
+                ] || [selectedOption.value];
+                setSatuanKerja(associatedValues.join(","));
+              }}
+              isRequired={true}
+            />
+
             <TextInput
               label="Nomor Telepon"
               placeholder="Masukkan Nomor Telepon"
