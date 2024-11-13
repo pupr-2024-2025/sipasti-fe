@@ -9,7 +9,8 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import { CloseCircle } from "iconsax-react";
 const Tahap4 = ({ onNext, onBack, onClose }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [commonInformation, setCommonInformation] = useState({
     kode_rup: "",
     nama_balai: "",
@@ -23,6 +24,20 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     return selectedVendors.some(
       (selectedVendor) => selectedVendor.data_vendor_id === vendorId
     );
+  };
+  const handleDeleteAndContinue = () => {
+    setIsConfirmModalOpen(true); // Open the confirmation modal
+  };
+
+  const confirmDelete = () => {
+    // This is where you can add logic to proceed with deletion
+    setIsConfirmModalOpen(false); // Close confirmation modal
+    console.log("Data deleted and proceeding to the next step.");
+    onNext(); // Proceed to the next step if required
+  };
+
+  const cancelDelete = () => {
+    setIsConfirmModalOpen(false); // Close confirmation modal without action
   };
   const handleCheckboxChange = (vendor, isChecked) => {
     console.log("Vendor ID yang dipilih:", vendor.id);
@@ -146,7 +161,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
 
     // Retrieve the informasi_umum_id from localStorage
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+    const dataToSend = {
+      id_vendor,
+      shortlist_vendor_id,
+      material,
+      peralatan,
+      tenaga_kerja,
+    };
 
+    // Debugging console log
+    console.log("Data yang akan dikirim:", dataToSend);
     // Prepare payload with the selected vendor's ID
     const payload = {
       id_vendor: selectedVendorId, // Only send the selected vendor ID
@@ -352,7 +376,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div className="p-4">
           <div className="flex justify-between items-center mb-4">
-            <h5 className="text-H5">Seleksi</h5>
+            <h5 className="text-H5">Shorlist MPK yang akan disurvei</h5>
             <button
               className="text-emphasis-on_surface-high"
               onClick={handleCloseModal}>
@@ -544,10 +568,34 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
               //     alert(error.message);
               //   }
               // }}
-              onClick={handleAdjustData}>
+              // onClick={handleAdjustData}
+              onClick={handleDeleteAndContinue}>
               Hapus & Lanjut
             </Button>
           </div>
+          <Modal isOpen={isConfirmModalOpen} onClose={cancelDelete}>
+            <div className="space-y-4 p-4">
+              <h2 className="text-H5">Peringatan</h2>
+              <p>
+                Dengan menekan tombol simpan Anda tidak dapat melakukan
+                perubahan data kembali.
+              </p>
+              <div className="flex justify-end space-x-4 mt-4">
+                <Button
+                  variant="outlined_yellow"
+                  size="Medium"
+                  onClick={cancelDelete}>
+                  Batal
+                </Button>
+                <Button
+                  variant="solid_blue"
+                  size="Medium"
+                  onClick={handleAdjustData}>
+                  Ya, Hapus
+                </Button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </Modal>
       <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
