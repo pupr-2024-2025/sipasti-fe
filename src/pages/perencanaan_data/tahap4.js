@@ -11,6 +11,8 @@ import { CloseCircle } from "iconsax-react";
 const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [selectedVendorFinal, setSelectedVendorFinal] = useState(null);
+
   const [commonInformation, setCommonInformation] = useState({
     kode_rup: "",
     nama_balai: "",
@@ -63,6 +65,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       return updatedVendors;
     });
   };
+  console.log("hai", selectedVendors);
   const [selectedVendorId, setSelectedVendorId] = useState(null);
   const [vendorDetail, setVendorDetail] = useState([]);
   const [dataMaterial, setDataMaterial] = useState([]);
@@ -70,6 +73,9 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [dataTenagaKerja, setDataTenagaKerja] = useState([]);
   const [dataVendor, setDataVendor] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [deletedDataMaterial, setDeletedDataMaterial] = useState([]);
+  const [deletedDataPeralatan, setDeletedDataPeralatan] = useState([]);
+  const [deletedDataTenagaKerja, setDeletedDataTenagaKerja] = useState([]);
   const itemsPerPage = 10;
 
   const fetchCommonInformation = useCallback(async () => {
@@ -114,6 +120,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     setIsModalOpen(false);
     setSelectedVendorId(null);
     setVendorDetail(null);
+    setSelectedVendors([]);
   };
 
   const handleSearchMaterial = (query) => {
@@ -142,6 +149,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             JSON.stringify(response.data, null, 2)
           ); // Menampilkan data dalam format JSON
           setVendorDetail(response.data.data); // Memastikan respons diatur ke vendorDetail
+          setSelectedVendorFinal(response?.data?.data?.id_vendor ?? 0);
         })
         .catch((error) =>
           console.error("Failed to fetch vendor details:", error)
@@ -161,19 +169,10 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
 
     // Retrieve the informasi_umum_id from localStorage
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
-    const dataToSend = {
-      id_vendor,
-      shortlist_vendor_id,
-      material,
-      peralatan,
-      tenaga_kerja,
-    };
 
-    // Debugging console log
-    console.log("Data yang akan dikirim:", dataToSend);
     // Prepare payload with the selected vendor's ID
     const payload = {
-      id_vendor: selectedVendorId, // Only send the selected vendor ID
+      id_vendor: Number(selectedVendorFinal), // Only send the selected vendor ID
       shortlist_vendor_id: informasi_umum_id
         ? parseInt(informasi_umum_id)
         : null, // Single value, check if it's available
@@ -200,7 +199,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       console.error("An error occurred during submission:", error);
     }
   };
-
+  console.log("tes", selectedVendorId);
   return (
     <div className="space-y-3">
       <h4 className="text-H4 text-emphasis-on_surface-high">
