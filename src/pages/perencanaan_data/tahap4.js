@@ -25,6 +25,9 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     );
   };
   const handleCheckboxChange = (vendor, isChecked) => {
+    console.log("Vendor ID yang dipilih:", vendor.id);
+    console.log("Apakah checkboxnya dipilih?", isChecked);
+
     setSelectedVendors((prevSelectedVendors) => {
       const updatedVendors = isChecked
         ? [
@@ -40,6 +43,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         : prevSelectedVendors.filter(
             (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
           );
+
+      console.log("Daftar selectedVendors yang diperbarui:", updatedVendors);
       return updatedVendors;
     });
   };
@@ -131,6 +136,45 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
 
   const handleSearchTenagaKerja = (query) => {
     // Implement search functionality for tenaga kerja
+  };
+  const handleAdjustData = async () => {
+    // Ensure a vendor is selected
+    if (!selectedVendorId) {
+      console.error("No vendor selected.");
+      return; // Stop the function if no vendor is selected
+    }
+
+    // Retrieve the informasi_umum_id from localStorage
+    const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+
+    // Prepare payload with the selected vendor's ID
+    const payload = {
+      id_vendor: selectedVendorId, // Only send the selected vendor ID
+      shortlist_vendor_id: informasi_umum_id
+        ? parseInt(informasi_umum_id)
+        : null, // Single value, check if it's available
+      material: dataMaterial.map((item) => ({ id: item.id })),
+      peralatan: dataPeralatan.map((item) => ({ id: item.id })),
+      tenaga_kerja: dataTenagaKerja.map((item) => ({ id: item.id })),
+    };
+
+    // Log payload to verify the data being sent
+    console.log("Payload being sent:", JSON.stringify(payload));
+
+    try {
+      const response = await axios.post(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/adjust-identifikasi-kebutuhan",
+        payload
+      );
+      if (response.status === 200) {
+        console.log("Data submitted successfully:", response.data);
+        // Proceed with success actions, like navigating to the next step
+      } else {
+        console.error("Error submitting data:", response.statusText);
+      }
+    } catch (error) {
+      console.error("An error occurred during submission:", error);
+    }
   };
 
   return (
@@ -362,10 +406,6 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                       ]}
                       data={
-                        // vendorDetail?.identifikasi_kebutuhan?.material?.slice(
-                        //   (currentPage - 1) * itemsPerPage,
-                        //   currentPage * itemsPerPage
-                        // ) || []
                         vendorDetail?.identifikasi_kebutuhan?.material ?? []
                       }
                       setParentState={setCommonInformation}
@@ -504,7 +544,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
               //     alert(error.message);
               //   }
               // }}
-            >
+              onClick={handleAdjustData}>
               Hapus & Lanjut
             </Button>
           </div>
