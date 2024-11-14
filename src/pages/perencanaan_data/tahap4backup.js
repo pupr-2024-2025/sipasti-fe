@@ -49,56 +49,29 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const cancelDelete = () => {
     setIsConfirmModalOpen(false); // Close confirmation modal without action
   };
-  const handleCheckboxChange = (vendor, isChecked, type) => {
+  const handleCheckboxChange = (vendor, isChecked) => {
     console.log("Vendor ID yang dipilih:", vendor.id);
     console.log("Apakah checkboxnya dipilih?", isChecked);
-    if (type === "material") {
-      if (isChecked) {
-        setDeletedDataMaterial((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataMaterial((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
-    }
-    if (type === "peralatan") {
-      if (isChecked) {
-        setDeletedDataPeralatan((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataPeralatan((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
-    }
-    if (type === "tenaga_kerja") {
-      if (isChecked) {
-        setDeletedDataTenagaKerja((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataTenagaKerja((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
-    }
 
-    // setSelectedVendors((prevSelectedVendors) => {
-    //   const updatedVendors = isChecked
-    //     ? [
-    //         ...prevSelectedVendors,
-    //         {
-    //           data_vendor_id: vendor.id,
-    //           nama_vendor: vendor.nama_vendor,
-    //           pemilik_vendor: vendor.pemilik_vendor,
-    //           alamat: vendor.alamat,
-    //           kontak: vendor.kontak,
-    //         },
-    //       ]
-    //     : prevSelectedVendors.filter(
-    //         (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
-    //       );
+    setSelectedVendors((prevSelectedVendors) => {
+      const updatedVendors = isChecked
+        ? [
+            ...prevSelectedVendors,
+            {
+              data_vendor_id: vendor.id,
+              nama_vendor: vendor.nama_vendor,
+              pemilik_vendor: vendor.pemilik_vendor,
+              alamat: vendor.alamat,
+              kontak: vendor.kontak,
+            },
+          ]
+        : prevSelectedVendors.filter(
+            (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
+          );
 
-    //   console.log("Daftar selectedVendors yang diperbarui:", updatedVendors);
-    //   return updatedVendors;
-    // });
+      console.log("Daftar selectedVendors yang diperbarui:", updatedVendors);
+      return updatedVendors;
+    });
   };
   console.log("hai", selectedVendors);
   const [selectedVendorId, setSelectedVendorId] = useState(null);
@@ -160,9 +133,6 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     setSelectedVendorId(null);
     setVendorDetail(null);
     setSelectedVendors([]);
-    setDataMaterial([]);
-    setDataPeralatan([]);
-    setDataTenagaKerja([]);
   };
 
   const handleSearchMaterial = (query) => {
@@ -260,19 +230,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
 
     // Retrieve the informasi_umum_id from localStorage
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
-    console.log(
-      "ispayload",
-      deletedDataTenagaKerja.map((item) => ({ id: item }))
-    );
+
     // Prepare payload with the selected vendor's ID
     const payload = {
       id_vendor: Number(selectedVendorFinal), // Only send the selected vendor ID
       shortlist_vendor_id: informasi_umum_id
         ? parseInt(informasi_umum_id)
         : null, // Single value, check if it's available
-      material: deletedDataMaterial.map((item) => ({ id: item })),
-      peralatan: deletedDataPeralatan.map((item) => ({ id: item })),
-      tenaga_kerja: deletedDataTenagaKerja.map((item) => ({ id: item })),
+      material: dataMaterial.map((item) => ({ id: item.id })),
+      peralatan: dataPeralatan.map((item) => ({ id: item.id })),
+      tenaga_kerja: dataTenagaKerja.map((item) => ({ id: item.id })),
     };
 
     // Log payload to verify the data being sent
@@ -285,6 +252,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       );
       if (response.status === 200) {
         console.log("Data submitted successfully:", response.data);
+        // Proceed with success actions, like navigating to the next step
       } else {
         console.error("Error submitting data:", response.statusText);
       }
@@ -292,6 +260,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       console.error("An error occurred during submission:", error);
     }
   };
+  console.log("tes", selectedVendorId);
   return (
     <div className="space-y-3">
       <h4 className="text-H4 text-emphasis-on_surface-high">
@@ -500,6 +469,15 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
               <CloseCircle size="24" />
             </button>
           </div>
+          {/* <Table
+            columns={[
+              { title: "Responder/Vendor", accessor: "nama_material" },
+              { title: "Pemilik Vendor", accessor: "satuan" },
+              { title: "Alamat", accessor: "jumlah_kebutuhan" },
+              { title: "Kontak", accessor: "jumlah_kebutuhan" },
+            ]}
+            data={dataMaterial} // Display all material data in modal table
+          /> */}
           {console.log("Vendor Detail in Modal:", vendorDetail)}{" "}
           {/* Check vendorDetail data */}
           <Tabs
@@ -522,8 +500,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           onChange: (material) =>
                             handleCheckboxChange(
                               material,
-                              !isVendorSelected(material.id),
-                              "material"
+                              !isVendorSelected(material.id)
                             ),
                           isChecked: (material) =>
                             isVendorSelected(material.id),
@@ -573,8 +550,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           onChange: (equipment) =>
                             handleCheckboxChange(
                               equipment,
-                              !isVendorSelected(equipment.id),
-                              "peralatan"
+                              !isVendorSelected(equipment.id)
                             ),
                           isChecked: (equipment) =>
                             isVendorSelected(equipment.id),
@@ -629,8 +605,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           onChange: (worker) =>
                             handleCheckboxChange(
                               worker,
-                              !isVendorSelected(worker.id),
-                              "tenaga_kerja"
+                              !isVendorSelected(worker.id)
                             ),
                           isChecked: (worker) => isVendorSelected(worker.id),
                         },
@@ -701,11 +676,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <Button
                   variant="solid_blue"
                   size="Medium"
-                  onClick={() => {
-                    handleAdjustData();
-                    setIsConfirmModalOpen(false);
-                    handleCloseModal();
-                  }}>
+                  onClick={handleAdjustData}>
                   Ya, Hapus
                 </Button>
               </div>
