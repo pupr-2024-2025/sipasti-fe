@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
+import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
 
@@ -20,6 +21,14 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [selectedVendors, setSelectedVendors] = useState([]);
   const [identifikasi_kebutuhan_id, setIdentifikasi_Kebutuhan_id] =
     useState("");
+  const [allDataMaterial, setAllDataMaterial] = useState([]);
+  const [allDataPeralatan, setAllDataPeralatan] = useState([]);
+  const [allDataTenagaKerja, setAllDataTenagaKerja] = useState([]);
+  const [allDataVendor, setAllDataVendor] = useState([]);
+  const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
+  const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
+  const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
+  const [searchVendorQuery, setSearchVendorQuery] = useState("");
 
   useEffect(() => {
     // Ambil identifikasi_kebutuhan_id dari localStorage
@@ -37,6 +46,11 @@ const Tahap3 = ({ onNext, onBack }) => {
           setMaterialData(material || []);
           setEquipmentData(peralatan || []);
           setLaborData(tenaga_kerja || []);
+          setAllDataMaterial(material || []);
+          // setDataPeralatan(peralatan || []);
+          setAllDataPeralatan(peralatan || []);
+          // setDataTenagaKerja(tenaga_kerja || []);
+          setAllDataTenagaKerja(tenaga_kerja || []);
         })
         .catch((error) => {
           console.error("Error fetching data:", error);
@@ -89,7 +103,55 @@ const Tahap3 = ({ onNext, onBack }) => {
     setFormErrors(newErrors);
     return isValid;
   };
+  const handleSearchMaterial = (query) => {
+    setSearchMaterialQuery(query);
 
+    if (!query) {
+      setMaterialData(allDataMaterial); // Reset if query is empty
+      return;
+    }
+
+    const filteredMaterials = allDataMaterial.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setMaterialData(filteredMaterials); // Use setMaterialData
+  };
+
+  // Search for Peralatan
+  const handleSearchPeralatan = (query) => {
+    setSearchPeralatanQuery(query);
+
+    if (!query) {
+      setEquipmentData(allDataPeralatan); // Reset if query is empty
+      return;
+    }
+
+    const filteredPeralatan = allDataPeralatan.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setEquipmentData(filteredPeralatan);
+  };
+
+  // Search for Tenaga Kerja
+  const handleSearchTenagaKerja = (query) => {
+    setSearchTenagaKerjaQuery(query);
+
+    if (!query) {
+      setLaborData(allDataTenagaKerja); // Reset if query is empty
+      return;
+    }
+
+    const filteredTenagaKerja = allDataTenagaKerja.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setLaborData(filteredTenagaKerja); // Use setLaborData instead of setDataTenagaKerja
+  };
   const handleSubmit = async () => {
     // Validasi input
     if (!validateInputs()) {
@@ -177,22 +239,22 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
+          <SearchBox
+            placeholder="Cari Material..."
+            onSearch={handleSearchMaterial}
+          />
           <Table
             columns={columns}
             data={materialData}
             errors={formErrors}
             setParentState={() => {}}
           />
-          {materialData.length > 0 && (
-            <Pagination
-              currentPage={currentPage.material}
-              totalPages={Math.ceil(materialData.length / itemsPerPage)}
-              onPageChange={(page) =>
-                setCurrentPage({ ...currentPage, material: page })
-              }
-              totalData={materialData.length}
-            />
-          )}
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalData={materialData.length}
+            onPageChange={setCurrentPage}
+          />
         </div>
       ),
     },
@@ -200,45 +262,45 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Peralatan",
       content: (
         <div className="mt-3 space-y-8">
+          <SearchBox
+            placeholder="Cari Peralatan..."
+            onSearch={handleSearchPeralatan}
+          />
           <Table
             columns={columns}
             data={equipmentData}
             errors={formErrors}
             setParentState={() => {}}
           />
-          {equipmentData.length > 0 && (
-            <Pagination
-              currentPage={currentPage.equipment}
-              totalPages={Math.ceil(equipmentData.length / itemsPerPage)}
-              onPageChange={(page) =>
-                setCurrentPage({ ...currentPage, equipment: page })
-              }
-              totalData={equipmentData.length}
-            />
-          )}
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalData={equipmentData.length}
+            onPageChange={setCurrentPage}
+          />
         </div>
       ),
     },
     {
       label: "Tenaga Kerja",
       content: (
-        <div className="mt-3 space-y-8">
+        <div className="mt-3 ">
+          <SearchBox
+            placeholder="Cari Tenaga Kerja..."
+            onSearch={handleSearchTenagaKerja}
+          />
           <Table
             columns={columns}
             data={laborData}
             errors={formErrors}
             setParentState={() => {}}
           />
-          {laborData.length > 0 && (
-            <Pagination
-              currentPage={currentPage.labor}
-              totalPages={Math.ceil(laborData.length / itemsPerPage)}
-              onPageChange={(page) =>
-                setCurrentPage({ ...currentPage, labor: page })
-              }
-              totalData={laborData.length}
-            />
-          )}
+          <Pagination
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            totalData={laborData.length}
+            onPageChange={setCurrentPage}
+          />
         </div>
       ),
     },

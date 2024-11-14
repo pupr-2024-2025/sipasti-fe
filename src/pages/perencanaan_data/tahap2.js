@@ -178,6 +178,7 @@ const Tahap2 = ({ onNext, onBack }) => {
   let result = [];
 
   const handleSearch = (query, tab) => {
+    // Tentukan data berdasarkan tab yang aktif
     const data =
       tab === "Material"
         ? dataMaterial
@@ -185,25 +186,27 @@ const Tahap2 = ({ onNext, onBack }) => {
         ? dataPeralatan
         : dataTenagaKerja;
 
-    // Pastikan kita memiliki data untuk difilter
-    if (data) {
-      result = data.filter((item) =>
-        Object.values(item).some((value) =>
-          value.toString().toLowerCase().includes(query.toLowerCase())
+    // Filter data berdasarkan query
+    const result = data
+      ? data.filter((item) =>
+          Object.values(item).some((value) =>
+            value.toString().toLowerCase().includes(query.toLowerCase())
+          )
         )
-      );
-    }
+      : [];
 
-    // Update state berdasarkan tab yang aktif
-    if (tab === "Material") {
-      setFilteredDataMaterial(result);
-    } else if (tab === "Peralatan") {
-      setFilteredDataPeralatan(result);
-    } else {
-      setFilteredDataTenagaKerja(result);
-    }
+    // Peta state filter yang akan di-update berdasarkan tab
+    const setFilteredData = {
+      Material: setFilteredDataMaterial,
+      Peralatan: setFilteredDataPeralatan,
+      "Tenaga Kerja": setFilteredDataTenagaKerja,
+    };
 
-    setCurrentPage(1); // Reset ke halaman pertama
+    // Update state yang sesuai dengan tab
+    setFilteredData[tab](result);
+
+    // Reset ke halaman pertama
+    setCurrentPage(1);
   };
 
   const handleDelete = (row, tab) => {
@@ -557,7 +560,8 @@ const Tahap2 = ({ onNext, onBack }) => {
           />
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(filteredDataMaterial.length / itemsPerPage)}
+            itemsPerPage={itemsPerPage}
+            totalData={dataMaterial.length}
             onPageChange={setCurrentPage}
           />
         </div>
@@ -619,7 +623,8 @@ const Tahap2 = ({ onNext, onBack }) => {
           />
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(filteredDataPeralatan.length / itemsPerPage)}
+            itemsPerPage={itemsPerPage}
+            totalData={dataPeralatan.length}
             onPageChange={setCurrentPage}
           />
         </div>
@@ -681,9 +686,8 @@ const Tahap2 = ({ onNext, onBack }) => {
           />
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(
-              filteredDataTenagaKerja.length / itemsPerPage
-            )}
+            itemsPerPage={itemsPerPage}
+            totalData={dataTenagaKerja.length}
             onPageChange={setCurrentPage}
           />
         </div>
@@ -693,13 +697,6 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const handleSubmitSecondStep = async () => {
     try {
-      // if (!stateMaterial) throw new Error("Data material belum diisi!");
-      // if (!statePeralatan) throw new Error("Data peralatan belum diisi!");
-      // if (!stateTenagaKerja) throw new Error("Data tenaga kerja belum diisi!");
-
-      // console.log(JSON.stringify(stateMaterial));
-      // console.log(JSON.stringify(statePeralatan));
-      // console.log(JSON.stringify(stateTenagaKerja));
       const informasi_umum_id = localStorage.getItem("informasi_umum_id");
       const requestData = {
         informasi_umum_id: informasi_umum_id,
@@ -708,53 +705,7 @@ const Tahap2 = ({ onNext, onBack }) => {
         tenaga_kerja: stateTenagaKerja,
       };
 
-      // const requestData = {
-      //   informasi_umum_id: informasi_umum_id,
-      //   material: [
-      //     {
-      //       ...stateMaterialFirst,
-      //       provincies_id: "",
-      //       cities_id: "",
-      //     },
-      //   ],
-      //   peralatan: [
-      //     {
-      //       ...statePeralatanFirst,
-      //       provincies_id: "",
-      //       cities_id: "",
-      //     },
-      //   ],
-      //   tenaga_kerja: [
-      //     {
-      //       ...stateTenagaKerjaFirst,
-      //       provincies_id: "",
-      //       cities_id: "",
-      //     },
-      //   ],
-      // };
       console.log(JSON.stringify(requestData));
-      // const response = await fetch(
-      //   "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-      //   {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify(requestData),
-      //   }
-      // );
-      // localStorage.setItem(
-      //   "identifikasi_kebutuhan_id",
-      //   response.body.data?.material[0].identifikasi_kebutuhan_id ?? 0
-      // );
-
-      // const responseData = await response.json(); // Parse the JSON data
-      // console.log(responseData);
-
-      // if (!response.ok) {
-      //   throw new Error("Submit tahap 2 gagal");
-      // }
-
       try {
         const response = await fetch(
           "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",

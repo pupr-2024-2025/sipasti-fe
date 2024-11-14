@@ -12,6 +12,14 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [selectedVendorFinal, setSelectedVendorFinal] = useState(null);
+  const [allDataMaterial, setAllDataMaterial] = useState([]);
+  const [allDataPeralatan, setAllDataPeralatan] = useState([]);
+  const [allDataTenagaKerja, setAllDataTenagaKerja] = useState([]);
+  const [allDataVendor, setAllDataVendor] = useState([]);
+  const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
+  const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
+  const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
+  const [searchVendorQuery, setSearchVendorQuery] = useState("");
 
   const [commonInformation, setCommonInformation] = useState({
     kode_rup: "",
@@ -99,8 +107,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
 
       setCommonInformation(data.data.informasi_umum || {});
       setDataMaterial(data.data.material || []);
+      setAllDataMaterial(data.data.material || []);
       setDataPeralatan(data.data.peralatan || []);
+      setAllDataPeralatan(data.data.peralatan || []);
       setDataTenagaKerja(data.data.tenaga_kerja || []);
+      setAllDataTenagaKerja(data.data.tenaga_kerja || []);
+      setAllDataVendor(data.data.shortlist_vendor || []);
       setDataVendor(data.data.shortlist_vendor || []);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -124,18 +136,70 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   };
 
   const handleSearchMaterial = (query) => {
+    setSearchMaterialQuery(query);
+
+    if (!query) {
+      setDataMaterial(allDataMaterial); // Reset if query is empty
+      return;
+    }
+
     const filteredMaterials = allDataMaterial.filter((item) =>
-      item.nama_material.toLowerCase().includes(query.toLowerCase())
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
     );
     setDataMaterial(filteredMaterials);
   };
 
+  // Search for Peralatan
   const handleSearchPeralatan = (query) => {
+    setSearchPeralatanQuery(query);
+
+    if (!query) {
+      setEquipmentData(allDataPeralatan); // Reset if query is empty
+      return;
+    }
+
     const filteredPeralatan = allDataPeralatan.filter((item) =>
-      item.nama_peralatan.toLowerCase().includes(query.toLowerCase())
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
     );
-    setDataPeralatan(filteredPeralatan);
+    setEquipmentData(filteredPeralatan); // Ganti setDataPeralatan dengan setEquipmentData
   };
+
+  // Search for Tenaga Kerja
+  const handleSearchTenagaKerja = (query) => {
+    setSearchTenagaKerjaQuery(query);
+
+    if (!query) {
+      setDataTenagaKerja(allDataTenagaKerja); // Reset if query is empty
+      return;
+    }
+
+    const filteredTenagaKerja = allDataTenagaKerja.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setDataTenagaKerja(filteredTenagaKerja);
+  };
+  const handleSearchVendor = (query) => {
+    setSearchVendorQuery(query);
+
+    if (!query) {
+      setDataVendor(allDataVendor); // Reset if query is empty
+      return;
+    }
+
+    const filteredVendors = allDataVendor.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(query.toLowerCase())
+      )
+    );
+    setDataVendor(filteredVendors);
+  };
+
   useEffect(() => {
     if (selectedVendorId && isModalOpen) {
       const informasi_umum_id = localStorage.getItem("informasi_umum_id");
@@ -157,9 +221,6 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     }
   }, [selectedVendorId, isModalOpen]);
 
-  const handleSearchTenagaKerja = (query) => {
-    // Implement search functionality for tenaga kerja
-  };
   const handleAdjustData = async () => {
     // Ensure a vendor is selected
     if (!selectedVendorId) {
@@ -264,7 +325,17 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                   columns={[
                     { title: "Nama Material", accessor: "nama_material" },
                     { title: "Satuan", accessor: "satuan" },
+                    { title: "Spesifikasi", accessor: "spesifikasi" },
+                    { title: "Ukuran", accessor: "ukuran" },
+                    { title: "Kodefikasi", accessor: "kodefikasi" },
+                    {
+                      title: "Kelompok Material",
+                      accessor: "kelompok_material",
+                    },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
+                    { title: "Merk", accessor: "merk" },
+                    { title: "Provinsi", accessor: "provincies_id" },
+                    { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
                   data={dataMaterial.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -274,7 +345,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <Pagination
                   currentPage={currentPage}
                   itemsPerPage={itemsPerPage}
-                  totalData={dataVendor.length} // Adjust this
+                  totalData={dataMaterial.length}
                   onPageChange={setCurrentPage}
                 />
               </div>
@@ -292,7 +363,17 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                   columns={[
                     { title: "Nama Peralatan", accessor: "nama_peralatan" },
                     { title: "Satuan", accessor: "satuan" },
+                    { title: "Spesifikasi", accessor: "spesifikasi" },
+                    { title: "Kapasitas", accessor: "satuan" },
+                    { title: "Kodefikasi", accessor: "kodefikasi" },
+                    {
+                      title: "Kelompok Peralatan",
+                      accessor: "kelompok_peralatan",
+                    },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
+                    { title: "Merk", accessor: "merk" },
+                    { title: "Provinsi", accessor: "provincies_id" },
+                    { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
                   data={dataPeralatan.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -301,7 +382,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 />
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={Math.ceil(dataPeralatan.length / itemsPerPage)}
+                  itemsPerPage={itemsPerPage}
+                  totalData={dataPeralatan.length}
                   onPageChange={setCurrentPage}
                 />
               </div>
@@ -318,9 +400,11 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <Table
                   columns={[
                     { title: "Nama Pekerja", accessor: "jenis_tenaga_kerja" },
-                    { title: "Kategori", accessor: "kategori" },
-                    { title: "Upah", accessor: "upah" },
+                    { title: "Satuan", accessor: "satuan" },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
+                    { title: "Kodefikasi", accessor: "kodefikasi" },
+                    { title: "Provinsi", accessor: "provincies_id" },
+                    { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
                   data={dataTenagaKerja.slice(
                     (currentPage - 1) * itemsPerPage,
@@ -329,7 +413,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 />
                 <Pagination
                   currentPage={currentPage}
-                  totalPages={Math.ceil(dataTenagaKerja.length / itemsPerPage)}
+                  itemsPerPage={itemsPerPage}
+                  totalData={dataTenagaKerja.length}
                   onPageChange={setCurrentPage}
                 />
               </div>
@@ -338,6 +423,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         ]}
       />
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
+      <SearchBox placeholder="Cari Vendor..." onSearch={handleSearchVendor} />
       <Table
         columns={[
           {
@@ -369,7 +455,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       />
       <Pagination
         currentPage={currentPage}
-        totalPages={Math.ceil(dataVendor.length / itemsPerPage)}
+        itemsPerPage={itemsPerPage}
+        totalData={dataVendor?.length || 0}
         onPageChange={setCurrentPage}
       />
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>

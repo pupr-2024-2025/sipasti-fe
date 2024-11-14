@@ -165,7 +165,11 @@ const Table = ({ columns, data, setParentState }) => {
                             placeholder={column.placeholder}
                             value={inputValues[row.id]?.[column.accessor] || ""}
                             onChange={(e) =>
-                              handleInputChange(row.id, column.accessor, e)
+                              handleInputChange(
+                                row.id,
+                                column.accessor,
+                                e.target.value
+                              )
                             }
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}

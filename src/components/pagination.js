@@ -129,7 +129,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalData, onPageChange }) => {
               }}
               className={`w-[40px] h-[40px] flex items-center justify-center rounded-full ${
                 currentPage === totalPages
-                  ? "bg-gray-300 text-emphasis-on_surface-high cursor-not-allowed opacity-60"
+                  ? "bg-custom-neutral-0 text-emphasis-on_surface-high cursor-not-allowed opacity-60"
                   : `bg-custom-neutral-0 text-emphasis-on_surface-high cursor-pointer transition-transform duration-200 ease-in-out ${
                       pressedPage === "next"
                         ? "bg-custom-blue-400"

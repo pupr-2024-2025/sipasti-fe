@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import colors from "../styles/colors";
-import { CloseCircle } from "iconsax-react";
+import { EyeSlash, Eye, CloseCircle } from "iconsax-react";
 
 const TextInput = ({
   label,
-  placeholder = "Enter values, separated by commas",
+  placeholder = "Lorem Ipsum",
   size = "Small",
   baseClasses = "p-3 min-h-12 w-full border-[1.5px]",
   variant = "border",
@@ -17,7 +17,12 @@ const TextInput = ({
   errorMessage = "This field is required",
   labelPosition = "top",
 }) => {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
 
   const sizes = {
     ExtraSmall: "text-ExtraSmall px-2 py-1",
@@ -32,37 +37,22 @@ const TextInput = ({
       "border border-surface-light-outline focus:outline-none focus:border-2 focus:border-custom-blue-500",
     disabledActive:
       "bg-white border border-surface-light-outline cursor-not-allowed text-emphasis-on_surface-high",
-    multipleInput:
-      "border border-surface-light-outline focus:outline-none focus:border-2 focus:border-custom-blue-500", // For multi-input
   };
 
   const handleBlur = () => {
-    if (isRequired) {
-      if (variant === "multipleInput") {
-        // For multiple input, ensure all values in the array are non-empty
-        const hasEmptyValue = value.some((val) => val.trim() === "");
-        setError(hasEmptyValue ? errorMessage : "");
-      } else {
-        // For single input, check if value is empty
-        setError(
-          !value || (typeof value === "string" && value.trim() === "")
-            ? errorMessage
-            : ""
-        );
-      }
+    if (isRequired && !value) {
+      setError(errorMessage);
+    } else {
+      setError("");
     }
   };
 
   const handleChange = (e) => {
-    if (disabledActive) return;
-
-    const newValue = e?.target?.value; // Access value only if target is defined
-    if (newValue !== undefined) {
-      onChange(newValue);
-    }
-
-    if (error) {
-      setError("");
+    if (!disabledActive) {
+      onChange(e);
+      if (error) {
+        setError("");
+      }
     }
   };
 
@@ -80,21 +70,43 @@ const TextInput = ({
               )}
             </label>
           )}
-          <input
-            type={type}
-            placeholder={placeholder}
-            value={variant === "multipleInput" ? value.join(", ") : value} // Join for display if multipleInput
-            onChange={handleChange}
-            onBlur={handleBlur}
-            disabled={disabledActive}
-            className={`${sizes[size]} ${baseClasses} ${
-              disabledActive
-                ? variants.disabledActive
-                : error
-                ? `border-custom-red-500 focus:border-custom-blue-500 border-2`
-                : variants[variant]
-            } rounded-[16px] transition-all duration-200 ease-in-out h-12`}
-          />
+          <div className="relative w-full">
+            <input
+              type={isPasswordVisible ? "text" : type}
+              placeholder={placeholder}
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              disabled={disabledActive} // Gunakan disabledActive di sini
+              className={`${sizes[size]} ${baseClasses} ${
+                disabledActive
+                  ? variants.disabledActive
+                  : error
+                  ? `border-custom-red-500 focus:border-custom-blue-500 border-2`
+                  : variants[variant]
+              } rounded-[16px] transition-all duration-200 ease-in-out h-12`}
+            />
+            {type === "password" && (
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center h-6 w-6">
+                {isPasswordVisible ? (
+                  <EyeSlash
+                    color={colors.Emphasis.Light.On_Surface.Medium}
+                    variant="Linear"
+                    size={24}
+                  />
+                ) : (
+                  <Eye
+                    color={colors.Emphasis.Light.On_Surface.Medium}
+                    variant="Linear"
+                    size={24}
+                  />
+                )}
+              </button>
+            )}
+          </div>
           {error && (
             <div className="flex items-center mt-1">
               <CloseCircle
@@ -124,9 +136,9 @@ const TextInput = ({
             )}
             <div className="relative w-full">
               <input
-                type={type}
+                type={isPasswordVisible ? "text" : type}
                 placeholder={placeholder}
-                value={variant === "multipleInput" ? value.join(", ") : value} // Join for display if multipleInput
+                value={value}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 disabled={disabledActive}
@@ -138,6 +150,26 @@ const TextInput = ({
                     : variants[variant]
                 } rounded-[16px] transition-all duration-200 ease-in-out h-12`}
               />
+              {type === "password" && (
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center justify-center h-6 w-6">
+                  {isPasswordVisible ? (
+                    <EyeSlash
+                      color={colors.Emphasis.Light.On_Surface.Medium}
+                      variant="Linear"
+                      size={24}
+                    />
+                  ) : (
+                    <Eye
+                      color={colors.Emphasis.Light.On_Surface.Medium}
+                      variant="Linear"
+                      size={24}
+                    />
+                  )}
+                </button>
+              )}
             </div>
           </div>
           {error && (
