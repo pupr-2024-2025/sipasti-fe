@@ -251,13 +251,29 @@ const Table = ({ columns, data, setParentState }) => {
                             handleCheckboxChange(row.id, checked);
                           }}
                         />
-                      ) : column.type === "button" ? (
+                      ) : column.type === "changingbutton" ? (
                         <div className="flex justify-center">
                           <Button
                             size="Small"
-                            variant="solid_blue"
-                            onClick={() => column.onClick(row)}>
-                            {column.buttonLabel}
+                            variant={
+                              typeof column.buttonLabel === "function"
+                                ? ((label) => {
+                                    switch (label) {
+                                      case "Lihat PDF":
+                                        return "outlined_blue";
+                                      case "Sunting PDF":
+                                        return "outlined_yellow";
+                                      default:
+                                        return "outlined_yellow";
+                                    }
+                                  })(column.buttonLabel(row))
+                                : "outlined_default"
+                            }
+                            onClick={() => column.onClick(row)}
+                            style={{ width: "150px" }}>
+                            {typeof column.buttonLabel === "function"
+                              ? column.buttonLabel(row)
+                              : column.buttonLabel}
                           </Button>
                         </div>
                       ) : (

@@ -5,14 +5,28 @@ const Modal = ({ isOpen, onClose, children }) => {
 
   useEffect(() => {
     if (isOpen) {
-      setIsVisible(true); // Memulai transisi ketika modal dibuka
+      setIsVisible(true);
     } else {
       const timer = setTimeout(() => {
-        setIsVisible(false); // Menyembunyikan modal setelah transisi keluar selesai
-      }, 500); // Durasi tutup 500ms
-      return () => clearTimeout(timer); // Membersihkan timer jika komponen unmount
+        setIsVisible(false);
+      }, 500);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onClose]);
 
   if (!isVisible && !isOpen) return null;
 

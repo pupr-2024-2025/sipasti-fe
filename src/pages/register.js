@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextInput from "../components/input";
 import Button from "../components/button";
 import FileInput from "../components/FileInput";
 import IconCheckbox from "../components/checkbox";
 import { CloseCircle } from "iconsax-react";
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/dropdownontopofmodal";
 import CustomAlert from "../components/alert";
 
 const Register = ({ onClose }) => {
@@ -22,9 +22,10 @@ const Register = ({ onClose }) => {
   const [errorMessages, setErrorMessages] = useState({});
   const [generalError, setGeneralError] = useState("");
   const [error, setError] = useState("");
-  const [alertMessage, setAlertMessage] = useState(null); // State for alert message
-  const [alertSeverity, setAlertSeverity] = useState("info"); // State for alert severity
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertSeverity, setAlertSeverity] = useState("info");
   const [alertOpen, setAlertOpen] = useState(false);
+  const [balaiOptions, setBalaiOptions] = useState([]);
 
   const labels = {
     nama_lengkap: "Nama Lengkap",
@@ -36,7 +37,30 @@ const Register = ({ onClose }) => {
     surat_penugasan_url: "SK/Surat Penugasan",
   };
 
-  const balaiOptions = [{ value: "1", label: "balai 007" }];
+  // const balaiOptions = [{ value: "1", label: "balai 007" }];
+  useEffect(() => {
+    const fetchBalaiOptions = async () => {
+      try {
+        const response = await fetch(
+          "https://api-ecatalogue-staging.online/api/get-balai-kerja"
+        );
+        const result = await response.json(); // Pastikan 'result' menerima seluruh respons API
+        if (result && result.data && Array.isArray(result.data)) {
+          // Akses 'result.data' karena data balai kerja ada di properti 'data'
+          const formattedOptions = result.data.map((item) => ({
+            value: item.id,
+            label: item.nama,
+          }));
+          setBalaiOptions(formattedOptions);
+        }
+      } catch (error) {
+        console.error("Error fetching balai options:", error);
+      }
+    };
+
+    fetchBalaiOptions();
+  }, []);
+
   const satuanKerjaOptions = [{ value: "1", label: "satker_007" }];
 
   const handleCheckboxChange = () => {
@@ -119,6 +143,17 @@ const Register = ({ onClose }) => {
     formData.append("satuan_kerja_id", satuan_kerja_id);
     formData.append("no_handphone", no_handphone);
     formData.append("surat_penugasan_url", surat_penugasan_url);
+    console.log("Data yang dikirim ke API:");
+    console.log({
+      email,
+      nama_lengkap,
+      nik,
+      nrp,
+      balai_kerja_id,
+      satuan_kerja_id,
+      no_handphone,
+      surat_penugasan_url,
+    });
 
     try {
       const response = await fetch(
@@ -262,12 +297,9 @@ const Register = ({ onClose }) => {
               placeholder="Pilih kategori vendor/perusahaan"
               errorMessage="Kategori tidak boleh kosong."
               value={satuan_kerja_id}
-              onSelect={(selectedOption) => {
-                const associatedValues = labelToCategoriesMap[
-                  selectedOption.label
-                ] || [selectedOption.value];
-                setSatuanKerja(associatedValues.join(","));
-              }}
+              onSelect={(selectedOption) =>
+                setSatuanKerja(selectedOption.value)
+              }
               isRequired={true}
             />
 

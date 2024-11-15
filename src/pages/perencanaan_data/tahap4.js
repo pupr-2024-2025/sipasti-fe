@@ -255,7 +255,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     // Ensure a vendor is selected
     if (!selectedVendorId) {
       console.error("No vendor selected.");
-      return; // Stop the function if no vendor is selected
+      return;
     }
 
     // Retrieve the informasi_umum_id from localStorage
@@ -285,6 +285,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       );
       if (response.status === 200) {
         console.log("Data submitted successfully:", response.data);
+        fetchCommonInformation();
       } else {
         console.error("Error submitting data:", response.statusText);
       }
@@ -472,11 +473,18 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
           {
             title: "Rancangan Kuesioner",
             accessor: "url_kuisioner",
-            type: "button",
-            buttonLabel: "Sunting PDF",
+            type: "changingbutton",
+            buttonLabel: (row) =>
+              row.url_kuisioner ? "Lihat PDF" : "Sunting PDF",
             alignment: "center",
             width: "300px",
-            onClick: (row) => handleOpenModal(row.id), // Pass the vendor ID to handleOpenModal
+            onClick: (row) => {
+              if (row.url_kuisioner) {
+                window.open(row.url_kuisioner, "_blank"); // Open PDF if url exists
+              } else {
+                handleOpenModal(row.id); // Otherwise, open modal to edit
+              }
+            },
           },
         ]}
         data={dataVendor.slice(
