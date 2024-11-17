@@ -13,10 +13,12 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [rowsToAdd, setRowsToAdd] = useState(0);
   const [provincies_idOptions, setprovincies_idOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [filteredData, setFilteredData] = useState([]);
   // const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
   const [dataMaterial, setDataMaterial] = useState([
     {
-      id: 1,
+      id: "",
       namaMaterial: "",
       satuan: "",
       spesifikasi: "",
@@ -29,7 +31,18 @@ const Tahap2 = ({ onNext, onBack }) => {
       kelompokMaterial: "",
     },
   ]);
-
+  const validateInput = (rowId, accessor, value) => {
+    const error = value
+      ? ""
+      : columns.find((col) => col.accessor === accessor)?.errorMessage;
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [rowId]: {
+        ...prevErrors[rowId],
+        [accessor]: error,
+      },
+    }));
+  };
   useEffect(() => {
     const fetchProvincesAndCities = async () => {
       try {
@@ -81,9 +94,9 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const [dataPeralatan, setDataPeralatan] = useState([
     {
-      id: 1,
-      namaPeralatan: "Excavator",
-      satuan: "unit",
+      id: "",
+      namaPeralatan: "",
+      satuan: "",
       tipe: "",
       merk: "",
       kapasitas: "",
@@ -96,9 +109,9 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const [dataTenagaKerja, setDataTenagaKerja] = useState([
     {
-      id: 1,
-      namaPekerja: "Tukang Batu",
-      kategori: "Pekerja Harian",
+      id: "1",
+      namaPekerja: "",
+      kategori: "",
       upah: "",
       jumlahKebutuhan: "",
       provincies_id: "",
@@ -177,36 +190,74 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   let result = [];
 
-  const handleSearch = (query, tab) => {
-    // Tentukan data berdasarkan tab yang aktif
-    const data =
-      tab === "Material"
-        ? dataMaterial
-        : tab === "Peralatan"
-        ? dataPeralatan
-        : dataTenagaKerja;
+  // const [filteredDataMaterial, setFilteredDataMaterial] =
+  //   useState(dataMaterial);
+  // const [filteredDataPeralatan, setFilteredDataPeralatan] =
+  //   useState(dataPeralatan);
+  // const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
+  //   useState(dataTenagaKerja);
 
-    // Filter data berdasarkan query
-    const result = data
-      ? data.filter((item) =>
-          Object.values(item).some((value) =>
-            value.toString().toLowerCase().includes(query.toLowerCase())
-          )
-        )
-      : [];
+  const handleSearch = (query) => {
+    console.log(`Searching for: ${query}`);
 
-    // Peta state filter yang akan di-update berdasarkan tab
-    const setFilteredData = {
-      Material: setFilteredDataMaterial,
-      Peralatan: setFilteredDataPeralatan,
-      "Tenaga Kerja": setFilteredDataTenagaKerja,
-    };
+    const lowerCaseQuery = query.toLowerCase();
 
-    // Update state yang sesuai dengan tab
-    setFilteredData[tab](result);
+    // Jika query kosong, reset ke data asli
+    if (!query) {
+      setFilteredDataMaterial(dataMaterial);
+      setFilteredDataPeralatan(dataPeralatan);
+      setFilteredDataTenagaKerja(dataTenagaKerja);
+      return;
+    }
 
-    // Reset ke halaman pertama
-    setCurrentPage(1);
+    // Filter data material
+    const newFilteredDataMaterial = dataMaterial.filter((item) => {
+      return columnsMaterial.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataMaterial(newFilteredDataMaterial);
+
+    // Filter data peralatan
+    const newFilteredDataPeralatan = dataPeralatan.filter((item) => {
+      return columnsPeralatan.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataPeralatan(newFilteredDataPeralatan);
+
+    // Filter data tenaga kerja
+    const newFilteredDataTenagaKerja = dataTenagaKerja.filter((item) => {
+      return columnsTenagaKerja.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataTenagaKerja(newFilteredDataTenagaKerja);
+
+    console.log(`Filtered Material Data:`, newFilteredDataMaterial);
+    console.log(`Filtered Peralatan Data:`, newFilteredDataPeralatan);
+    console.log(`Filtered Tenaga Kerja Data:`, newFilteredDataTenagaKerja);
   };
 
   const handleDelete = (row, tab) => {
@@ -248,6 +299,7 @@ const Tahap2 = ({ onNext, onBack }) => {
       placeholder: "Masukkan Nama Material",
       type: "textInput",
       width: "300px",
+      errorMessage: "Email tidak boleh kosong",
       required: true,
     },
     {
@@ -511,7 +563,11 @@ const Tahap2 = ({ onNext, onBack }) => {
       content: (
         <div className="mt-3 space-y-8">
           <div className="flex items-center space-x-3 mt-3">
-            <SearchBox placeholder="Cari Material..." onSearch={handleSearch} />
+            <SearchBox
+              placeholder="Cari Material..."
+              onSearch={handleSearch}
+              withFilter={true}
+            />
             <Button
               variant="solid_blue"
               size="Medium"

@@ -352,6 +352,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Material..."
                   onSearch={handleSearchMaterial}
+                  withFilter={true}
                 />
                 <Table
                   columns={[

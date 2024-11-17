@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { SearchNormal } from "iconsax-react";
+import { SearchNormal, Filter } from "iconsax-react";
 import colors from "../styles/colors";
 
 const SearchBox = ({
   placeholder = "Cari...",
   onSearch, // Fungsi yang dipanggil setiap kali input berubah
+  withFilter = false, // Menentukan apakah varian kedua digunakan
+  onFilterClick, // Fungsi untuk tombol filter
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -15,7 +17,7 @@ const SearchBox = ({
   };
 
   return (
-    <div className="flex items-center rounded-[12px] p-2 space-x-3">
+    <div className="flex items-center space-x-3">
       {/* Input dengan Search Icon */}
       <div className="relative w-full">
         <input
@@ -33,6 +35,16 @@ const SearchBox = ({
           />
         </div>
       </div>
+
+      {/* Tombol Filter untuk varian kedua */}
+      {withFilter && (
+        <button
+          onClick={onFilterClick}
+          className="flex items-center px-4 py-2 h-[46px] w-[119px] text-Medium  border-2 border-surface-light-outline text-emphasis-on_surface-medium rounded-[16px] hover:bg-custom-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-custom-blue-500">
+          <Filter size="20" color={colors.Emphasis.Light.On_Surface.Medium} />
+          <span className="text-Small font-medium">Filter</span>
+        </button>
+      )}
     </div>
   );
 };

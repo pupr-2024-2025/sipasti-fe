@@ -10,7 +10,7 @@ const Dropdown = ({
   onSelect,
   value,
   isRequired = false,
-  errorMessage = "This field is required",
+  errorMessage = "Wajib Diisi",
 }) => {
   const [selectedValue, setSelectedValue] = useState(value || null);
   const [error, setError] = useState("");
