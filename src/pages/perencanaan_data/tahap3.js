@@ -24,11 +24,17 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [allDataMaterial, setAllDataMaterial] = useState([]);
   const [allDataPeralatan, setAllDataPeralatan] = useState([]);
   const [allDataTenagaKerja, setAllDataTenagaKerja] = useState([]);
+  const [activeFilterColumn, setActiveFilterColumn] = useState(null);
   const [allDataVendor, setAllDataVendor] = useState([]);
   const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
   const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
   const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
   const [searchVendorQuery, setSearchVendorQuery] = useState("");
+  const getPaginatedData = (data, page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
 
   useEffect(() => {
     // Ambil identifikasi_kebutuhan_id dari localStorage
@@ -103,55 +109,59 @@ const Tahap3 = ({ onNext, onBack }) => {
     setFormErrors(newErrors);
     return isValid;
   };
-  const handleSearchMaterial = (query) => {
-    setSearchMaterialQuery(query);
+  const handleFilterClick = (filters) => {
+    // Cari filter yang dicentang (checked: true)
+    const activeFilter = filters.find((filter) => filter.checked);
 
-    if (!query) {
-      setMaterialData(allDataMaterial); // Reset if query is empty
+    if (!activeFilter) {
+      console.log("No active filter selected.");
       return;
     }
 
-    const filteredMaterials = allDataMaterial.filter((item) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(query.toLowerCase())
-      )
-    );
-    setMaterialData(filteredMaterials); // Use setMaterialData
+    console.log("Filter clicked:", activeFilter.accessor); // Filter yang dipilih
+
+    // Update activeFilterColumn untuk toggle antara filter yang aktif atau null
+    setActiveFilterColumn((prev) => {
+      const newActiveColumn =
+        prev === activeFilter.accessor ? null : activeFilter.accessor;
+      console.log("Active filter column updated to:", newActiveColumn);
+      return newActiveColumn;
+    });
+
+    // Panggil fungsi pencarian untuk langsung menerapkan filter
+    handleSearch("", "material"); // Ganti 'material' dengan tab yang sesuai
   };
 
-  // Search for Peralatan
-  const handleSearchPeralatan = (query) => {
-    setSearchPeralatanQuery(query);
+  const handleSearch = (query, tab) => {
+    const setDataByTab = {
+      material: setMaterialData,
+      equipment: setEquipmentData,
+      labor: setLaborData,
+    };
+    const allDataByTab = {
+      material: allDataMaterial,
+      equipment: allDataPeralatan,
+      labor: allDataTenagaKerja,
+    };
 
-    if (!query) {
-      setEquipmentData(allDataPeralatan); // Reset if query is empty
-      return;
-    }
+    // Menyaring data berdasarkan checkbox yang terpilih
+    const filteredData = allDataByTab[tab].filter((item) => {
+      if (activeFilterColumn) {
+        // Jika ada kolom filter aktif, hanya cek kolom itu
+        return String(item[activeFilterColumn])
+          .toLowerCase()
+          .includes(query.toLowerCase());
+      } else {
+        // Jika tidak ada kolom filter aktif, cek seluruh kolom
+        return Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(query.toLowerCase())
+        );
+      }
+    });
 
-    const filteredPeralatan = allDataPeralatan.filter((item) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(query.toLowerCase())
-      )
-    );
-    setEquipmentData(filteredPeralatan);
+    setDataByTab[tab](filteredData);
   };
 
-  // Search for Tenaga Kerja
-  const handleSearchTenagaKerja = (query) => {
-    setSearchTenagaKerjaQuery(query);
-
-    if (!query) {
-      setLaborData(allDataTenagaKerja); // Reset if query is empty
-      return;
-    }
-
-    const filteredTenagaKerja = allDataTenagaKerja.filter((item) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(query.toLowerCase())
-      )
-    );
-    setLaborData(filteredTenagaKerja); // Use setLaborData instead of setDataTenagaKerja
-  };
   const handleSubmit = async () => {
     // Validasi input
     if (!validateInputs()) {
@@ -190,6 +200,17 @@ const Tahap3 = ({ onNext, onBack }) => {
     } catch (error) {
       console.error("Error posting data:", error);
     }
+  };
+  const filterOptions = [
+    { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
+    { label: "Sumber Daya", accessor: "sumber_daya", checked: false },
+    { label: "Pemilik Vendor", accessor: "pemilik_vendor", checked: false },
+    { label: "Alamat", accessor: "alamat", checked: false },
+    { label: "Kontak", accessor: "kontak", checked: false },
+  ];
+
+  const handleFilterUpdate = (filters) => {
+    console.log("Updated Filters:", filters);
   };
 
   const columns = [
@@ -239,21 +260,31 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Material",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox
-            placeholder="Cari Material..."
-            onSearch={handleSearchMaterial}
-          />
-          <Table
-            columns={columns}
-            data={materialData}
-            errors={formErrors}
-            setParentState={() => {}}
-          />
+          <div className="space-y-3">
+            <SearchBox
+              placeholder="Cari Material..."
+              onSearch={(query) => handleSearch(query, "material")}
+              withFilter={true}
+              filterOptions={filterOptions}
+              onFilterClick={(filters) => {
+                console.log("Filter option clicked:", filters); // Debug
+                handleFilterClick(filters);
+              }}
+            />
+            <Table
+              columns={columns}
+              data={materialData}
+              errors={formErrors}
+              setParentState={() => {}}
+            />
+          </div>
           <Pagination
-            currentPage={currentPage}
+            currentPage={currentPage.material}
             itemsPerPage={itemsPerPage}
             totalData={materialData.length}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) =>
+              setCurrentPage((prev) => ({ ...prev, material: page }))
+            }
           />
         </div>
       ),
@@ -262,21 +293,31 @@ const Tahap3 = ({ onNext, onBack }) => {
       label: "Peralatan",
       content: (
         <div className="mt-3 space-y-8">
-          <SearchBox
-            placeholder="Cari Peralatan..."
-            onSearch={handleSearchPeralatan}
-          />
-          <Table
-            columns={columns}
-            data={equipmentData}
-            errors={formErrors}
-            setParentState={() => {}}
-          />
+          <div className="space-y-3">
+            <SearchBox
+              placeholder="Cari Peralatan..."
+              onSearch={(query) => handleSearch(query, "equipment")}
+              withFilter={true}
+              filterOptions={filterOptions}
+              onFilterClick={(filters) => {
+                console.log("Filter option clicked:", filters); // Debug
+                handleFilterClick(filters);
+              }}
+            />
+            <Table
+              columns={columns}
+              data={equipmentData}
+              errors={formErrors}
+              setParentState={() => {}}
+            />
+          </div>
           <Pagination
-            currentPage={currentPage}
+            currentPage={currentPage.equipment}
             itemsPerPage={itemsPerPage}
             totalData={equipmentData.length}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) =>
+              setCurrentPage((prev) => ({ ...prev, equipment: page }))
+            }
           />
         </div>
       ),
@@ -284,22 +325,32 @@ const Tahap3 = ({ onNext, onBack }) => {
     {
       label: "Tenaga Kerja",
       content: (
-        <div className="mt-3 ">
-          <SearchBox
-            placeholder="Cari Tenaga Kerja..."
-            onSearch={handleSearchTenagaKerja}
-          />
-          <Table
-            columns={columns}
-            data={laborData}
-            errors={formErrors}
-            setParentState={() => {}}
-          />
+        <div className="mt-3 space-y-8">
+          <div className="space-y-3">
+            <SearchBox
+              placeholder="Cari Tenaga Kerja..."
+              onSearch={(query) => handleSearch(query, "labor")}
+              withFilter={true}
+              filterOptions={filterOptions}
+              onFilterClick={(filters) => {
+                console.log("Filter option clicked:", filters); // Debug
+                handleFilterClick(filters);
+              }}
+            />
+            <Table
+              columns={columns}
+              data={laborData}
+              errors={formErrors}
+              setParentState={() => {}}
+            />
+          </div>
           <Pagination
-            currentPage={currentPage}
+            currentPage={currentPage.labor}
             itemsPerPage={itemsPerPage}
             totalData={laborData.length}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) =>
+              setCurrentPage((prev) => ({ ...prev, labor: page }))
+            }
           />
         </div>
       ),

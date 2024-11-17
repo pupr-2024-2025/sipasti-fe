@@ -112,7 +112,44 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [deletedDataPeralatan, setDeletedDataPeralatan] = useState([]);
   const [deletedDataTenagaKerja, setDeletedDataTenagaKerja] = useState([]);
   const itemsPerPage = 10;
-
+  const filterOptionsMaterial = [
+    { label: "Material", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Spesifikasi", accessor: "pemilik_vendor", checked: false },
+    { label: "Ukuran", accessor: "alamat", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Kelompok Material", accessor: "kontak", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "kontak", checked: false },
+    { label: "Merk", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsPeralatan = [
+    { label: "Nama Peralatan", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Spesifikasi", accessor: "pemilik_vendor", checked: false },
+    { label: "Kapasitas", accessor: "alamat", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Kelompok Peralatan", accessor: "kontak", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "kontak", checked: false },
+    { label: "Merk", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsTenagaKerja = [
+    { label: "Nama Pekerja", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "pemilik_vendor", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsVendor = [
+    { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
+    { label: "Pemilik Vendor", accessor: "pemilik_vendor", checked: false },
+    { label: "Alamat", accessor: "alamat", checked: false },
+    { label: "Kontak", accessor: "kontak", checked: false },
+  ];
   const fetchCommonInformation = useCallback(async () => {
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
 
@@ -353,6 +390,11 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                   placeholder="Cari Material..."
                   onSearch={handleSearchMaterial}
                   withFilter={true}
+                  filterOptions={filterOptionsMaterial}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -391,6 +433,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Peralatan..."
                   onSearch={handleSearchPeralatan}
+                  withFilter={true}
+                  filterOptions={filterOptionsPeralatan}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -429,6 +477,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Tenaga Kerja..."
                   onSearch={handleSearchTenagaKerja}
+                  withFilter={true}
+                  filterOptions={filterOptionsTenagaKerja}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -456,7 +510,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         ]}
       />
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
-      <SearchBox placeholder="Cari Vendor..." onSearch={handleSearchVendor} />
+      <SearchBox
+        placeholder="Cari Vendor..."
+        onSearch={handleSearchVendor}
+        withFilter={true}
+        filterOptions={filterOptionsVendor}
+        onFilterClick={(filters) => {
+          console.log("Filter option clicked:", filters); // Debug
+          handleFilterClick(filters);
+        }}
+      />
       <Table
         columns={[
           {
@@ -520,6 +583,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Material..."
                       onSearch={handleSearchMaterial}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
@@ -571,6 +635,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Peralatan..."
                       onSearch={handleSearchPeralatan}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
@@ -627,6 +692,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Tenaga Kerja..."
                       onSearch={handleSearchTenagaKerja}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
