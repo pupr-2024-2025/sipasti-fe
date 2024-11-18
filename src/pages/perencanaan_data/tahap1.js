@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navigationbar";
 import Tabs from "../../components/Tabs";
 import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
+import Dropdown from "../../components/dropdown";
 import Tahap2 from "./tahap2";
 import Tahap3 from "./tahap3";
 import Tahap4 from "./tahap4";
@@ -18,6 +19,7 @@ const Tahap1 = () => {
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("info");
+  const [balai_kerja_id, setBalai] = useState("");
 
   // State for Input Manual tab
   const [koderupManual, setKodeRUPManual] = useState("");
@@ -27,6 +29,7 @@ const Tahap1 = () => {
   const [jabatanPPKManual, setJabatanPPKManual] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [filterCriteria, setFilterCriteria] = useState("");
+  const [balaiOptions, setBalaiOptions] = useState([]);
 
   const handleCariData = () => {
     console.log("Mencari data di SIPASTI dengan Kode RUP:", koderupSipasti);
@@ -94,6 +97,28 @@ const Tahap1 = () => {
       return false;
     }
   };
+  useEffect(() => {
+    const fetchBalaiOptions = async () => {
+      try {
+        const response = await fetch(
+          "https://api-ecatalogue-staging.online/api/get-balai-kerja"
+        );
+        const result = await response.json(); // Pastikan 'result' menerima seluruh respons API
+        if (result && result.data && Array.isArray(result.data)) {
+          // Akses 'result.data' karena data balai kerja ada di properti 'data'
+          const formattedOptions = result.data.map((item) => ({
+            value: item.id,
+            label: item.nama,
+          }));
+          setBalaiOptions(formattedOptions);
+        }
+      } catch (error) {
+        console.error("Error fetching balai options:", error);
+      }
+    };
+
+    fetchBalaiOptions();
+  }, []);
   const tabs = [
     {
       label: "Sinkron data dari SIPASTI",
@@ -161,7 +186,20 @@ const Tahap1 = () => {
             errorMessage="Kode RUP tidak boleh kosong"
             onChange={(e) => setKodeRUPManual(e.target.value)}
           />
-          <TextInput
+          <Dropdown
+            options={balaiOptions}
+            label="Nama Balai"
+            placeholder="Pilih Balai"
+            onSelect={(selectedOption) =>
+              setNamaBalaiManual(String(selectedOption?.value || ""))
+            }
+            isRequired={true}
+            value={namaBalaiManual}
+            labelWidth="220px"
+            labelPosition="left"
+            errorMessage="Balai tidak boleh kosong"
+          />
+          {/* <TextInput
             label="Nama Balai"
             labelPosition="left"
             placeholder="Masukkan Nama Balai"
@@ -170,7 +208,7 @@ const Tahap1 = () => {
             value={namaBalaiManual}
             errorMessage="Nama balai tidak boleh kosong"
             onChange={(e) => setNamaBalaiManual(e.target.value)}
-          />
+          /> */}
 
           <TextInput
             label="Nama Paket"
@@ -209,9 +247,13 @@ const Tahap1 = () => {
 
   const areFieldsFilled = () => {
     return (
+      typeof namaBalaiManual === "string" &&
       namaBalaiManual.trim() !== "" &&
+      typeof namaPaketManual === "string" &&
       namaPaketManual.trim() !== "" &&
+      typeof namaPPKManual === "string" &&
       namaPPKManual.trim() !== "" &&
+      typeof jabatanPPKManual === "string" &&
       jabatanPPKManual.trim() !== ""
     );
   };
