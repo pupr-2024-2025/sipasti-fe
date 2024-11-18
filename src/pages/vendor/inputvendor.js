@@ -193,14 +193,14 @@ const InputVendor = ({ onNext, onBack }) => {
         { value: "4", label: "Pedagang Campuran" },
       ],
       2: [
-        { value: "1", label: "Produsen" },
-        { value: "2", label: "Jasa Penyewaan Alat Berat" },
-        { value: "3", label: "Kontraktor" },
-        { value: "4", label: "Agen" },
+        { value: "8", label: "Produsen" },
+        { value: "5", label: "Jasa Penyewaan Alat Berat" },
+        { value: "6", label: "Kontraktor" },
+        { value: "7", label: "Agen" },
       ],
       3: [
-        { value: "1", label: "Kontraktor" },
-        { value: "2", label: "Pemerintah Daerah" },
+        { value: "9", label: "Kontraktor" },
+        { value: "10", label: "Pemerintah Daerah" },
       ],
     };
     const combinedOptionsMap = new Map();
