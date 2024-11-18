@@ -79,26 +79,6 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
       }
     }
-
-    // setSelectedVendors((prevSelectedVendors) => {
-    //   const updatedVendors = isChecked
-    //     ? [
-    //         ...prevSelectedVendors,
-    //         {
-    //           data_vendor_id: vendor.id,
-    //           nama_vendor: vendor.nama_vendor,
-    //           pemilik_vendor: vendor.pemilik_vendor,
-    //           alamat: vendor.alamat,
-    //           kontak: vendor.kontak,
-    //         },
-    //       ]
-    //     : prevSelectedVendors.filter(
-    //         (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
-    //       );
-
-    //   console.log("Daftar selectedVendors yang diperbarui:", updatedVendors);
-    //   return updatedVendors;
-    // });
   };
   console.log("hai", selectedVendors);
   const [selectedVendorId, setSelectedVendorId] = useState(null);
@@ -655,7 +635,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                         {
                           title: "Nama Peralatan",
-                          accessor: "jenis_peralatan",
+                          accessor: "nama_peralatan",
                         },
                         { title: "Satuan", accessor: "satuan" },
                         {
