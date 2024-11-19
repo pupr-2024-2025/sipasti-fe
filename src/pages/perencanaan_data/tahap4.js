@@ -531,7 +531,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             accessor: "url_kuisioner",
             type: "changingbutton",
             buttonLabel: (row) =>
-              row.url_kuisioner ? "Lihat PDF" : "Sunting PDF",
+              row.url_kuisioner ? "Lihat PDF" : "Edit PDF",
             alignment: "center",
             width: "300px",
             onClick: (row) => {
@@ -647,7 +647,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                         {
                           title: "Nama Peralatan",
-                          accessor: "jenis_peralatan",
+                          accessor: "nama_peralatan",
                         },
                         { title: "Satuan", accessor: "satuan" },
                         {

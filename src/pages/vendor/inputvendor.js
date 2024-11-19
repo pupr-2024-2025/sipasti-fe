@@ -250,7 +250,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Vendor/Perusahaan tidak boleh kosong."
               value={nama_vendor}
-              onChange={(e) => setnama_vendor(e)}
+              onChange={(e) => setnama_vendor(e.target.value)}
             />
             <div className="space-b-1">
               <p className="text-B2">Jenis Responden/ Vendor</p>
@@ -295,7 +295,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Sumber daya tidak boleh kosong."
               value={sumber_daya}
-              onChange={(e) => setsumber_daya(e)}
+              onChange={(e) => setsumber_daya(e.target.value)}
             />
             <TextInput
               label="Alamat vendor atau perusahaan"
@@ -305,7 +305,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Alamat tidak boleh kosong."
               value={alamat}
-              onChange={(e) => setalamat(e)}
+              onChange={(e) => setalamat(e.target.value)}
             />
             <div className="flex gap-8">
               <TextInput
@@ -317,7 +317,7 @@ const InputVendor = ({ onNext, onBack }) => {
                 errorMessage="Nomor telepon tidak boleh kosong."
                 name="phone"
                 value={no_telepon}
-                onChange={(e) => setno_telepon(e)}
+                onChange={(e) => setno_telepon(e.target.value)}
                 className="flex-1"
               />
               <TextInput
@@ -328,7 +328,7 @@ const InputVendor = ({ onNext, onBack }) => {
                 isRequired={true}
                 errorMessage="Nomor HP tidak boleh kosong."
                 value={no_hp}
-                onChange={(e) => setno_hp(e)}
+                onChange={(e) => setno_hp(e.target.value)}
                 className="flex-1"
               />
             </div>
@@ -340,7 +340,7 @@ const InputVendor = ({ onNext, onBack }) => {
               isRequired={true}
               errorMessage="Nama PIC tidak boleh kosong."
               value={nama_pic}
-              onChange={(e) => setnama_pic(e)}
+              onChange={(e) => setnama_pic(e.target.value)}
             />
             <div className="flex gap-8">
               <Dropdown
@@ -373,7 +373,7 @@ const InputVendor = ({ onNext, onBack }) => {
                 placeholder="Masukkan Koordinat"
                 type="text"
                 value={koordinat}
-                onChange={(e) => setkoordinat(e)}
+                onChange={(e) => setkoordinat(e.target.value)}
                 state="border"
               />
               <FileInput
