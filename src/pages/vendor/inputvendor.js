@@ -22,33 +22,97 @@ const InputVendor = ({ onNext, onBack }) => {
   const [provinsiOptions, setProvinsiOptions] = useState([]);
   const [kotaOptions, setKotaOptions] = useState([]);
   const [koordinat, setkoordinat] = useState("");
-  const [logoUploadState, setLogoUploadState] = useState("default");
-  const [dok_pendukung_url, setDokPendukungUrl] = useState("null");
+  const [logoUploadState, setlogoUploadState] = useState("default");
+  const [dok_pendukung_url, setDokPendukungUrl] = useState(null);
   const [logoUploadProgress, setLogoUploadProgress] = useState(0);
-  const [logo_url, setLogoUrl] = useState("null");
+  const [logo_url, setLogoUrl] = useState(null);
   const [inputValues, setInputValues] = useState([]);
-
-  const handleInputChange = (newValues) => {
-    setInputValues(newValues); // This will be an array of values
-  };
-
-  const handleLogoFileSelect = (files) =>
-    handleFileSelect(
-      files,
-      setLogoUrl,
-      setLogoUploadState,
-      setLogoUploadProgress
-    );
-  const handleDokPendukungFileSelect = (files) =>
-    handleFileSelect(
-      files,
-      setDokPendukungUrl,
-      setDokPendukungUploadState,
-      setDokPendukungUploadProgress
-    );
-
+  const [uploadState, setUploadState] = useState("default");
+  const [error, setError] = useState("");
+  const [progress, setProgress] = useState(0);
   const [dokPendukungUploadState, setDokPendukungUploadState] =
     useState("default");
+
+  const handleInputChange = (newValues) => {
+    setInputValues(newValues);
+  };
+
+  const handleLogoFileSelect = (files) => {
+    if (files.length === 0) {
+      setError("File wajib dipilih.");
+      return;
+    }
+
+    const file = files[0];
+    setLogoUrl(file);
+    setlogoUploadState("processing");
+    setError("");
+    try {
+      // Simpan file langsung ke state
+      setLogoUrl(file); // Simpan file dengan format lengkap (File Object)
+      setlogoUploadState("done");
+    } catch (error) {
+      console.error("Error processing logo file:", error);
+      setlogoUploadState("default");
+    }
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setlogoUploadState("done");
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
+  };
+
+  const handleDokPendukungFileSelect = (files) => {
+    if (files.length === 0) {
+      setError("File wajib dipilih.");
+      return;
+    }
+
+    const file = files[0];
+    setDokPendukungUrl(file);
+    setDokPendukungUploadState("processing");
+    setError("");
+
+    try {
+      // Simpan file langsung ke state
+      setDokPendukungUrl(file); // Simpan file dengan format lengkap (File Object)
+      setDokPendukungUploadState("done");
+    } catch (error) {
+      console.error("Error processing dokumen pendukung file:", error);
+      setDokPendukungUploadState("default");
+    }
+    // Simulate upload progress
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setDokPendukungUploadState("done");
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
+  };
+
+  const handleLogoCancel = () => {
+    setlogoUploadState("default");
+    setLogoUrl(null);
+    setProgress(0);
+  };
+
+  const handleDokPendukungCancel = () => {
+    setDokPendukungUploadState("default");
+    setDokPendukungUrl(null);
+    setProgress(0);
+  };
+
+  useState("default");
   const [dokPendukungUploadProgress, setDokPendukungUploadProgress] =
     useState(0);
 
@@ -116,21 +180,6 @@ const InputVendor = ({ onNext, onBack }) => {
     });
   };
 
-  const handleFileSelect = (files, setFileUrl, setUploadState, setProgress) => {
-    console.log("Selected file:", files);
-    setFileUrl(files[0]);
-    setUploadState("processing");
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setUploadState("done");
-        }
-        return prev + 10;
-      });
-    }, 500);
-  };
-
   const saveVendorData = () => {
     const jsonVendorTypes = selectedTypes.map((type) => parseInt(type));
     const jsonCategories = selectedTypes.map((type) => parseInt(type));
@@ -142,45 +191,37 @@ const InputVendor = ({ onNext, onBack }) => {
       ? dok_pendukung_url.join(", ")
       : dok_pendukung_url || "";
 
-    const payload = {
-      nama_vendor,
-      jenis_vendor_id: JSON.stringify(jsonVendorTypes),
-      kategori_vendor_id: JSON.stringify(jsonCategories),
-      alamat,
-      no_telepon,
-      no_hp,
-      sumber_daya,
-      nama_pic,
-      provinsi_id,
-      kota_id,
-      koordinat,
-      logo_url: logo_url.name,
-      dok_pendukung_url: dok_pendukung_url.name,
-    };
+    const formData = new FormData();
+    formData.append("nama_vendor", nama_vendor);
+    formData.append("jenis_vendor_id", JSON.stringify(jsonVendorTypes)); // JSON.stringify for array or object
+    formData.append(
+      "kategori_vendor_id",
+      kategori_vendor_id ? `[${kategori_vendor_id}]` : "[]"
+    );
+    formData.append("alamat", alamat);
+    formData.append("no_telepon", no_telepon);
+    formData.append("no_hp", no_hp);
+    formData.append("sumber_daya", sumber_daya);
+    formData.append("nama_pic", nama_pic);
+    formData.append("provinsi_id", provinsi_id);
+    formData.append("kota_id", kota_id);
+    formData.append("koordinat", koordinat);
+    formData.append("logo_url", logo_url);
+    formData.append("dok_pendukung_url", dok_pendukung_url);
+    for (let [key, value] of formData.entries()) {
+      console.log(`Key: ${key}, Value: ${value}`);
+    }
     console.log("Payload for API:", logo_url);
-    const jsonPayload = JSON.stringify(payload);
-    console.log("Payload for API:", jsonPayload);
+    console.log("Payload for API:", dok_pendukung_url);
 
     fetch("https://api-ecatalogue-staging.online/api/input-vendor", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: jsonPayload,
+      // headers: { "Content-Type": "application/json" },
+      body: formData,
     })
       .then((response) => response.json())
       .then((data) => console.log("Response from API:", data))
       .catch((error) => console.error("API error:", error));
-  };
-
-  const handleLogoCancel = () => {
-    console.log("Logo upload canceled");
-    setLogoUploadState("default");
-    setLogoUploadProgress(0);
-  };
-
-  const handleDokPendukungCancel = () => {
-    console.log("Dok pendukung upload canceled");
-    setDokPendukungUploadState("default");
-    setDokPendukungUploadProgress(0);
   };
 
   const getOptions = () => {
@@ -220,8 +261,8 @@ const InputVendor = ({ onNext, onBack }) => {
   };
 
   const labelToCategoriesMap = {
-    Produsen: ["1-3", "2-1"],
-    Kontraktor: ["2-3", "3-1"],
+    Produsen: ["3", "8"],
+    Kontraktor: ["6", "9"],
   };
   // const handleProvinsiChange = (selectedOption) => {
   //   setprovinsi_id(selectedOption ? selectedOption.value : "");
@@ -378,34 +419,29 @@ const InputVendor = ({ onNext, onBack }) => {
               />
               <FileInput
                 onFileSelect={handleLogoFileSelect}
-                buttonText="Pilih File"
-                selectedFile={logo_url}
-                progress={logoUploadProgress}
+                setSelectedFile={setLogoUrl}
+                buttonText="Pilih Berkas"
+                multiple={false}
+                accept=".pdf, .jpg, .jpeg"
+                Label="Unggah Logo"
+                HelperText="Format .JPG, .JPEG dan maksimal 2MB"
                 state={logoUploadState}
                 onCancel={handleLogoCancel}
-                multiple={false}
-                accept=".jpg, .png"
-                Label="Logo"
-                HelperText="Format .JPG, .PNG dan maksimal 512Kb"
+                selectedFile={logo_url}
+                maxSizeMB={2}
               />
-              {/* <TextInput
-                label="Enter multiple values"
-                value={inputValues}
-                onChange={handleInputChange}
-                variant="multipleInput"
-                isRequired={true}
-              /> */}
               <FileInput
                 onFileSelect={handleDokPendukungFileSelect}
-                buttonText="Pilih File"
-                selectedFile={dok_pendukung_url}
-                progress={dokPendukungUploadProgress}
+                setSelectedFile={setDokPendukungUrl}
+                buttonText="Pilih Berkas"
+                multiple={false}
+                accept=".pdf"
+                Label="Unggah Dokumen Pendukung"
+                HelperText="Format .PDF dan maksimal 2MB"
                 state={dokPendukungUploadState}
                 onCancel={handleDokPendukungCancel}
-                multiple={false}
-                accept=".jpg, .png"
-                Label="Dokumen Pendukung"
-                HelperText="Format .JPG, .PNG dan maksimal 512Kb"
+                selectedFile={dok_pendukung_url}
+                maxSizeMB={2}
               />
             </div>
 

@@ -143,19 +143,24 @@ const Register = ({ onClose }) => {
     formData.append("satuan_kerja_id", satuan_kerja_id);
     formData.append("no_handphone", no_handphone);
     formData.append("surat_penugasan_url", surat_penugasan_url);
-    console.log("Data yang dikirim ke API:");
-    console.log({
-      email,
-      nama_lengkap,
-      nik,
-      nrp,
-      balai_kerja_id,
-      satuan_kerja_id,
-      no_handphone,
-      surat_penugasan_url,
-    });
-
+    // console.log("Data yang dikirim ke API:");
+    // console.log({
+    //   email,
+    //   nama_lengkap,
+    //   nik,
+    //   nrp,
+    //   balai_kerja_id,
+    //   satuan_kerja_id,
+    //   no_handphone,
+    //   surat_penugasan_url,
+    // });
+    for (let [key, value] of formData.entries()) {
+      console.log(`Key: ${key}, Value: ${value}`);
+    }
     try {
+      console.log("Payload for API:", surat_penugasan_url);
+      const jsonPayload = JSON.stringify(formData);
+      console.log("Payload for API:", jsonPayload);
       const response = await fetch(
         "https://api-ecatalogue-staging.online/api/store-user",
         {
@@ -333,7 +338,7 @@ const Register = ({ onClose }) => {
         <FileInput
           onFileSelect={handleFileSelect}
           setSelectedFile={setSelectedFile} // Pass the setter function here
-          buttonText="Unggah"
+          buttonText="Pilih Berkas"
           iconLeft={null}
           iconRight={null}
           multiple={false}

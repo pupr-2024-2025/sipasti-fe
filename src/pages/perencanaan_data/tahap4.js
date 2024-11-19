@@ -188,7 +188,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedVendorId(null);
-    setVendorDetail(null);
+    // setVendorDetail(null);
     setSelectedVendors([]);
     setDeletedDataMaterial([]);
     setDeletedDataPeralatan([]);
@@ -401,7 +401,11 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                     { title: "Merk", accessor: "merk" },
-                    { title: "Provinsi", accessor: "provincies_id" },
+                    {
+                      title: "Provinsi",
+                      accessor: (row) =>
+                        row.provinces?.nama_provinsi || "Data tidak ada",
+                    },
                     { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
                   data={dataMaterial.slice(
@@ -602,6 +606,10 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           title: "Spesifikasi",
                           accessor: "spesifikasi",
                         },
+                        {
+                          title: "Merk",
+                          accessor: "merk",
+                        },
                       ]}
                       data={
                         vendorDetail?.identifikasi_kebutuhan?.material ?? []
@@ -651,8 +659,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                         { title: "Satuan", accessor: "satuan" },
                         {
-                          title: "Jumlah Kebutuhan",
-                          accessor: "jumlah_kebutuhan",
+                          title: "Spesifikasi",
+                          accessor: "spesifikasi",
+                        },
+                        {
+                          title: "Merk",
+                          accessor: "merk",
                         },
                       ]}
                       data={
