@@ -6,8 +6,9 @@ import Checkbox from "../../components/checkbox";
 import Button from "../../components/button";
 import Dropdown from "../../components/Dropdown";
 import axios from "axios";
+import CustomAlert from "../../components/alert";
 
-const InputVendor = ({ onNext, onBack }) => {
+const InputVendor = ({ onNext, onBack, onClose }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [nama_vendor, setnama_vendor] = useState("");
   const [jenis_vendor_id, setjenis_vendor_id] = useState("");
@@ -32,6 +33,9 @@ const InputVendor = ({ onNext, onBack }) => {
   const [progress, setProgress] = useState(0);
   const [dokPendukungUploadState, setDokPendukungUploadState] =
     useState("default");
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [alertSeverity, setAlertSeverity] = useState("info");
+  const [alertOpen, setAlertOpen] = useState(false);
 
   const handleInputChange = (newValues) => {
     setInputValues(newValues);
@@ -48,14 +52,12 @@ const InputVendor = ({ onNext, onBack }) => {
     setlogoUploadState("processing");
     setError("");
     try {
-      // Simpan file langsung ke state
-      setLogoUrl(file); // Simpan file dengan format lengkap (File Object)
+      setLogoUrl(file);
       setlogoUploadState("done");
     } catch (error) {
       console.error("Error processing logo file:", error);
       setlogoUploadState("default");
     }
-    // Simulate upload progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -80,14 +82,12 @@ const InputVendor = ({ onNext, onBack }) => {
     setError("");
 
     try {
-      // Simpan file langsung ke state
-      setDokPendukungUrl(file); // Simpan file dengan format lengkap (File Object)
+      setDokPendukungUrl(file);
       setDokPendukungUploadState("done");
     } catch (error) {
       console.error("Error processing dokumen pendukung file:", error);
       setDokPendukungUploadState("default");
     }
-    // Simulate upload progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -180,49 +180,138 @@ const InputVendor = ({ onNext, onBack }) => {
     });
   };
 
-  const saveVendorData = () => {
-    const jsonVendorTypes = selectedTypes.map((type) => parseInt(type));
-    const jsonCategories = selectedTypes.map((type) => parseInt(type));
+  const saveVendorData = async () => {
+    try {
+      const jsonVendorTypes = selectedTypes.map((type) => parseInt(type));
+      const jsonCategories = selectedTypes.map((type) => parseInt(type));
 
-    const stringLogoUrl = Array.isArray(logo_url)
-      ? logo_url.join(", ")
-      : logo_url || "";
-    const stringDokPendukungUrl = Array.isArray(dok_pendukung_url)
-      ? dok_pendukung_url.join(", ")
-      : dok_pendukung_url || "";
+      const stringLogoUrl = Array.isArray(logo_url)
+        ? logo_url.join(", ")
+        : logo_url || "";
+      const stringDokPendukungUrl = Array.isArray(dok_pendukung_url)
+        ? dok_pendukung_url.join(", ")
+        : dok_pendukung_url || "";
 
-    const formData = new FormData();
-    formData.append("nama_vendor", nama_vendor);
-    formData.append("jenis_vendor_id", JSON.stringify(jsonVendorTypes)); // JSON.stringify for array or object
-    formData.append(
-      "kategori_vendor_id",
-      kategori_vendor_id ? `[${kategori_vendor_id}]` : "[]"
-    );
-    formData.append("alamat", alamat);
-    formData.append("no_telepon", no_telepon);
-    formData.append("no_hp", no_hp);
-    formData.append("sumber_daya", sumber_daya);
-    formData.append("nama_pic", nama_pic);
-    formData.append("provinsi_id", provinsi_id);
-    formData.append("kota_id", kota_id);
-    formData.append("koordinat", koordinat);
-    formData.append("logo_url", logo_url);
-    formData.append("dok_pendukung_url", dok_pendukung_url);
-    for (let [key, value] of formData.entries()) {
-      console.log(`Key: ${key}, Value: ${value}`);
+      const formData = new FormData();
+      formData.append("nama_vendor", nama_vendor);
+      formData.append("jenis_vendor_id", jsonVendorTypes.join(","));
+      formData.append(
+        "kategori_vendor_id",
+        kategori_vendor_id ? `[${kategori_vendor_id}]` : "[]"
+      );
+      formData.append("alamat", alamat);
+      formData.append("no_telepon", no_telepon);
+      formData.append("no_hp", no_hp);
+      formData.append("sumber_daya", sumber_daya);
+      formData.append("nama_pic", nama_pic);
+      formData.append("provinsi_id", provinsi_id);
+      formData.append("kota_id", kota_id);
+      formData.append("koordinat", koordinat);
+      formData.append("logo_url", stringLogoUrl);
+      formData.append("dok_pendukung_url", stringDokPendukungUrl);
+      console.log("Payload yang dikirim:", {
+        nama_vendor,
+        jenis_vendor_id,
+        kategori_vendor_id,
+        alamat,
+        no_telepon,
+        no_hp,
+        sumber_daya,
+        nama_pic,
+        provinsi_id,
+        kota_id,
+        koordinat,
+        logo_url,
+        dok_pendukung_url,
+      });
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/input-vendor",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok || result.status === "error") {
+        console.error("Response error:", result);
+        throw new Error(
+          result.message || "Terjadi kesalahan saat input vendor."
+        );
+      }
+
+      setAlertMessage(result.message || "Input vendor berhasil!");
+      setAlertSeverity("success");
+      setAlertOpen(true);
+
+      window.location.reload();
+      // setnama_vendor("");
+      // setSelectedTypes([]);
+      // setkategori_vendor_id("");
+      // setalamat("");
+      // setno_telepon("");
+      // setno_hp("");
+      // setsumber_daya("");
+      // setnama_pic("");
+      // setprovinsi_id("");
+      // setkota_id("");
+      // setkoordinat("");
+      // setLogoUrl("default");
+      // setDokPendukungUrl("default");
+    } catch (error) {
+      const errorMessage = error.message || "Data gagal disimpan.";
+      console.error("Error saat menyimpan data:", errorMessage);
+      setAlertMessage(errorMessage);
+      setAlertSeverity("error");
+      setAlertOpen(true);
     }
-    console.log("Payload for API:", logo_url);
-    console.log("Payload for API:", dok_pendukung_url);
-
-    fetch("https://api-ecatalogue-staging.online/api/input-vendor", {
-      method: "POST",
-      // headers: { "Content-Type": "application/json" },
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => console.log("Response from API:", data))
-      .catch((error) => console.error("API error:", error));
   };
+  // .then((response) => {
+  //   if (!response.ok) {
+  //     throw new Error("Gagal menyimpan data. Silakan coba lagi.");
+  //   }
+  //   return response.json(); // Parsing JSON
+  // })
+  // .then((result) => {
+  //   if (result.success) {
+  //     // Jika sukses
+  //     setAlertMessage(result.message || "Data berhasil disimpan.");
+  //     setAlertSeverity("success");
+  //     setAlertOpen(true);
+
+  //     // Reset inputan jika berhasil
+  //     setnama_vendor("");
+  //     setSelectedTypes([]);
+  //     setkategori_vendor_id("");
+  //     setalamat("");
+  //     setno_telepon("");
+  //     setno_hp("");
+  //     setsumber_daya("");
+  //     setnama_pic("");
+  //     setprovinsi_id("");
+  //     setkota_id("");
+  //     setkoordinat("");
+  //     setLogoUrl("");
+  //     setDokPendukungUrl("");
+  //   } else if (result.error) {
+  //     // Jika terdapat error dari API
+  //     setAlertMessage(result.message || "Data gagal disimpan.");
+  //     setAlertSeverity("error");
+  //     setAlertOpen(true);
+  //     console.error(
+  //       "API error:",
+  //       result.message || "Error tidak diketahui."
+  //     );
+  //   }
+  // })
+  // .catch((error) => {
+  //   // Menangani error dari jaringan atau fetch
+  //   setAlertMessage(error.message || "Data gagal disimpan.");
+  //   setAlertSeverity("error");
+  //   setAlertOpen(true);
+  //   console.error("Fetch error:", error);
+  // });
+  // };
 
   const getOptions = () => {
     if (selectedTypes.length === 0) return [];
@@ -470,6 +559,12 @@ const InputVendor = ({ onNext, onBack }) => {
           </Button>
         </div>
       </div>
+      <CustomAlert
+        message={alertMessage}
+        severity={alertSeverity}
+        openInitially={alertOpen}
+        onClose={() => setAlertOpen(false)}
+      />
     </div>
   );
 };

@@ -401,11 +401,13 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                     { title: "Merk", accessor: "merk" },
-                    {
-                      title: "Provinsi",
-                      accessor: (row) =>
-                        row.provinces?.nama_provinsi || "Data tidak ada",
-                    },
+                    // {
+                    //   title: "Provinsi",
+                    //   accessor: (row) =>
+                    //     row.provinces?.nama_provinsi || "Data tidak ada",
+                    // },
+                    // { title: "Provinsi", accessor: "provinces?.nama_provinsi" },
+                    { title: "Provinsi", accessor: "provincies_id" },
                     { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
                   data={dataMaterial.slice(
