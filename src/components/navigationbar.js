@@ -17,7 +17,11 @@ const Navbar = () => {
 
   const links = [
     { href: "/dashboard", label: "Beranda" },
-    { href: "/perencanaan_data/tahap1", label: "Perencanaan Data" },
+    {
+      href: "/perencanaan_data/tahap1",
+      label: "Perencanaan Data",
+      activePath: "/perencanaan_data", // Semua path di bawah /perencanaan_data dianggap aktif
+    },
     { href: "/vendor/inputvendor", label: "Vendor" },
   ];
 
@@ -48,10 +52,9 @@ const Navbar = () => {
 
       if (response.ok) {
         localStorage.removeItem("token");
-
         router.push("/login");
       } else {
-        setAlertMessage("Logout gagal: " + response.statusText);
+        setAlertMessage("Keluar gagal");
         setAlertOpen(true);
       }
     } catch (error) {
@@ -74,7 +77,7 @@ const Navbar = () => {
         className={`flex justify-between items-center px-4 ${
           isSticky ? "sticky" : "relative"
         }`}>
-        {/* Logo Container with clickable logo */}
+        {/* Logo Container */}
         <Link
           href="/dashboard"
           className="bg-custom-blue-500 flex items-center rounded-full py-6 px-7 transition-transform duration-300 ease-in-out hover:scale-110 active:scale-95">
@@ -83,7 +86,9 @@ const Navbar = () => {
             alt="SIPASTI Logo"
             className={`max-h-[54.37px] max-w-[156px] transition-transform duration-300 ease-in-out
               ${
-                links.some((link) => router.pathname === link.href)
+                links.some((link) =>
+                  router.pathname.startsWith(link.activePath || link.href)
+                )
                   ? "scale-110"
                   : "scale-100"
               }
@@ -91,11 +96,13 @@ const Navbar = () => {
           />
         </Link>
 
-        {/* Navbar Links Container */}
+        {/* Navbar Links */}
         <div className="flex items-center rounded-full bg-custom-neutral-100 mx-auto">
           <ul className="inline-flex flex-row items-center gap-x-3 px-2 h-[66px]">
             {links.map((link, index) => {
-              const isActive = router.pathname === link.href;
+              const isActive = router.pathname.startsWith(
+                link.activePath || link.href
+              ); // Menggunakan activePath jika ada
               const isHovered = hovered === index;
 
               return (
@@ -122,8 +129,7 @@ const Navbar = () => {
                       ${isHovered ? "scale-105" : "scale-100"}
                     `}
                     onMouseEnter={() => setHovered(index)}
-                    onMouseLeave={() => setHovered(null)}
-                    aria-disabled={false}>
+                    onMouseLeave={() => setHovered(null)}>
                     {link.label}
                   </Link>
                 </li>
@@ -131,12 +137,12 @@ const Navbar = () => {
             })}
           </ul>
         </div>
-        {/* Profile Container with Hoverable Dropdown */}
+
+        {/* Profile Container */}
         <div
           className="relative"
           onMouseEnter={() => setIsProfileHovered(true)}
           onMouseLeave={() => setIsProfileHovered(false)}>
-          {/* Profile Container */}
           <div className="bg-custom-neutral-100 flex items-center rounded-full px-3 pe-6 h-[66px] space-x-3 cursor-pointer">
             <div className="p-2 bg-custom-neutral-0 rounded-full">
               <User

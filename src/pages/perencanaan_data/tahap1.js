@@ -4,12 +4,13 @@ import Tabs from "../../components/Tabs";
 import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
-import Dropdown from "../../components/dropdown";
-import Tahap2 from "./tahap2";
-import Tahap3 from "./tahap3";
-import Tahap4 from "./tahap4";
+import Dropdown from "../../components/Dropdown";
+// import Tahap2 from "./tahap2pisah";
+// import Tahap3 from "./tahap3";
+// import Tahap4 from "./tahap4";
 import CustomAlert from "../../components/alert";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const Tahap1 = () => {
   const [koderupSipasti, setKodeRUPSipasti] = useState("");
@@ -20,6 +21,7 @@ const Tahap1 = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState("info");
   const [balai_kerja_id, setBalai] = useState("");
+  const router = useRouter();
 
   // State for Input Manual tab
   const [koderupManual, setKodeRUPManual] = useState("");
@@ -259,17 +261,11 @@ const Tahap1 = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < NUMBER_OF_STEPS - 1) {
-      setCurrentStep((prevStep) => prevStep + 1);
-    }
+    router.replace("/perencanaan_data/tahap2pisah");
   };
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleNextStep = async (type, step) => {
-    if (step > 1) {
-      nextStep();
-      return;
-    }
     if (isSubmitting) return;
 
     setIsSubmitting(true);
@@ -325,42 +321,7 @@ const Tahap1 = () => {
               <div className="mt-6">
                 <Tabs tabs={tabs} />
               </div>
-              {/* Conditionally render filter input */}
-              {filterCriteria && (
-                <TextInput
-                  label="Filter"
-                  labelPosition="left"
-                  placeholder="Masukkan kriteria filter"
-                  size="Medium"
-                  value={filterCriteria}
-                  onChange={(e) => setFilterCriteria(e.target.value)}
-                />
-              )}
             </>
-          )}
-          {currentStep === 1 && (
-            <Tahap2
-              onNext={() => {
-                handleNextStep("manual", 2);
-              }}
-              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
-            />
-          )}
-          {currentStep === 2 && (
-            <Tahap3
-              onNext={() => {
-                handleNextStep("manual", 3);
-              }}
-              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
-            />
-          )}
-          {currentStep === 3 && (
-            <Tahap4
-              onNext={() => {
-                handleNextStep("manual", 4);
-              }}
-              onBack={() => setCurrentStep((prev) => Math.max(prev - 1, 0))}
-            />
           )}
         </div>
         {currentStep === 0 && (
@@ -376,7 +337,7 @@ const Tahap1 = () => {
               variant="solid_blue"
               size="Medium"
               disabled={!areFieldsFilled()}
-              onClick={() => handleNextStep("manual", 1)}>
+              onClick={() => handleNextStep(("manual", 1))}>
               Lanjut
             </Button>
           </div>

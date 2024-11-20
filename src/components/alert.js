@@ -77,7 +77,7 @@ const CustomAlert = ({
       case "warning":
         return <Warning2 size="32" variant="Bulk" color={iconColor} />;
       case "error":
-        return <CloseCircle size="32" variant="Bulk" color={iconColor} />;
+        return <Warning2 size="32" variant="Bulk" color={iconColor} />;
       default:
         return null;
     }

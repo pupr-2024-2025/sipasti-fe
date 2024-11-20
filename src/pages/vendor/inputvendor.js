@@ -7,6 +7,7 @@ import Button from "../../components/button";
 import Dropdown from "../../components/Dropdown";
 import axios from "axios";
 import CustomAlert from "../../components/alert";
+// import { Console } from "console";
 
 const InputVendor = ({ onNext, onBack, onClose }) => {
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -409,11 +410,11 @@ const InputVendor = ({ onNext, onBack, onClose }) => {
               errorMessage="Kategori tidak boleh kosong."
               value={kategori_vendor_id}
               onSelect={(selectedOption) => {
-                const associatedValues = labelToCategoriesMap[
-                  selectedOption.label
-                ] || [selectedOption.value];
-
-                setkategori_vendor_id(associatedValues.join(","));
+                // const associatedValues = labelToCategoriesMap[
+                //   selectedOption.label
+                // ] || [selectedOption.value];
+                setkategori_vendor_id(selectedOption.value);
+                // setkategori_vendor_id(associatedValues.join(","));
               }}
               isRequired={true}
             />{" "}
