@@ -5,6 +5,9 @@ import Tabs from "../../components/Tabs";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
+import Navbar from "../../components/navigationbar";
+import Stepper from "../../components/stepper";
+import { useRouter } from "next/router";
 
 const Tahap3 = ({ onNext, onBack }) => {
   const [data, setData] = useState({ material: [], equipment: [], labor: [] });
@@ -21,15 +24,29 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [selectedVendors, setSelectedVendors] = useState([]);
   const [identifikasi_kebutuhan_id, setIdentifikasi_Kebutuhan_id] =
     useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [allDataMaterial, setAllDataMaterial] = useState([]);
   const [allDataPeralatan, setAllDataPeralatan] = useState([]);
   const [allDataTenagaKerja, setAllDataTenagaKerja] = useState([]);
   const [activeFilterColumn, setActiveFilterColumn] = useState(null);
-  const [allDataVendor, setAllDataVendor] = useState([]);
-  const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
-  const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
-  const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
-  const [searchVendorQuery, setSearchVendorQuery] = useState("");
+  const router = useRouter();
+  // const [allDataVendor, setAllDataVendor] = useState([]);
+  // const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
+  // const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
+  // const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
+  // const [searchVendorQuery, setSearchVendorQuery] = useState("");
+  const [currentStep, setCurrentStep] = useState(2);
+  const navigateToTahap2 = () => {
+    window.location.href = "/perencanaan_data/tahap2";
+  };
+  const NUMBER_OF_STEPS = 4;
+  const stepLabels = [
+    "Informasi Umum",
+    "Identifikasi Kebutuhan",
+    "Penentuan Shortlist Vendor",
+    "Perancangan Kuesioner",
+  ];
+
   const getPaginatedData = (data, page) => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -162,43 +179,46 @@ const Tahap3 = ({ onNext, onBack }) => {
     setDataByTab[tab](filteredData);
   };
 
-  const handleSubmit = async () => {
-    // Validasi input
-    if (!validateInputs()) {
-      console.error("Input tidak valid, silakan periksa kembali.");
-      return;
-    }
+  const handleNextStep = async () => {
+    if (isSubmitting) return;
 
-    const payload = {
-      identifikasi_kebutuhan_id: identifikasi_kebutuhan_id,
-      shortlist_vendor: selectedVendors.map((vendor) => ({
-        data_vendor_id: vendor.data_vendor_id,
-        nama_vendor: vendor.nama_vendor,
-        sumber_daya: vendor.sumber_daya,
-        pemilik_vendor: vendor.pemilik_vendor,
-        alamat: vendor.alamat,
-        kontak: vendor.kontak || "",
-      })),
-    };
-
-    console.log("Payload yang akan dikirim:", payload); // Tambahkan ini
-
-    if (payload.shortlist_vendor.length === 0) {
-      console.error("Silakan pilih vendor sebelum melanjutkan.");
-      return;
-    }
+    setIsSubmitting(true);
 
     try {
+      if (!validateInputs()) {
+        console.error("Input tidak valid, silakan periksa kembali.");
+        return;
+      }
+
+      const payload = {
+        identifikasi_kebutuhan_id,
+        shortlist_vendor: selectedVendors.map((vendor) => ({
+          data_vendor_id: vendor.data_vendor_id,
+          nama_vendor: vendor.nama_vendor,
+          sumber_daya: vendor.sumber_daya,
+          pemilik_vendor: vendor.pemilik_vendor,
+          alamat: vendor.alamat,
+          kontak: vendor.kontak || "",
+        })),
+      };
+
+      console.log("Payload yang akan dikirim:", payload);
+
+      if (payload.shortlist_vendor.length === 0) {
+        console.error("Silakan pilih vendor sebelum melanjutkan.");
+        return;
+      }
+
       const response = await axios.post(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
         payload
       );
       console.log("Data berhasil dikirim:", response.data);
-      if (typeof onNext === "function") {
-        onNext();
-      }
+      router.replace("/perencanaan_data/tahap4");
     } catch (error) {
       console.error("Error posting data:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
   const filterOptions = [
@@ -358,20 +378,39 @@ const Tahap3 = ({ onNext, onBack }) => {
   ];
 
   return (
-    <div>
-      <h4 className="text-H4 text-emphasis-on_surface-high">
-        Penentuan Shortlist Vendor
-      </h4>
-      <div className="mt-6">
-        <Tabs tabs={tabs} />
-      </div>
-      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
-          Kembali
-        </Button>
-        <Button variant="solid_blue" size="Medium" onClick={handleSubmit}>
-          Simpan & Lanjut
-        </Button>
+    <div className="p-8">
+      <Navbar />
+      <div className="space-y-8">
+        <div className="space-y-3 pt-8">
+          <h3 className="text-H3 text-emphasis-on_surface-high">
+            Tahap Perencanaan Data
+          </h3>
+          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
+            <Stepper
+              currentStep={currentStep}
+              numberOfSteps={NUMBER_OF_STEPS}
+              labels={stepLabels}
+            />
+            <br />
+          </div>
+          <h4 className="text-H4 text-emphasis-on_surface-high">
+            Penentuan Shortlist Vendor
+          </h4>
+          <div className="mt-6">
+            <Tabs tabs={tabs} />
+          </div>
+          <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+            <Button
+              variant="outlined_yellow"
+              size="Medium"
+              onClick={navigateToTahap2}>
+              Kembali
+            </Button>
+            <Button variant="solid_blue" size="Medium" onClick={handleNextStep}>
+              Simpan & Lanjut
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

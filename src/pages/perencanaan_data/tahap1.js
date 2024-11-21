@@ -5,7 +5,7 @@ import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
 import Dropdown from "../../components/Dropdown";
-// import Tahap2 from "./tahap2pisah";
+// import Tahap2 from "./tahap2";
 // import Tahap3 from "./tahap3";
 // import Tahap4 from "./tahap4";
 import CustomAlert from "../../components/alert";
@@ -22,6 +22,7 @@ const Tahap1 = () => {
   const [alertSeverity, setAlertSeverity] = useState("info");
   const [balai_kerja_id, setBalai] = useState("");
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State for Input Manual tab
   const [koderupManual, setKodeRUPManual] = useState("");
@@ -30,7 +31,7 @@ const Tahap1 = () => {
   const [namaPPKManual, setNamaPPKManual] = useState("");
   const [jabatanPPKManual, setJabatanPPKManual] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
-  const [filterCriteria, setFilterCriteria] = useState("");
+  // const [filterCriteria, setFilterCriteria] = useState("");
   const [balaiOptions, setBalaiOptions] = useState([]);
 
   const handleCariData = () => {
@@ -260,34 +261,25 @@ const Tahap1 = () => {
     );
   };
 
-  const nextStep = () => {
-    router.replace("/perencanaan_data/tahap2pisah");
-  };
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleNextStep = async (type, step) => {
+  const handleNextStep = async (type) => {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
 
-    if (areFieldsFilled()) {
-      const isSubmitSuccessful = await submitAndProceed(type);
-      if (isSubmitSuccessful) {
-        nextStep();
-      }
-    } else {
-      showAlert("Pastikan semua field telah diisi dengan benar.", "warning");
-    }
-
-    setIsSubmitting(false);
-  };
-
-  const submitAndProceed = async (type) => {
     try {
-      return await handleSubmit(type);
+      if (!areFieldsFilled()) {
+        showAlert("Pastikan semua field telah diisi dengan benar.", "warning");
+        return;
+      }
+
+      const isSubmitSuccessful = await handleSubmit(type);
+      if (isSubmitSuccessful) {
+        router.replace("/perencanaan_data/tahap2");
+      }
     } catch (error) {
       console.error("Submission failed:", error);
-      return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
-import TextInput from "../../components/input";
-import Table from "../../components/table";
-import Pagination from "../../components/pagination";
-import Tabs from "../../components/Tabs";
-import SearchBox from "../../components/searchbox";
-import Button from "../../components/button";
+import TextInput from "../../../components/input";
+import Table from "../../../components/table";
+import Pagination from "../../../components/pagination";
+import Tabs from "../../../components/Tabs";
+import SearchBox from "../../../components/searchbox";
+import Button from "../../../components/button";
 import axios from "axios";
-import Modal from "../../components/modal";
+import Modal from "../../../components/modal";
 import { CloseCircle } from "iconsax-react";
 const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +35,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       (selectedVendor) => selectedVendor.data_vendor_id === vendorId
     );
   };
+
   const handleDeleteAndContinue = () => {
     setIsConfirmModalOpen(true); // Open the confirmation modal
   };
@@ -52,54 +53,46 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const handleCheckboxChange = (vendor, isChecked, type) => {
     console.log("Vendor ID yang dipilih:", vendor.id);
     console.log("Apakah checkboxnya dipilih?", isChecked);
+
+    // Sub-fungsi untuk memperbarui data deleted berdasarkan tipe
+    const updateDeletedData = (setDeletedData, deletedDataArray) => {
+      if (isChecked) {
+        setDeletedData([...deletedDataArray, vendor.id]);
+      } else {
+        setDeletedData(deletedDataArray.filter((id) => id !== vendor.id));
+      }
+    };
+
+    // Update deleted data sesuai tipe
     if (type === "material") {
-      if (isChecked) {
-        setDeletedDataMaterial((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataMaterial((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
-    }
-    if (type === "peralatan") {
-      if (isChecked) {
-        setDeletedDataPeralatan((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataPeralatan((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
-    }
-    if (type === "tenaga_kerja") {
-      if (isChecked) {
-        setDeletedDataTenagaKerja((prevArray) => [...prevArray, vendor.id]); // ꦩꦸꦒꦺꦴꦧꦺꦴꦤ꧀ ꦭꦸꦠ꧀ ꦏꦺꦴꦤ꧀ꦛꦁ
-      } else {
-        setDeletedDataTenagaKerja((prevArray) =>
-          prevArray.filter((id) => id !== vendor.id)
-        ); // ꦏꦸꦤꦏꦧꦤ꧀ ꦏꦶꦠ꧀ꦩꦶꦒ꧀ꦱ꧀ꦏꦭꦶꦱ꧀ꦱꦼꦭꦸꦩ꧀ꦱ
-      }
+      updateDeletedData(setDeletedDataMaterial, deletedDataMaterial);
+    } else if (type === "peralatan") {
+      updateDeletedData(setDeletedDataPeralatan, deletedDataPeralatan);
+    } else if (type === "tenaga_kerja") {
+      updateDeletedData(setDeletedDataTenagaKerja, deletedDataTenagaKerja);
     }
 
-    // setSelectedVendors((prevSelectedVendors) => {
-    //   const updatedVendors = isChecked
-    //     ? [
-    //         ...prevSelectedVendors,
-    //         {
-    //           data_vendor_id: vendor.id,
-    //           nama_vendor: vendor.nama_vendor,
-    //           pemilik_vendor: vendor.pemilik_vendor,
-    //           alamat: vendor.alamat,
-    //           kontak: vendor.kontak,
-    //         },
-    //       ]
-    //     : prevSelectedVendors.filter(
-    //         (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
-    //       );
-
-    //   console.log("Daftar selectedVendors yang diperbarui:", updatedVendors);
-    //   return updatedVendors;
-    // });
+    // Sinkronisasi selected vendors
+    setSelectedVendors((prevSelectedVendors) => {
+      if (isChecked) {
+        return [
+          ...prevSelectedVendors,
+          {
+            data_vendor_id: vendor.id,
+            nama_vendor: vendor.nama_vendor,
+            pemilik_vendor: vendor.pemilik_vendor,
+            alamat: vendor.alamat,
+            kontak: vendor.kontak,
+          },
+        ];
+      } else {
+        return prevSelectedVendors.filter(
+          (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
+        );
+      }
+    });
   };
+
   console.log("hai", selectedVendors);
   const [selectedVendorId, setSelectedVendorId] = useState(null);
   const [vendorDetail, setVendorDetail] = useState([]);
@@ -112,7 +105,44 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [deletedDataPeralatan, setDeletedDataPeralatan] = useState([]);
   const [deletedDataTenagaKerja, setDeletedDataTenagaKerja] = useState([]);
   const itemsPerPage = 10;
-
+  const filterOptionsMaterial = [
+    { label: "Material", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Spesifikasi", accessor: "pemilik_vendor", checked: false },
+    { label: "Ukuran", accessor: "alamat", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Kelompok Material", accessor: "kontak", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "kontak", checked: false },
+    { label: "Merk", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsPeralatan = [
+    { label: "Nama Peralatan", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Spesifikasi", accessor: "pemilik_vendor", checked: false },
+    { label: "Kapasitas", accessor: "alamat", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Kelompok Peralatan", accessor: "kontak", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "kontak", checked: false },
+    { label: "Merk", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsTenagaKerja = [
+    { label: "Nama Pekerja", accessor: "nama_vendor", checked: true },
+    { label: "Satuan", accessor: "sumber_daya", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "pemilik_vendor", checked: false },
+    { label: "Kodefikasi", accessor: "kontak", checked: false },
+    { label: "Provinsi", accessor: "kontak", checked: false },
+    { label: "Kabupaten/Kota", accessor: "kontak", checked: false },
+  ];
+  const filterOptionsVendor = [
+    { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
+    { label: "Pemilik Vendor", accessor: "pemilik_vendor", checked: false },
+    { label: "Alamat", accessor: "alamat", checked: false },
+    { label: "Kontak", accessor: "kontak", checked: false },
+  ];
   const fetchCommonInformation = useCallback(async () => {
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
 
@@ -158,11 +188,11 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedVendorId(null);
-    setVendorDetail(null);
+    // setVendorDetail(null);
     setSelectedVendors([]);
-    setDataMaterial([]);
-    setDataPeralatan([]);
-    setDataTenagaKerja([]);
+    setDeletedDataMaterial([]);
+    setDeletedDataPeralatan([]);
+    setDeletedDataTenagaKerja([]);
   };
 
   const handleSearchMaterial = (query) => {
@@ -252,19 +282,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   }, [selectedVendorId, isModalOpen]);
 
   const handleAdjustData = async () => {
-    // Ensure a vendor is selected
     if (!selectedVendorId) {
       console.error("No vendor selected.");
       return;
     }
 
-    // Retrieve the informasi_umum_id from localStorage
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
     console.log(
       "ispayload",
       deletedDataTenagaKerja.map((item) => ({ id: item }))
     );
-    // Prepare payload with the selected vendor's ID
     const payload = {
       id_vendor: Number(selectedVendorFinal), // Only send the selected vendor ID
       shortlist_vendor_id: informasi_umum_id
@@ -274,8 +301,9 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
       peralatan: deletedDataPeralatan.map((item) => ({ id: item })),
       tenaga_kerja: deletedDataTenagaKerja.map((item) => ({ id: item })),
     };
-
-    // Log payload to verify the data being sent
+    console.log("Hapus material:", deletedDataMaterial);
+    console.log("Hapus Peralatan:", deletedDataPeralatan);
+    console.log("Hapus material:", deletedDataTenagaKerja);
     console.log("Payload being sent:", JSON.stringify(payload));
 
     try {
@@ -288,6 +316,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         fetchCommonInformation();
       } else {
         console.error("Error submitting data:", response.statusText);
+        fetchCommonInformation();
       }
     } catch (error) {
       console.error("An error occurred during submission:", error);
@@ -352,6 +381,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Material..."
                   onSearch={handleSearchMaterial}
+                  withFilter={true}
+                  filterOptions={filterOptionsMaterial}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -366,6 +401,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     },
                     { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
                     { title: "Merk", accessor: "merk" },
+                    // {
+                    //   title: "Provinsi",
+                    //   accessor: (row) =>
+                    //     row.provinces?.nama_provinsi || "Data tidak ada",
+                    // },
+                    // { title: "Provinsi", accessor: "provinces?.nama_provinsi" },
                     { title: "Provinsi", accessor: "provincies_id" },
                     { title: "Kabupaten/Kota", accessor: "cities_id" },
                   ]}
@@ -390,6 +431,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Peralatan..."
                   onSearch={handleSearchPeralatan}
+                  withFilter={true}
+                  filterOptions={filterOptionsPeralatan}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -428,6 +475,12 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                 <SearchBox
                   placeholder="Cari Tenaga Kerja..."
                   onSearch={handleSearchTenagaKerja}
+                  withFilter={true}
+                  filterOptions={filterOptionsTenagaKerja}
+                  onFilterClick={(filters) => {
+                    console.log("Filter option clicked:", filters); // Debug
+                    handleFilterClick(filters);
+                  }}
                 />
                 <Table
                   columns={[
@@ -455,7 +508,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
         ]}
       />
       <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
-      <SearchBox placeholder="Cari Vendor..." onSearch={handleSearchVendor} />
+      <SearchBox
+        placeholder="Cari Vendor..."
+        onSearch={handleSearchVendor}
+        withFilter={true}
+        filterOptions={filterOptionsVendor}
+        onFilterClick={(filters) => {
+          console.log("Filter option clicked:", filters); // Debug
+          handleFilterClick(filters);
+        }}
+      />
       <Table
         columns={[
           {
@@ -475,7 +537,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
             accessor: "url_kuisioner",
             type: "changingbutton",
             buttonLabel: (row) =>
-              row.url_kuisioner ? "Lihat PDF" : "Sunting PDF",
+              row.url_kuisioner ? "Lihat PDF" : "Edit PDF",
             alignment: "center",
             width: "300px",
             onClick: (row) => {
@@ -519,6 +581,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Material..."
                       onSearch={handleSearchMaterial}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
@@ -545,6 +608,10 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           title: "Spesifikasi",
                           accessor: "spesifikasi",
                         },
+                        {
+                          title: "Merk",
+                          accessor: "merk",
+                        },
                       ]}
                       data={
                         vendorDetail?.identifikasi_kebutuhan?.material ?? []
@@ -570,6 +637,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Peralatan..."
                       onSearch={handleSearchPeralatan}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
@@ -589,12 +657,16 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                         },
                         {
                           title: "Nama Peralatan",
-                          accessor: "jenis_peralatan",
+                          accessor: "nama_peralatan",
                         },
                         { title: "Satuan", accessor: "satuan" },
                         {
-                          title: "Jumlah Kebutuhan",
-                          accessor: "jumlah_kebutuhan",
+                          title: "Spesifikasi",
+                          accessor: "spesifikasi",
+                        },
+                        {
+                          title: "Merk",
+                          accessor: "merk",
                         },
                       ]}
                       data={
@@ -626,6 +698,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     <SearchBox
                       placeholder="Cari Tenaga Kerja..."
                       onSearch={handleSearchTenagaKerja}
+                      withFilter={true}
                     />
                     <Table
                       columns={[
@@ -689,7 +762,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
               // }}
               // onClick={handleAdjustData}
               onClick={handleDeleteAndContinue}>
-              Hapus & Lanjut
+              Simpan & Lanjut
             </Button>
           </div>
           <Modal isOpen={isConfirmModalOpen} onClose={cancelDelete}>
@@ -714,7 +787,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                     setIsConfirmModalOpen(false);
                     handleCloseModal();
                   }}>
-                  Ya, Hapus
+                  Ya, Cetak
                 </Button>
               </div>
             </div>

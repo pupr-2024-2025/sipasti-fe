@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import Navbar from "../../components/navigationbar";
+import Stepper from "../../components/stepper";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
 import { Trash } from "iconsax-react";
 import SearchBox from "../../components/searchbox";
+import { useRouter } from "next/router";
 
 const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,8 +17,21 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [provincies_idOptions, setprovincies_idOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
   const [errors, setErrors] = useState({});
+  const [currentStep, setCurrentStep] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const navigateToTahap1 = () => {
+    window.location.href = "/perencanaan_data/tahap1";
+  };
   // const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
+  const NUMBER_OF_STEPS = 4;
+  const stepLabels = [
+    "Informasi Umum",
+    "Identifikasi Kebutuhan",
+    "Penentuan Shortlist Vendor",
+    "Perancangan Kuesioner",
+  ];
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: "",
@@ -89,6 +105,42 @@ const Tahap2 = ({ onNext, onBack }) => {
       console.error("Province not found!");
     }
   };
+  // const nextStep = () => {
+  //   if (currentStep < NUMBER_OF_STEPS - 1) {
+  //     setCurrentStep((prevStep) => prevStep + 1);
+  //   }
+  // };
+  // const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // const handleSubmit = async (type, step) => {
+  //   if (step > 1) {
+  //     nextStep();
+  //     return;
+  //   }
+  //   if (isSubmitting) return;
+
+  //   setIsSubmitting(true);
+
+  //   if (areFieldsFilled()) {
+  //     const isSubmitSuccessful = await submitAndProceed(type);
+  //     if (isSubmitSuccessful) {
+  //       nextStep();
+  //     }
+  //   } else {
+  //     showAlert("Pastikan semua field telah diisi dengan benar.", "warning");
+  //   }
+
+  //   setIsSubmitting(false);
+  // };
+
+  // const submitAndProceed = async (type) => {
+  //   try {
+  //     return await handleSubmit(type);
+  //   } catch (error) {
+  //     console.error("Submission failed:", error);
+  //     return false;
+  //   }
+  // };
 
   // console.log(provincies_idOptions[0]);
 
@@ -750,80 +802,100 @@ const Tahap2 = ({ onNext, onBack }) => {
       ),
     },
   ];
+  const handleNextStep = async (type) => {
+    if (isSubmitting) return;
 
-  const handleSubmitSecondStep = async () => {
+    setIsSubmitting(true);
+
     try {
-      const informasi_umum_id = localStorage.getItem("informasi_umum_id");
-      const requestData = {
-        informasi_umum_id: informasi_umum_id,
-        material: stateMaterial,
-        peralatan: statePeralatan,
-        tenaga_kerja: stateTenagaKerja,
-      };
+      const isSubmitSuccessful = await handleSubmit(type);
 
-      console.log(JSON.stringify(requestData));
-      try {
-        const response = await fetch(
-          "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-          }
-        );
-
-        // Memeriksa apakah response berhasil
-        if (!response.ok) {
-          throw new Error("Submit tahap 2 gagal: " + response.statusText);
-        }
-
-        // Mengambil dan mem-parsing response data
-        const responseData = await response.json(); // Parse the JSON data
-        console.log(responseData);
-
-        // Mengambil data identifikasi_kebutuhan_id dari response dan menyimpannya ke localStorage
-        localStorage.setItem(
-          "identifikasi_kebutuhan_id",
-          responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
-        );
-      } catch (error) {
-        console.error(error); // Mencetak error ke konsol untuk debugging
-        throw error; // Melempar kembali error jika diperlukan
+      if (isSubmitSuccessful) {
+        router.replace("/perencanaan_data/tahap3");
       }
     } catch (error) {
-      throw error;
+      console.error("Submission failed:", error);
+      alert(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  return (
-    <div>
-      <h4 className="text-H4 text-emphasis-on_surface-high">
-        Identifikasi Kebutuhan{" "}
-      </h4>
-      <div className="mt-6">
-        <Tabs tabs={tabs} />
-      </div>
-      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
-          Kembali
-        </Button>
+  const handleSubmit = async () => {
+    const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+    const requestData = {
+      informasi_umum_id,
+      material: stateMaterial,
+      peralatan: statePeralatan,
+      tenaga_kerja: stateTenagaKerja,
+    };
 
-        <Button
-          variant="solid_blue"
-          size="Medium"
-          onClick={async () => {
-            console.log("onNext called");
-            try {
-              await handleSubmitSecondStep();
-              onNext();
-            } catch (error) {
-              alert(error.message);
-            }
-          }}>
-          Simpan & Lanjut
-        </Button>
+    console.log("Request data:", JSON.stringify(requestData));
+
+    const response = await fetch(
+      "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Submit tahap 2 gagal: ${response.statusText}`);
+    }
+
+    const responseData = await response.json();
+    console.log("Response data:", responseData);
+
+    localStorage.setItem(
+      "identifikasi_kebutuhan_id",
+      responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
+    );
+    return true;
+  };
+
+  return (
+    <div className="p-8">
+      <Navbar />
+      <div className="space-y-8">
+        <div className="space-y-3 pt-8">
+          <h3 className="text-H3 text-emphasis-on_surface-high">
+            Tahap Perencanaan Data
+          </h3>
+          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
+            <Stepper
+              currentStep={currentStep}
+              numberOfSteps={NUMBER_OF_STEPS}
+              labels={stepLabels}
+            />
+            <br />
+          </div>
+          {currentStep === 1 && (
+            <>
+              <h4 className="text-H4 text-emphasis-on_surface-high">
+                Identifikasi Kebutuhan
+              </h4>
+              <div className="mt-6">
+                <Tabs tabs={tabs} />
+              </div>
+            </>
+          )}
+          <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+            <Button
+              variant="outlined_yellow"
+              size="Medium"
+              onClick={navigateToTahap1}>
+              Kembali
+            </Button>
+
+            <Button variant="solid_blue" size="Medium" onClick={handleNextStep}>
+              Simpan & Lanjut
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../components/navigationbar";
-import Stepper from "../../components/stepper";
 import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import Tabs from "../../components/Tabs";
@@ -16,19 +14,8 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [provincies_idOptions, setprovincies_idOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
   const [errors, setErrors] = useState({});
-  const [currentStep, setCurrentStep] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
-  const navigateToTahap1 = () => {
-    window.location.href = "/perencanaan_data/tahap1";
-  };
   // const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
-  const NUMBER_OF_STEPS = 4;
-  const stepLabels = [
-    "Informasi Umum",
-    "Identifikasi Kebutuhan",
-    "Penentuan Shortlist Vendor",
-    "Perancangan Kuesioner",
-  ];
   const [dataMaterial, setDataMaterial] = useState([
     {
       id: "",
@@ -100,42 +87,6 @@ const Tahap2 = ({ onNext, onBack }) => {
       setCityOptions(selectedprovincies_id.cities); // Update city options based on selected province
     } else {
       console.error("Province not found!");
-    }
-  };
-  const nextStep = () => {
-    if (currentStep < NUMBER_OF_STEPS - 1) {
-      setCurrentStep((prevStep) => prevStep + 1);
-    }
-  };
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleNextStep = async (type, step) => {
-    if (step > 1) {
-      nextStep();
-      return;
-    }
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-
-    if (areFieldsFilled()) {
-      const isSubmitSuccessful = await submitAndProceed(type);
-      if (isSubmitSuccessful) {
-        nextStep();
-      }
-    } else {
-      showAlert("Pastikan semua field telah diisi dengan benar.", "warning");
-    }
-
-    setIsSubmitting(false);
-  };
-
-  const submitAndProceed = async (type) => {
-    try {
-      return await handleSubmit(type);
-    } catch (error) {
-      console.error("Submission failed:", error);
-      return false;
     }
   };
 
@@ -847,55 +798,32 @@ const Tahap2 = ({ onNext, onBack }) => {
   };
 
   return (
-    <div className="p-8">
-      <Navbar />
-      <div className="space-y-8">
-        <div className="space-y-3 pt-8">
-          <h3 className="text-H3 text-emphasis-on_surface-high">
-            Tahap Perencanaan Data
-          </h3>
-          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
-            <Stepper
-              currentStep={currentStep}
-              numberOfSteps={NUMBER_OF_STEPS}
-              labels={stepLabels}
-            />
-            <br />
-          </div>
-          {currentStep === 1 && (
-            <>
-              <h4 className="text-H4 text-emphasis-on_surface-high">
-                Identifikasi Kebutuhan
-              </h4>
-              <div className="mt-6">
-                <Tabs tabs={tabs} />
-              </div>
-            </>
-          )}
-          <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-            <Button
-              variant="outlined_yellow"
-              size="Medium"
-              onClick={navigateToTahap1}>
-              Kembali
-            </Button>
+    <div>
+      <h4 className="text-H4 text-emphasis-on_surface-high">
+        Identifikasi Kebutuhan{" "}
+      </h4>
+      <div className="mt-6">
+        <Tabs tabs={tabs} />
+      </div>
+      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+          Kembali
+        </Button>
 
-            <Button
-              variant="solid_blue"
-              size="Medium"
-              onClick={async () => {
-                console.log("onNext called");
-                try {
-                  await handleSubmitSecondStep();
-                  onNext();
-                } catch (error) {
-                  alert(error.message);
-                }
-              }}>
-              Simpan & Lanjut
-            </Button>
-          </div>
-        </div>
+        <Button
+          variant="solid_blue"
+          size="Medium"
+          onClick={async () => {
+            console.log("onNext called");
+            try {
+              await handleSubmitSecondStep();
+              onNext();
+            } catch (error) {
+              alert(error.message);
+            }
+          }}>
+          Simpan & Lanjut
+        </Button>
       </div>
     </div>
   );

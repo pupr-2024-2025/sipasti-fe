@@ -7,6 +7,9 @@ import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import axios from "axios";
 import Modal from "../../components/modal";
+import Navbar from "../../components/navigationbar";
+import Stepper from "../../components/stepper";
+
 import { CloseCircle } from "iconsax-react";
 const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +23,17 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
   const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
   const [searchVendorQuery, setSearchVendorQuery] = useState("");
+  const [currentStep, setCurrentStep] = useState(3);
+  const navigateToTahap3 = () => {
+    window.location.href = "/perencanaan_data/tahap3";
+  };
+  const NUMBER_OF_STEPS = 4;
+  const stepLabels = [
+    "Informasi Umum",
+    "Identifikasi Kebutuhan",
+    "Penentuan Shortlist Vendor",
+    "Perancangan Kuesioner",
+  ];
 
   const [commonInformation, setCommonInformation] = useState({
     kode_rup: "",
@@ -323,493 +337,532 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
     }
   };
   return (
-    <div className="space-y-3">
-      <h4 className="text-H4 text-emphasis-on_surface-high">
-        Perancangan Kuesioner
-      </h4>
-      <div className="space-y-2">
-        <h5 className="text-H5 text-emphasis-on_surface-high">
-          1. Informasi Umum
-        </h5>
-        <div className="mt-3 bg-custom-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
-          <TextInput
-            label="Kode RUP"
-            labelPosition="left"
-            size="Medium"
-            placeholder={commonInformation.kode_rup}
-            disabledActive={true}
-          />
-          <TextInput
-            label="Nama Balai"
-            labelPosition="left"
-            size="Medium"
-            placeholder={commonInformation.nama_balai}
-            disabledActive={true}
-          />
-          <TextInput
-            label="Nama Paket"
-            labelPosition="left"
-            size="Medium"
-            placeholder={commonInformation.nama_paket}
-            disabledActive={true}
-          />
-          <TextInput
-            label="Nama PPK"
-            labelPosition="left"
-            size="Medium"
-            placeholder={commonInformation.nama_ppk}
-            disabledActive={true}
-          />
-          <TextInput
-            label="Jabatan PPK"
-            labelPosition="left"
-            size="Medium"
-            placeholder={commonInformation.jabatan_ppk}
-            disabledActive={true}
-          />
-        </div>
-      </div>
-      <h5 className="text-H5 text-emphasis-on_surface-high">
-        2. Identifikasi Kebutuhan
-      </h5>
-      <Tabs
-        tabs={[
-          {
-            label: "Material",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Material..."
-                  onSearch={handleSearchMaterial}
-                  withFilter={true}
-                  filterOptions={filterOptionsMaterial}
-                  onFilterClick={(filters) => {
-                    console.log("Filter option clicked:", filters); // Debug
-                    handleFilterClick(filters);
-                  }}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Material", accessor: "nama_material" },
-                    { title: "Satuan", accessor: "satuan" },
-                    { title: "Spesifikasi", accessor: "spesifikasi" },
-                    { title: "Ukuran", accessor: "ukuran" },
-                    { title: "Kodefikasi", accessor: "kodefikasi" },
-                    {
-                      title: "Kelompok Material",
-                      accessor: "kelompok_material",
-                    },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
-                    { title: "Merk", accessor: "merk" },
-                    // {
-                    //   title: "Provinsi",
-                    //   accessor: (row) =>
-                    //     row.provinces?.nama_provinsi || "Data tidak ada",
-                    // },
-                    // { title: "Provinsi", accessor: "provinces?.nama_provinsi" },
-                    { title: "Provinsi", accessor: "provincies_id" },
-                    { title: "Kabupaten/Kota", accessor: "cities_id" },
-                  ]}
-                  data={dataMaterial.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  totalData={dataMaterial.length}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
-          },
-          {
-            label: "Peralatan",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Peralatan..."
-                  onSearch={handleSearchPeralatan}
-                  withFilter={true}
-                  filterOptions={filterOptionsPeralatan}
-                  onFilterClick={(filters) => {
-                    console.log("Filter option clicked:", filters); // Debug
-                    handleFilterClick(filters);
-                  }}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Peralatan", accessor: "nama_peralatan" },
-                    { title: "Satuan", accessor: "satuan" },
-                    { title: "Spesifikasi", accessor: "spesifikasi" },
-                    { title: "Kapasitas", accessor: "satuan" },
-                    { title: "Kodefikasi", accessor: "kodefikasi" },
-                    {
-                      title: "Kelompok Peralatan",
-                      accessor: "kelompok_peralatan",
-                    },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
-                    { title: "Merk", accessor: "merk" },
-                    { title: "Provinsi", accessor: "provincies_id" },
-                    { title: "Kabupaten/Kota", accessor: "cities_id" },
-                  ]}
-                  data={dataPeralatan.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  totalData={dataPeralatan.length}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
-          },
-          {
-            label: "Tenaga Kerja",
-            content: (
-              <div className="mt-3 space-y-4">
-                <SearchBox
-                  placeholder="Cari Tenaga Kerja..."
-                  onSearch={handleSearchTenagaKerja}
-                  withFilter={true}
-                  filterOptions={filterOptionsTenagaKerja}
-                  onFilterClick={(filters) => {
-                    console.log("Filter option clicked:", filters); // Debug
-                    handleFilterClick(filters);
-                  }}
-                />
-                <Table
-                  columns={[
-                    { title: "Nama Pekerja", accessor: "jenis_tenaga_kerja" },
-                    { title: "Satuan", accessor: "satuan" },
-                    { title: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan" },
-                    { title: "Kodefikasi", accessor: "kodefikasi" },
-                    { title: "Provinsi", accessor: "provincies_id" },
-                    { title: "Kabupaten/Kota", accessor: "cities_id" },
-                  ]}
-                  data={dataTenagaKerja.slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )}
-                />
-                <Pagination
-                  currentPage={currentPage}
-                  itemsPerPage={itemsPerPage}
-                  totalData={dataTenagaKerja.length}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            ),
-          },
-        ]}
-      />
-      <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
-      <SearchBox
-        placeholder="Cari Vendor..."
-        onSearch={handleSearchVendor}
-        withFilter={true}
-        filterOptions={filterOptionsVendor}
-        onFilterClick={(filters) => {
-          console.log("Filter option clicked:", filters); // Debug
-          handleFilterClick(filters);
-        }}
-      />
-      <Table
-        columns={[
-          {
-            title: "Responden/Vendor",
-            accessor: "nama_vendor",
-            width: "252px",
-          },
-          {
-            title: "Pemilik Vendor",
-            accessor: "pemilik_vendor",
-            width: "260px",
-          },
-          { title: "Alamat", accessor: "alamat", width: "340px" },
-          { title: "Kontak", accessor: "kontak", width: "200px" },
-          {
-            title: "Rancangan Kuesioner",
-            accessor: "url_kuisioner",
-            type: "changingbutton",
-            buttonLabel: (row) =>
-              row.url_kuisioner ? "Lihat PDF" : "Edit PDF",
-            alignment: "center",
-            width: "300px",
-            onClick: (row) => {
-              if (row.url_kuisioner) {
-                window.open(row.url_kuisioner, "_blank"); // Open PDF if url exists
-              } else {
-                handleOpenModal(row.id); // Otherwise, open modal to edit
-              }
-            },
-          },
-        ]}
-        data={dataVendor.slice(
-          (currentPage - 1) * itemsPerPage,
-          currentPage * itemsPerPage
-        )}
-      />
-      <Pagination
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        totalData={dataVendor?.length || 0}
-        onPageChange={setCurrentPage}
-      />
-      <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <div className="p-4">
-          <div className="flex justify-between items-center mb-4">
-            <h5 className="text-H5">Shorlist MPK yang akan disurvei</h5>
-            <button
-              className="text-emphasis-on_surface-high"
-              onClick={handleCloseModal}>
-              <CloseCircle size="24" />
-            </button>
+    <div className="p-8">
+      <Navbar />
+      <div className="space-y-8">
+        <div className="space-y-3 pt-8">
+          <h3 className="text-H3 text-emphasis-on_surface-high">
+            Tahap Perencanaan Data
+          </h3>
+          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
+            <Stepper
+              currentStep={currentStep}
+              numberOfSteps={NUMBER_OF_STEPS}
+              labels={stepLabels}
+            />
+            <br />
           </div>
-          {console.log("Vendor Detail in Modal:", vendorDetail)}{" "}
-          {/* Check vendorDetail data */}
-          <Tabs
-            tabs={[
-              {
-                label: "Material",
-                content: (
-                  <div className="mt-3 space-y-4">
-                    <SearchBox
-                      placeholder="Cari Material..."
-                      onSearch={handleSearchMaterial}
-                      withFilter={true}
-                    />
-                    <Table
-                      columns={[
-                        {
-                          title: "",
-                          accessor: "select",
-                          type: "checkbox",
-                          width: "48px",
-                          onChange: (material) =>
-                            handleCheckboxChange(
-                              material,
-                              !isVendorSelected(material.id),
-                              "material"
-                            ),
-                          isChecked: (material) =>
-                            isVendorSelected(material.id),
-                        },
-                        {
-                          title: "Nama Material",
-                          accessor: "nama_material",
-                        },
-                        { title: "Satuan", accessor: "satuan" },
-                        {
-                          title: "Spesifikasi",
-                          accessor: "spesifikasi",
-                        },
-                        {
-                          title: "Merk",
-                          accessor: "merk",
-                        },
-                      ]}
-                      data={
-                        vendorDetail?.identifikasi_kebutuhan?.material ?? []
-                      }
-                      setParentState={setCommonInformation}
-                    />
-                    <Pagination
-                      currentPage={currentPage}
-                      itemsPerPage={itemsPerPage}
-                      totalData={
-                        vendorDetail?.identifikasi_kebutuhan?.material
-                          ?.length || 0
-                      }
-                      onPageChange={setCurrentPage}
-                    />
-                  </div>
-                ),
-              },
-              {
-                label: "Peralatan",
-                content: (
-                  <div className="mt-3 space-y-4">
-                    <SearchBox
-                      placeholder="Cari Peralatan..."
-                      onSearch={handleSearchPeralatan}
-                      withFilter={true}
-                    />
-                    <Table
-                      columns={[
-                        {
-                          title: "",
-                          accessor: "select",
-                          type: "checkbox",
-                          width: "48px",
-                          onChange: (equipment) =>
-                            handleCheckboxChange(
-                              equipment,
-                              !isVendorSelected(equipment.id),
-                              "peralatan"
-                            ),
-                          isChecked: (equipment) =>
-                            isVendorSelected(equipment.id),
-                        },
-                        {
-                          title: "Nama Peralatan",
-                          accessor: "nama_peralatan",
-                        },
-                        { title: "Satuan", accessor: "satuan" },
-                        {
-                          title: "Spesifikasi",
-                          accessor: "spesifikasi",
-                        },
-                        {
-                          title: "Merk",
-                          accessor: "merk",
-                        },
-                      ]}
-                      data={
-                        vendorDetail?.identifikasi_kebutuhan?.peralatan
-                          ? vendorDetail.identifikasi_kebutuhan.peralatan.slice(
-                              (currentPage - 1) * itemsPerPage,
-                              currentPage * itemsPerPage
-                            )
-                          : []
-                      }
-                      setParentState={setCommonInformation}
-                    />
-                    <Pagination
-                      currentPage={currentPage}
-                      itemsPerPage={itemsPerPage}
-                      totalData={
-                        vendorDetail?.identifikasi_kebutuhan?.peralatan
-                          ?.length || 0
-                      }
-                      onPageChange={setCurrentPage}
-                    />
-                  </div>
-                ),
-              },
-              {
-                label: "Tenaga Kerja",
-                content: (
-                  <div className="mt-3 space-y-4">
-                    <SearchBox
-                      placeholder="Cari Tenaga Kerja..."
-                      onSearch={handleSearchTenagaKerja}
-                      withFilter={true}
-                    />
-                    <Table
-                      columns={[
-                        {
-                          title: "",
-                          accessor: "select",
-                          type: "checkbox",
-                          width: "48px",
-                          onChange: (worker) =>
-                            handleCheckboxChange(
-                              worker,
-                              !isVendorSelected(worker.id),
-                              "tenaga_kerja"
-                            ),
-                          isChecked: (worker) => isVendorSelected(worker.id),
-                        },
-                        {
-                          title: "Nama Pekerja",
-                          accessor: "jenis_tenaga_kerja",
-                        },
-                        { title: "Satuan", accessor: "satuan" },
-                      ]}
-                      data={
-                        vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja?.slice(
-                          (currentPage - 1) * itemsPerPage,
-                          currentPage * itemsPerPage
-                        ) || []
-                      }
-                      setParentState={setCommonInformation}
-                    />
-                    <Pagination
-                      currentPage={currentPage}
-                      itemsPerPage={itemsPerPage}
-                      totalData={
-                        vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja
-                          ?.length || 0
-                      }
-                      onPageChange={setCurrentPage}
-                    />
-                  </div>
-                ),
-              },
-            ]}
-          />
-          <div className="flex flex-row justify-end items-right space-x-4 mt-3 ">
-            <Button
-              variant="outlined_yellow"
-              size="Medium"
-              onClick={handleCloseModal}>
-              Kembali
-            </Button>
-            <Button
-              variant="solid_blue"
-              size="Medium"
-              // onClick={async () => {
-              //   try {
-              //     onNext();
-              //   } catch (error) {
-              //     alert(error.message);
-              //   }
-              // }}
-              // onClick={handleAdjustData}
-              onClick={handleDeleteAndContinue}>
-              Simpan & Lanjut
-            </Button>
-          </div>
-          <Modal isOpen={isConfirmModalOpen} onClose={cancelDelete}>
-            <div className="space-y-4 p-4">
-              <h2 className="text-H5">Peringatan</h2>
-              <p>
-                Dengan menekan tombol simpan Anda tidak dapat melakukan
-                perubahan data kembali.
-              </p>
-              <div className="flex justify-end space-x-4 mt-4">
-                <Button
-                  variant="outlined_yellow"
+          <div className="space-y-3">
+            <h4 className="text-H4 text-emphasis-on_surface-high">
+              Perancangan Kuesioner
+            </h4>
+            <div className="space-y-2">
+              <h5 className="text-H5 text-emphasis-on_surface-high">
+                1. Informasi Umum
+              </h5>
+              <div className="mt-3 bg-custom-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
+                <TextInput
+                  label="Kode RUP"
+                  labelPosition="left"
                   size="Medium"
-                  onClick={cancelDelete}>
-                  Batal
-                </Button>
-                <Button
-                  variant="solid_blue"
+                  placeholder={commonInformation.kode_rup}
+                  disabledActive={true}
+                />
+                <TextInput
+                  label="Nama Balai"
+                  labelPosition="left"
                   size="Medium"
-                  onClick={() => {
-                    handleAdjustData();
-                    setIsConfirmModalOpen(false);
-                    handleCloseModal();
-                  }}>
-                  Ya, Cetak
-                </Button>
+                  placeholder={commonInformation.nama_balai}
+                  disabledActive={true}
+                />
+                <TextInput
+                  label="Nama Paket"
+                  labelPosition="left"
+                  size="Medium"
+                  placeholder={commonInformation.nama_paket}
+                  disabledActive={true}
+                />
+                <TextInput
+                  label="Nama PPK"
+                  labelPosition="left"
+                  size="Medium"
+                  placeholder={commonInformation.nama_ppk}
+                  disabledActive={true}
+                />
+                <TextInput
+                  label="Jabatan PPK"
+                  labelPosition="left"
+                  size="Medium"
+                  placeholder={commonInformation.jabatan_ppk}
+                  disabledActive={true}
+                />
               </div>
             </div>
-          </Modal>
+            <h5 className="text-H5 text-emphasis-on_surface-high">
+              2. Identifikasi Kebutuhan
+            </h5>
+            <Tabs
+              tabs={[
+                {
+                  label: "Material",
+                  content: (
+                    <div className="mt-3 space-y-4">
+                      <SearchBox
+                        placeholder="Cari Material..."
+                        onSearch={handleSearchMaterial}
+                        withFilter={true}
+                        filterOptions={filterOptionsMaterial}
+                        onFilterClick={(filters) => {
+                          console.log("Filter option clicked:", filters); // Debug
+                          handleFilterClick(filters);
+                        }}
+                      />
+                      <Table
+                        columns={[
+                          { title: "Nama Material", accessor: "nama_material" },
+                          { title: "Satuan", accessor: "satuan" },
+                          { title: "Spesifikasi", accessor: "spesifikasi" },
+                          { title: "Ukuran", accessor: "ukuran" },
+                          { title: "Kodefikasi", accessor: "kodefikasi" },
+                          {
+                            title: "Kelompok Material",
+                            accessor: "kelompok_material",
+                          },
+                          {
+                            title: "Jumlah Kebutuhan",
+                            accessor: "jumlah_kebutuhan",
+                          },
+                          { title: "Merk", accessor: "merk" },
+                          // {
+                          //   title: "Provinsi",
+                          //   accessor: (row) =>
+                          //     row.provinces?.nama_provinsi || "Data tidak ada",
+                          // },
+                          // { title: "Provinsi", accessor: "provinces?.nama_provinsi" },
+                          { title: "Provinsi", accessor: "provincies_id" },
+                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                        ]}
+                        data={dataMaterial.slice(
+                          (currentPage - 1) * itemsPerPage,
+                          currentPage * itemsPerPage
+                        )}
+                      />
+                      <Pagination
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        totalData={dataMaterial.length}
+                        onPageChange={setCurrentPage}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  label: "Peralatan",
+                  content: (
+                    <div className="mt-3 space-y-4">
+                      <SearchBox
+                        placeholder="Cari Peralatan..."
+                        onSearch={handleSearchPeralatan}
+                        withFilter={true}
+                        filterOptions={filterOptionsPeralatan}
+                        onFilterClick={(filters) => {
+                          console.log("Filter option clicked:", filters); // Debug
+                          handleFilterClick(filters);
+                        }}
+                      />
+                      <Table
+                        columns={[
+                          {
+                            title: "Nama Peralatan",
+                            accessor: "nama_peralatan",
+                          },
+                          { title: "Satuan", accessor: "satuan" },
+                          { title: "Spesifikasi", accessor: "spesifikasi" },
+                          { title: "Kapasitas", accessor: "satuan" },
+                          { title: "Kodefikasi", accessor: "kodefikasi" },
+                          {
+                            title: "Kelompok Peralatan",
+                            accessor: "kelompok_peralatan",
+                          },
+                          {
+                            title: "Jumlah Kebutuhan",
+                            accessor: "jumlah_kebutuhan",
+                          },
+                          { title: "Merk", accessor: "merk" },
+                          { title: "Provinsi", accessor: "provincies_id" },
+                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                        ]}
+                        data={dataPeralatan.slice(
+                          (currentPage - 1) * itemsPerPage,
+                          currentPage * itemsPerPage
+                        )}
+                      />
+                      <Pagination
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        totalData={dataPeralatan.length}
+                        onPageChange={setCurrentPage}
+                      />
+                    </div>
+                  ),
+                },
+                {
+                  label: "Tenaga Kerja",
+                  content: (
+                    <div className="mt-3 space-y-4">
+                      <SearchBox
+                        placeholder="Cari Tenaga Kerja..."
+                        onSearch={handleSearchTenagaKerja}
+                        withFilter={true}
+                        filterOptions={filterOptionsTenagaKerja}
+                        onFilterClick={(filters) => {
+                          console.log("Filter option clicked:", filters); // Debug
+                          handleFilterClick(filters);
+                        }}
+                      />
+                      <Table
+                        columns={[
+                          {
+                            title: "Nama Pekerja",
+                            accessor: "jenis_tenaga_kerja",
+                          },
+                          { title: "Satuan", accessor: "satuan" },
+                          {
+                            title: "Jumlah Kebutuhan",
+                            accessor: "jumlah_kebutuhan",
+                          },
+                          { title: "Kodefikasi", accessor: "kodefikasi" },
+                          { title: "Provinsi", accessor: "provincies_id" },
+                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                        ]}
+                        data={dataTenagaKerja.slice(
+                          (currentPage - 1) * itemsPerPage,
+                          currentPage * itemsPerPage
+                        )}
+                      />
+                      <Pagination
+                        currentPage={currentPage}
+                        itemsPerPage={itemsPerPage}
+                        totalData={dataTenagaKerja.length}
+                        onPageChange={setCurrentPage}
+                      />
+                    </div>
+                  ),
+                },
+              ]}
+            />
+            <h5 className="text-H5 text-emphasis-on_surface-high">3. Vendor</h5>
+            <SearchBox
+              placeholder="Cari Vendor..."
+              onSearch={handleSearchVendor}
+              withFilter={true}
+              filterOptions={filterOptionsVendor}
+              onFilterClick={(filters) => {
+                console.log("Filter option clicked:", filters); // Debug
+                handleFilterClick(filters);
+              }}
+            />
+            <Table
+              columns={[
+                {
+                  title: "Responden/Vendor",
+                  accessor: "nama_vendor",
+                  width: "252px",
+                },
+                {
+                  title: "Pemilik Vendor",
+                  accessor: "pemilik_vendor",
+                  width: "260px",
+                },
+                { title: "Alamat", accessor: "alamat", width: "340px" },
+                { title: "Kontak", accessor: "kontak", width: "200px" },
+                {
+                  title: "Rancangan Kuesioner",
+                  accessor: "url_kuisioner",
+                  type: "changingbutton",
+                  buttonLabel: (row) =>
+                    row.url_kuisioner ? "Lihat PDF" : "Edit PDF",
+                  alignment: "center",
+                  width: "300px",
+                  onClick: (row) => {
+                    if (row.url_kuisioner) {
+                      window.open(row.url_kuisioner, "_blank");
+                    } else {
+                      handleOpenModal(row.id);
+                    }
+                    console.log("yang dipilih", row.id);
+                  },
+                },
+              ]}
+              data={dataVendor.slice(
+                (currentPage - 1) * itemsPerPage,
+                currentPage * itemsPerPage
+              )}
+            />
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalData={dataVendor?.length || 0}
+              onPageChange={setCurrentPage}
+            />
+            <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <h5 className="text-H5">Shorlist MPK yang akan disurvei</h5>
+                  <button
+                    className="text-emphasis-on_surface-high"
+                    onClick={handleCloseModal}>
+                    <CloseCircle size="24" />
+                  </button>
+                </div>
+                {console.log("Vendor Detail in Modal:", vendorDetail)}{" "}
+                {/* Check vendorDetail data */}
+                <Tabs
+                  tabs={[
+                    {
+                      label: "Material",
+                      content: (
+                        <div className="mt-3 space-y-4">
+                          <SearchBox
+                            placeholder="Cari Material..."
+                            onSearch={handleSearchMaterial}
+                            withFilter={true}
+                          />
+                          <Table
+                            columns={[
+                              {
+                                title: "",
+                                accessor: "select",
+                                type: "checkbox",
+                                width: "48px",
+                                onChange: (material) =>
+                                  handleCheckboxChange(
+                                    material,
+                                    !isVendorSelected(material.id),
+                                    "material"
+                                  ),
+                                isChecked: (material) =>
+                                  isVendorSelected(material.id),
+                              },
+                              {
+                                title: "Nama Material",
+                                accessor: "nama_material",
+                              },
+                              { title: "Satuan", accessor: "satuan" },
+                              {
+                                title: "Spesifikasi",
+                                accessor: "spesifikasi",
+                              },
+                              {
+                                title: "Merk",
+                                accessor: "merk",
+                              },
+                            ]}
+                            data={
+                              vendorDetail?.identifikasi_kebutuhan?.material ??
+                              []
+                            }
+                            setParentState={setCommonInformation}
+                          />
+                          <Pagination
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            totalData={
+                              vendorDetail?.identifikasi_kebutuhan?.material
+                                ?.length || 0
+                            }
+                            onPageChange={setCurrentPage}
+                          />
+                        </div>
+                      ),
+                    },
+                    {
+                      label: "Peralatan",
+                      content: (
+                        <div className="mt-3 space-y-4">
+                          <SearchBox
+                            placeholder="Cari Peralatan..."
+                            onSearch={handleSearchPeralatan}
+                            withFilter={true}
+                          />
+                          <Table
+                            columns={[
+                              {
+                                title: "",
+                                accessor: "select",
+                                type: "checkbox",
+                                width: "48px",
+                                onChange: (equipment) =>
+                                  handleCheckboxChange(
+                                    equipment,
+                                    !isVendorSelected(equipment.id),
+                                    "peralatan"
+                                  ),
+                                isChecked: (equipment) =>
+                                  isVendorSelected(equipment.id),
+                              },
+                              {
+                                title: "Nama Peralatan",
+                                accessor: "nama_peralatan",
+                              },
+                              { title: "Satuan", accessor: "satuan" },
+                              {
+                                title: "Spesifikasi",
+                                accessor: "spesifikasi",
+                              },
+                              {
+                                title: "Merk",
+                                accessor: "merk",
+                              },
+                            ]}
+                            data={
+                              vendorDetail?.identifikasi_kebutuhan?.peralatan
+                                ? vendorDetail.identifikasi_kebutuhan.peralatan.slice(
+                                    (currentPage - 1) * itemsPerPage,
+                                    currentPage * itemsPerPage
+                                  )
+                                : []
+                            }
+                            setParentState={setCommonInformation}
+                          />
+                          <Pagination
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            totalData={
+                              vendorDetail?.identifikasi_kebutuhan?.peralatan
+                                ?.length || 0
+                            }
+                            onPageChange={setCurrentPage}
+                          />
+                        </div>
+                      ),
+                    },
+                    {
+                      label: "Tenaga Kerja",
+                      content: (
+                        <div className="mt-3 space-y-4">
+                          <SearchBox
+                            placeholder="Cari Tenaga Kerja..."
+                            onSearch={handleSearchTenagaKerja}
+                            withFilter={true}
+                          />
+                          <Table
+                            columns={[
+                              {
+                                title: "",
+                                accessor: "select",
+                                type: "checkbox",
+                                width: "48px",
+                                onChange: (worker) =>
+                                  handleCheckboxChange(
+                                    worker,
+                                    !isVendorSelected(worker.id),
+                                    "tenaga_kerja"
+                                  ),
+                                isChecked: (worker) =>
+                                  isVendorSelected(worker.id),
+                              },
+                              {
+                                title: "Nama Pekerja",
+                                accessor: "jenis_tenaga_kerja",
+                              },
+                              { title: "Satuan", accessor: "satuan" },
+                            ]}
+                            data={
+                              vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja?.slice(
+                                (currentPage - 1) * itemsPerPage,
+                                currentPage * itemsPerPage
+                              ) || []
+                            }
+                            setParentState={setCommonInformation}
+                          />
+                          <Pagination
+                            currentPage={currentPage}
+                            itemsPerPage={itemsPerPage}
+                            totalData={
+                              vendorDetail?.identifikasi_kebutuhan?.tenaga_kerja
+                                ?.length || 0
+                            }
+                            onPageChange={setCurrentPage}
+                          />
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+                <div className="flex flex-row justify-end items-right space-x-4 mt-3 ">
+                  <Button
+                    variant="outlined_yellow"
+                    size="Medium"
+                    onClick={handleCloseModal}>
+                    Kembali
+                  </Button>
+                  <Button
+                    variant="solid_blue"
+                    size="Medium"
+                    // onClick={async () => {
+                    //   try {
+                    //     onNext();
+                    //   } catch (error) {
+                    //     alert(error.message);
+                    //   }
+                    // }}
+                    // onClick={handleAdjustData}
+                    onClick={handleDeleteAndContinue}>
+                    Simpan & Lanjut
+                  </Button>
+                </div>
+                <Modal isOpen={isConfirmModalOpen} onClose={cancelDelete}>
+                  <div className="space-y-4 p-4">
+                    <h2 className="text-H5">Peringatan</h2>
+                    <p>
+                      Dengan menekan tombol simpan Anda tidak dapat melakukan
+                      perubahan data kembali.
+                    </p>
+                    <div className="flex justify-end space-x-4 mt-4">
+                      <Button
+                        variant="outlined_yellow"
+                        size="Medium"
+                        onClick={cancelDelete}>
+                        Batal
+                      </Button>
+                      <Button
+                        variant="solid_blue"
+                        size="Medium"
+                        onClick={() => {
+                          handleAdjustData();
+                          setIsConfirmModalOpen(false);
+                          handleCloseModal();
+                        }}>
+                        Ya, Cetak
+                      </Button>
+                    </div>
+                  </div>
+                </Modal>
+              </div>
+            </Modal>
+            <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+              <Button
+                variant="outlined_yellow"
+                size="Medium"
+                onClick={navigateToTahap3}>
+                Kembali
+              </Button>
+              <Button
+                variant="solid_blue"
+                size="Medium"
+                onClick={async () => {
+                  try {
+                    onNext();
+                  } catch (error) {
+                    alert(error.message);
+                  }
+                }}>
+                Simpan & Lanjut
+              </Button>
+            </div>
+          </div>
         </div>
-      </Modal>
-      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
-          Kembali
-        </Button>
-        <Button
-          variant="solid_blue"
-          size="Medium"
-          onClick={async () => {
-            try {
-              onNext();
-            } catch (error) {
-              alert(error.message);
-            }
-          }}>
-          Simpan & Lanjut
-        </Button>
       </div>
     </div>
   );

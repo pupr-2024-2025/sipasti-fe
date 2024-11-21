@@ -512,7 +512,7 @@ const InputVendor = ({ onNext, onBack, onClose }) => {
                 setSelectedFile={setLogoUrl}
                 buttonText="Pilih Berkas"
                 multiple={false}
-                accept=".pdf, .jpg, .jpeg"
+                accept=".jpg, .jpeg"
                 Label="Unggah Logo"
                 HelperText="Format .JPG, .JPEG dan maksimal 2MB"
                 state={logoUploadState}

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Table from "../../components/table";
-import Pagination from "../../components/pagination";
-import Tabs from "../../components/Tabs";
-import SearchBox from "../../components/searchbox";
-import Button from "../../components/button";
+import Table from "../../../components/table";
+import Pagination from "../../../components/pagination";
+import Tabs from "../../../components/Tabs";
+import SearchBox from "../../../components/searchbox";
+import Button from "../../../components/button";
 import axios from "axios";
-import Navbar from "../../components/navigationbar";
-import Stepper from "../../components/stepper";
 
 const Tahap3 = ({ onNext, onBack }) => {
   const [data, setData] = useState({ material: [], equipment: [], labor: [] });
@@ -32,17 +30,6 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
   const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
   const [searchVendorQuery, setSearchVendorQuery] = useState("");
-  const [currentStep, setCurrentStep] = useState(2);
-  const navigateToTahap2 = () => {
-    window.location.href = "/perencanaan_data/tahap2pisah";
-  };
-  const NUMBER_OF_STEPS = 4;
-  const stepLabels = [
-    "Informasi Umum",
-    "Identifikasi Kebutuhan",
-    "Penentuan Shortlist Vendor",
-    "Perancangan Kuesioner",
-  ];
   const getPaginatedData = (data, page) => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -371,39 +358,20 @@ const Tahap3 = ({ onNext, onBack }) => {
   ];
 
   return (
-    <div className="p-8">
-      <Navbar />
-      <div className="space-y-8">
-        <div className="space-y-3 pt-8">
-          <h3 className="text-H3 text-emphasis-on_surface-high">
-            Tahap Perencanaan Data
-          </h3>
-          <div className="justify-center items-center space-x-4 mt-3 bg-neutral-100 px-6 pb-8 pt-16 rounded-[16px]">
-            <Stepper
-              currentStep={currentStep}
-              numberOfSteps={NUMBER_OF_STEPS}
-              labels={stepLabels}
-            />
-            <br />
-          </div>
-          <h4 className="text-H4 text-emphasis-on_surface-high">
-            Penentuan Shortlist Vendor
-          </h4>
-          <div className="mt-6">
-            <Tabs tabs={tabs} />
-          </div>
-          <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-            <Button
-              variant="outlined_yellow"
-              size="Medium"
-              onClick={navigateToTahap2}>
-              Kembali
-            </Button>
-            <Button variant="solid_blue" size="Medium" onClick={handleSubmit}>
-              Simpan & Lanjut
-            </Button>
-          </div>
-        </div>
+    <div>
+      <h4 className="text-H4 text-emphasis-on_surface-high">
+        Penentuan Shortlist Vendor
+      </h4>
+      <div className="mt-6">
+        <Tabs tabs={tabs} />
+      </div>
+      <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+        <Button variant="outlined_yellow" size="Medium" onClick={onBack}>
+          Kembali
+        </Button>
+        <Button variant="solid_blue" size="Medium" onClick={handleSubmit}>
+          Simpan & Lanjut
+        </Button>
       </div>
     </div>
   );
