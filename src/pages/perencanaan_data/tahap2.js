@@ -22,7 +22,7 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const navigateToTahap1 = () => {
-    window.location.href = "/perencanaan_data/tahap1";
+    window.location.href = "/perencanaan_data/tahap1?fromTahap2=true";
   };
   // const [selectedprovincies_id, setSelectedprovincies_id] = useState("");
   const NUMBER_OF_STEPS = 4;

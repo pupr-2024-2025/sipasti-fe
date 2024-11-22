@@ -106,9 +106,8 @@ const Tahap1 = () => {
         const response = await fetch(
           "https://api-ecatalogue-staging.online/api/get-balai-kerja"
         );
-        const result = await response.json(); // Pastikan 'result' menerima seluruh respons API
+        const result = await response.json();
         if (result && result.data && Array.isArray(result.data)) {
-          // Akses 'result.data' karena data balai kerja ada di properti 'data'
           const formattedOptions = result.data.map((item) => ({
             value: item.id,
             label: item.nama,
@@ -122,6 +121,43 @@ const Tahap1 = () => {
 
     fetchBalaiOptions();
   }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromTahap2 = params.get("fromTahap2");
+
+    if (fromTahap2 === "true") {
+      const informasiUmumId = localStorage.getItem("informasi_umum_id");
+      if (informasiUmumId) {
+        fetchInformasiUmum(informasiUmumId);
+      }
+    }
+  }, [balaiOptions]); // Tambahkan balaiOptions ke dependensi
+
+  const fetchInformasiUmum = async (id) => {
+    try {
+      const response = await axios.get(
+        `https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/${id}`
+      );
+      console.log("response data", response.data);
+      const result = response.data;
+
+      if (result?.data) {
+        setKodeRUPManual(result.data.kode_rup || "");
+        setNamaPaketManual(result.data.nama_paket || "");
+        setNamaPPKManual(result.data.nama_ppk || "");
+        setJabatanPPKManual(result.data.jabatan_ppk || "");
+
+        // Cocokkan nama balai dengan opsi balaiOptions
+        const selectedBalai = balaiOptions.find(
+          (option) => option.label === result.data.nama_balai
+        );
+        setNamaBalaiManual(selectedBalai || null);
+      }
+    } catch (error) {
+      console.error("Gagal memuat data Informasi Umum:", error);
+    }
+  };
   const tabs = [
     {
       label: "Sinkron data dari SIPASTI",

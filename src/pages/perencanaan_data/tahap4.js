@@ -25,7 +25,7 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [searchVendorQuery, setSearchVendorQuery] = useState("");
   const [currentStep, setCurrentStep] = useState(3);
   const navigateToTahap3 = () => {
-    window.location.href = "/perencanaan_data/tahap3";
+    window.location.href = "/perencanaan_data/tahap3?fromTahap4=true";
   };
   const NUMBER_OF_STEPS = 4;
   const stepLabels = [
@@ -439,8 +439,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                           //     row.provinces?.nama_provinsi || "Data tidak ada",
                           // },
                           // { title: "Provinsi", accessor: "provinces?.nama_provinsi" },
-                          { title: "Provinsi", accessor: "provincies_id" },
-                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                          { title: "Provinsi", accessor: "provinsi" },
+                          { title: "Kabupaten/Kota", accessor: "kota" },
                         ]}
                         data={dataMaterial.slice(
                           (currentPage - 1) * itemsPerPage,
@@ -489,8 +489,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                             accessor: "jumlah_kebutuhan",
                           },
                           { title: "Merk", accessor: "merk" },
-                          { title: "Provinsi", accessor: "provincies_id" },
-                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                          { title: "Provinsi", accessor: "provinsi" },
+                          { title: "Kabupaten/Kota", accessor: "kota" },
                         ]}
                         data={dataPeralatan.slice(
                           (currentPage - 1) * itemsPerPage,
@@ -532,8 +532,8 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                             accessor: "jumlah_kebutuhan",
                           },
                           { title: "Kodefikasi", accessor: "kodefikasi" },
-                          { title: "Provinsi", accessor: "provincies_id" },
-                          { title: "Kabupaten/Kota", accessor: "cities_id" },
+                          { title: "Provinsi", accessor: "provinsi" },
+                          { title: "Kabupaten/Kota", accessor: "kota" },
                         ]}
                         data={dataTenagaKerja.slice(
                           (currentPage - 1) * itemsPerPage,

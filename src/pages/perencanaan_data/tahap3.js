@@ -202,18 +202,18 @@ const Tahap3 = ({ onNext, onBack }) => {
         })),
       };
 
-      console.log("Payload yang akan dikirim:", payload);
-
-      if (payload.shortlist_vendor.length === 0) {
-        console.error("Silakan pilih vendor sebelum melanjutkan.");
-        return;
-      }
+      // Simpan payload ke localStorage
+      localStorage.setItem(
+        "shortlistVendorData",
+        JSON.stringify(payload.shortlist_vendor)
+      );
 
       const response = await axios.post(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
         payload
       );
       console.log("Data berhasil dikirim:", response.data);
+
       router.replace("/perencanaan_data/tahap4");
     } catch (error) {
       console.error("Error posting data:", error);
