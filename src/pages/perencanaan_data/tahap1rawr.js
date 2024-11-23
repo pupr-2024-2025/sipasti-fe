@@ -4,7 +4,7 @@ import Tabs from "../../components/Tabs";
 import TextInput from "../../components/input";
 import Button from "../../components/button";
 import Stepper from "../../components/stepper";
-import Dropdown from "../../components/dropdown1";
+import Dropdown from "../../components/dropdown";
 // import Tahap2 from "./tahap2";
 // import Tahap3 from "./tahap3";
 // import Tahap4 from "./tahap4";
@@ -167,14 +167,12 @@ const Tahap1 = () => {
           console.log("error undefined data");
         }
         console.log("isi selected balai : " + selectedBalai?.label ?? "");
-        setNamaBalaiManual(selectedBalai?.value ?? 0);
+        setNamaBalaiManual(selectedBalai);
         // setNamaBalaiManual(result.data.nama_balai || null);
-        console.log("oh my wow dalam", namaBalaiManual);
       }
     } catch (error) {
       console.error("Gagal memuat data Informasi Umum:", error);
     }
-    console.log("oh my wow", namaBalaiManual);
   };
   const tabs = [
     {
@@ -251,7 +249,6 @@ const Tahap1 = () => {
               setNamaBalaiManual(String(selectedOption?.value || ""))
             }
             isRequired={true}
-            // value={namaBalaiManual}
             value={namaBalaiManual}
             labelWidth="220px"
             labelPosition="left"
@@ -302,8 +299,7 @@ const Tahap1 = () => {
       ),
     },
   ];
-  console.log("hasil yang dikerluarkan irvan", namaBalaiManual);
-  // console.log("hasil yang dikerluarkan irvan", namaBalaiManual.value);
+
   const areFieldsFilled = () => {
     return (
       typeof namaBalaiManual === "string" &&

@@ -11,8 +11,8 @@ const Dropdown = ({
   value,
   isRequired = false,
   errorMessage = "Wajib diisi",
-  labelPosition = "top", // "top" or "left"
-  labelWidth = "150px", // Default width for label
+  labelPosition = "top",
+  labelWidth = "150px",
 }) => {
   const [selectedValue, setSelectedValue] = useState(value || null);
   const [error, setError] = useState("");
@@ -27,9 +27,10 @@ const Dropdown = ({
     label: option.label,
   }));
 
+  console.log("formattedOptions", formattedOptions);
+
   const handleChange = (selectedOption) => {
     setSelectedValue(selectedOption);
-    onSelect(selectedOption);
 
     if (isRequired && !selectedOption) {
       setError(errorMessage);
@@ -65,7 +66,7 @@ const Dropdown = ({
       <div className={`w-full ${labelPosition === "left" ? "flex-1" : ""}`}>
         <Select
           value={selectedValue}
-          onChange={handleChange}
+          onChange={onSelect}
           onBlur={handleBlur}
           options={formattedOptions}
           placeholder={placeholder}
