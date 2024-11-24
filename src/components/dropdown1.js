@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { CloseCircle } from "iconsax-react";
 import colors from "../styles/colors";
 
@@ -13,8 +13,12 @@ const Dropdown = ({
   labelPosition = "top",
   labelWidth = "150px",
 }) => {
-  const [selectedValue, setSelectedValue] = useState(value || "");
+  const [selectedValue, setSelectedValue] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setSelectedValue(value);
+  }, [value]);
 
   const handleChange = (event) => {
     const selected = event.target.value;
@@ -25,7 +29,6 @@ const Dropdown = ({
     } else {
       setError("");
     }
-
     onSelect && onSelect(selected);
   };
 

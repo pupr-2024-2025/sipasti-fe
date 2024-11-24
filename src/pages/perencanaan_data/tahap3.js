@@ -86,24 +86,28 @@ const Tahap3 = ({ onNext, onBack }) => {
   }, []);
 
   const handleCheckboxChange = (vendor, isChecked) => {
-    setSelectedVendors((prevSelectedVendors) => {
-      const updatedVendors = isChecked
-        ? [
-            ...prevSelectedVendors,
-            {
-              data_vendor_id: vendor.id,
-              nama_vendor: vendor.nama_vendor,
-              pemilik_vendor: vendor.pemilik_vendor,
-              sumber_daya: vendor.sumber_daya,
-              alamat: vendor.alamat,
-              kontak: vendor.kontak,
-            },
-          ]
-        : prevSelectedVendors.filter(
-            (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
-          );
-      return updatedVendors;
-    });
+    // Define the updatedVendors variable before using it
+    const updatedVendors = isChecked
+      ? [
+          ...selectedVendors,
+          {
+            data_vendor_id: vendor.id,
+            nama_vendor: vendor.nama_vendor,
+            pemilik_vendor: vendor.pemilik_vendor,
+            sumber_daya: vendor.sumber_daya,
+            alamat: vendor.alamat,
+            kontak: vendor.kontak,
+          },
+        ]
+      : selectedVendors.filter(
+          (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
+        );
+
+    // Now you can safely use updatedVendors here
+    localStorage.setItem("selectedVendors", JSON.stringify(updatedVendors));
+
+    // Update the state with the new list of vendors
+    setSelectedVendors(updatedVendors);
   };
 
   const validateInputs = () => {
@@ -202,11 +206,12 @@ const Tahap3 = ({ onNext, onBack }) => {
         })),
       };
 
-      // Simpan payload ke localStorage
-      localStorage.setItem(
-        "shortlistVendorData",
-        JSON.stringify(payload.shortlist_vendor)
-      );
+      useEffect(() => {
+        const storedVendors = localStorage.getItem("selectedVendors");
+        if (storedVendors) {
+          setSelectedVendors(JSON.parse(storedVendors));
+        }
+      }, []);
 
       const response = await axios.post(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
@@ -239,6 +244,8 @@ const Tahap3 = ({ onNext, onBack }) => {
       accessor: "select",
       type: "checkbox",
       width: "48px",
+      checked: (row) =>
+        selectedVendors.some((vendor) => vendor.data_vendor_id === row.id),
       onChange: handleCheckboxChange,
     },
     {

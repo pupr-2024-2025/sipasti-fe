@@ -168,14 +168,13 @@ const Tahap1 = () => {
         }
         console.log("isi selected balai : " + selectedBalai?.label ?? "");
         setNamaBalaiManual(selectedBalai?.value ?? 0);
-        // setNamaBalaiManual(result.data.nama_balai || null);
-        console.log("oh my wow dalam", namaBalaiManual);
       }
     } catch (error) {
       console.error("Gagal memuat data Informasi Umum:", error);
     }
     console.log("oh my wow", namaBalaiManual);
   };
+  console.log("ayam bakar ash shiddiq", namaBalaiManual);
   const tabs = [
     {
       label: "Sinkron data dari SIPASTI",
@@ -247,16 +246,17 @@ const Tahap1 = () => {
             options={balaiOptions}
             label="Nama Balai"
             placeholder="Pilih Balai"
-            onSelect={(selectedOption) =>
-              setNamaBalaiManual(String(selectedOption?.value || ""))
-            }
+            onSelect={(selectedOption) => {
+              console.log("Irvan kotak", balaiOptions);
+              setNamaBalaiManual(balaiOptions[selectedOption]?.label || "");
+            }}
             isRequired={true}
-            // value={namaBalaiManual}
             value={namaBalaiManual}
             labelWidth="220px"
             labelPosition="left"
             errorMessage="Balai tidak boleh kosong"
           />
+
           {/* <TextInput
             label="Nama Balai"
             labelPosition="left"
@@ -275,7 +275,7 @@ const Tahap1 = () => {
             size="Medium"
             isRequired="true"
             value={namaPaketManual}
-            errorMessage="Nama paket tidak boleh kosong"
+            errorMessage="1Nama paket tidak boleh kosong"
             onChange={(e) => setNamaPaketManual(e.target.value)}
           />
           <TextInput
@@ -302,9 +302,17 @@ const Tahap1 = () => {
       ),
     },
   ];
-  console.log("hasil yang dikerluarkan irvan", namaBalaiManual);
+  console.log("hasil yang dikerluarkan irvan", typeof namaBalaiManual);
   // console.log("hasil yang dikerluarkan irvan", namaBalaiManual.value);
   const areFieldsFilled = () => {
+    console.log("=== Type Nama Balai", typeof namaBalaiManual);
+    console.log("=== Value Nama Balai", namaBalaiManual);
+    console.log("=== Type Nama Paket", typeof namaPaketManual);
+    console.log("=== Value Nama Paket", namaPaketManual);
+    console.log("=== Type Nama PPK", typeof namaPPKManual);
+    console.log("=== Value Nama PPK", namaPPKManual);
+    console.log("=== Type Jabatan PPK", typeof jabatanPPKManual);
+    console.log("=== Value Jabatan PPK", jabatanPPKManual);
     return (
       typeof namaBalaiManual === "string" &&
       namaBalaiManual.trim() !== "" &&
@@ -381,13 +389,13 @@ const Tahap1 = () => {
               onClick={() => setCurrentStep((prev) => Math.max(prev - 1, 1))}>
               Kembali
             </Button>
-            {/* <Button
+            <Button
               variant="solid_blue"
               size="Medium"
               disabled={!areFieldsFilled()}
               onClick={() => handleNextStep(("manual", 1))}>
               Lanjut
-            </Button> */}
+            </Button>
           </div>
         )}
       </div>
