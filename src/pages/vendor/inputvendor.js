@@ -4,7 +4,7 @@ import TextInput from "../../components/input";
 import FileInput from "../../components/FileInput";
 import Checkbox from "../../components/checkbox";
 import Button from "../../components/button";
-import Dropdown from "../../components/Dropdown";
+import Dropdown from "../../components/dropdown";
 import axios from "axios";
 import CustomAlert from "../../components/alert";
 // import { Console } from "console";

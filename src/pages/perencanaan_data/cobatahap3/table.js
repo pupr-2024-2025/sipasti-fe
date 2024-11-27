@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react";
-import TextInput from "../components/input";
-import Dropdown from "../components/dropdown";
-import Button from "../components/button";
-import Checkbox from "../components/checkbox";
+import React, { useState, useEffect } from "react";
+import TextInput from "../../../components/input";
+import Dropdown from "../../../components/dropdown";
+import Button from "../../../components/button";
+import Checkbox from "../../../components/checkbox";
 import Image from "next/image";
-import QuestionMark from "../../public/images/question_mark.svg";
-import Tooltip from "./tooltip";
-import useStore from "../pages/perencanaan_data/tahap3/store";
+import Tooltip from "../../../components/tooltip";
+import useStore from "./store";
 
 const Table = ({ columns, data, setParentState }) => {
   const store = useStore ? useStore() : {};
   const { checkedValue = [] } = store;
+
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
-      acc[row.id] = {};
+      acc[row.id] = { checkbox: checkedValue.includes(row.id) };
       return acc;
     }, {})
   );
-
+  console.log("store is called", checkedValue);
   const [errors, setErrors] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -26,22 +26,18 @@ const Table = ({ columns, data, setParentState }) => {
   );
   const [selectedRows, setSelectedRows] = useState([]);
 
-  console.log("checkedValue", checkedValue);
-
-  // useEffect(() => {
-  //   setInputValues((prev) => {
-  //     const updatedValues = { ...prev };
-  //     checkedValue.forEach((id) => {
-  //       updatedValues[id] = {
-  //         ...updatedValues[id],
-  //         checkbox: true,
-  //       };
-  //     });
-  //     return updatedValues;
-  //   });
-  // }, [checkedValue]);
-
-  console.log("inputValues", inputValues);
+  useEffect(() => {
+    setInputValues((prev) => {
+      const updatedValues = { ...prev };
+      checkedValue.forEach((id) => {
+        updatedValues[id] = {
+          ...updatedValues[id],
+          checkbox: true,
+        };
+      });
+      return updatedValues;
+    });
+  }, [checkedValue]);
 
   const handleInputChange = (rowId, columnAccessor, value) => {
     const dropdownFields = [
@@ -51,7 +47,6 @@ const Table = ({ columns, data, setParentState }) => {
       "kabupaten_kota",
       "cities_id",
     ];
-    console.log(value, columnAccessor);
 
     setInputValues((prev) => {
       const updatedRow = prev[rowId] || {};
@@ -64,7 +59,6 @@ const Table = ({ columns, data, setParentState }) => {
             : value,
         },
       };
-      console.log(inputValues);
 
       // Update the parent state after inputValues is updated
       setParentState(updatedInputValues);
@@ -80,25 +74,15 @@ const Table = ({ columns, data, setParentState }) => {
     }));
   };
 
-  // setParentState(inputValues);
-  // setErrors((prevErrors) => ({
-  //   ...prevErrors,
-  //   [rowId]: {
-  //     ...prevErrors[rowId],
-  //     [columnAccessor]: "",
-  //   },
-  // }));
-  // setParentState((prevState) => ({
-  //   ...prevState,
-  //   [rowId]: {
-  //     ...prevState[rowId],
-  //     [columnAccessor]: value?.value,
-  //   },
-  // }));
-  // };
-
+  // Consolidate checkbox logic into one function
   const handleCheckboxChange = (rowId, checked) => {
-    handleInputChange(rowId, "checkbox", checked);
+    const updatedInputValues = {
+      ...inputValues,
+      [rowId]: { checkbox: checked },
+    };
+    setInputValues(updatedInputValues);
+    setParentState(updatedInputValues); // Propagate to parent state
+
     setSelectedRows((prevSelected) =>
       checked
         ? [...prevSelected, rowId]
@@ -125,6 +109,8 @@ const Table = ({ columns, data, setParentState }) => {
     return isValid;
   };
 
+  console.log("input terpanggil cuy", inputValues);
+
   return (
     <div>
       <div className="rounded-[16px] border border-gray-200 overflow-hidden">
@@ -148,7 +134,7 @@ const Table = ({ columns, data, setParentState }) => {
                         <Tooltip text={column.tooltipText}>
                           <div className="ml-2 cursor-pointer text-emphasis-on_surface-medium">
                             <Image
-                              src={QuestionMark}
+                              src={`/images/question_mark.svg`}
                               alt="Info"
                               width={16}
                               height={16}
@@ -201,102 +187,15 @@ const Table = ({ columns, data, setParentState }) => {
                               </span>
                             )}
                         </>
-                      ) : column.type === "dropdown" ? (
-                        <>
-                          <Dropdown
-                            options={column.options.map((option) => ({
-                              value: option,
-                              label: option,
-                            }))}
-                            placeholder="Pilih Opsi"
-                            value={inputValues[row.id]?.[column.accessor] || ""}
-                            onSelect={(value) =>
-                              handleInputChange(row.id, column.accessor, value)
-                            }
-                            isRequired={column.required}
-                            errorMessage={errors[row.id]?.[column.accessor]}
-                          />
-                          {errors[row.id] &&
-                            errors[row.id][column.accessor] && (
-                              <span className="text-custom-red-500 text-sm">
-                                {errors[row.id][column.accessor]}
-                              </span>
-                            )}
-                        </>
-                      ) : column.type === "dropdown API" ? (
-                        <>
-                          <Dropdown
-                            options={column.options.map((option) => ({
-                              value: option.value,
-                              label: option.label,
-                            }))}
-                            placeholder="Pilih Opsi"
-                            value={inputValues[row.id]?.[column.accessor] || ""}
-                            onSelect={(value) => {
-                              handleInputChange(row.id, column.accessor, value);
-                              column.onChange(value);
-                              console.log(row.id);
-                            }}
-                            isRequired={column.required}
-                            errorMessage={errors[row.id]?.[column.accessor]}
-                          />
-                          {errors[row.id] &&
-                            errors[row.id][column.accessor] && (
-                              <span className="text-custom-red-500 text-sm">
-                                {errors[row.id][column.accessor]}
-                              </span>
-                            )}
-                        </>
-                      ) : column.type === "iconButton" ? (
-                        <Button
-                          size="Small"
-                          variant="outlined_icon"
-                          iconLeft={<column.icon />}
-                          onClick={() =>
-                            column.onClick
-                              ? column.onClick(row)
-                              : console.log(
-                                  `Clicked icon button on row ${row.id}`
-                                )
-                          }
-                        />
                       ) : column.type === "checkbox" ? (
                         <Checkbox
                           label=""
-                          checked={
-                            inputValues[row.id]?.checkbox ||
-                            [40, 50].includes(row.id)
-                          }
+                          checked={inputValues[row.id]?.checkedValue || false}
                           onChange={(checked) => {
                             column.onChange(row, checked);
                             handleCheckboxChange(row.id, checked);
                           }}
                         />
-                      ) : column.type === "changingbutton" ? (
-                        <div className="flex justify-center">
-                          <Button
-                            size="Small"
-                            variant={
-                              typeof column.buttonLabel === "function"
-                                ? ((label) => {
-                                    switch (label) {
-                                      case "Lihat PDF":
-                                        return "outlined_blue";
-                                      case "Sunting PDF":
-                                        return "outlined_yellow";
-                                      default:
-                                        return "outlined_yellow";
-                                    }
-                                  })(column.buttonLabel(row))
-                                : "outlined_default"
-                            }
-                            onClick={() => column.onClick(row)}
-                            style={{ width: "150px" }}>
-                            {typeof column.buttonLabel === "function"
-                              ? column.buttonLabel(row)
-                              : column.buttonLabel}
-                          </Button>
-                        </div>
                       ) : (
                         row[column.accessor]
                       )}

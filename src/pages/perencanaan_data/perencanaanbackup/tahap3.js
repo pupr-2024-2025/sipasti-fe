@@ -37,12 +37,10 @@ const Tahap3 = ({ onNext, onBack }) => {
   };
 
   useEffect(() => {
-    // Ambil identifikasi_kebutuhan_id dari localStorage
     const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
     if (storedId) {
       setIdentifikasi_Kebutuhan_id(storedId);
 
-      // Request ke API dengan ID langsung di URL
       axios
         .get(
           `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${storedId}`

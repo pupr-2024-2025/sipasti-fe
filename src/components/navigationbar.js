@@ -11,16 +11,39 @@ const Navbar = () => {
   const router = useRouter();
   const [hovered, setHovered] = useState(null);
   const [isSticky, setIsSticky] = useState(false);
-  const [isProfileHovered, setIsProfileHovered] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [isProfileHovered, setIsProfileHovered] = useState(false);
+  let hoverTimeout;
+
+  const handleMouseEnter = (index) => {
+    clearTimeout(hoverTimeout);
+    setHovered(index);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeout = setTimeout(() => {
+      setHovered(null);
+    }, 300);
+  };
+
+  const handleProfileMouseEnter = () => {
+    clearTimeout(hoverTimeout);
+    setIsProfileHovered(true);
+  };
+
+  const handleProfileMouseLeave = () => {
+    hoverTimeout = setTimeout(() => {
+      setIsProfileHovered(false);
+    }, 300);
+  };
 
   const links = [
     { href: "/dashboard", label: "Beranda" },
     {
-      href: "/perencanaan_data/tahap1",
+      href: "",
       label: "Perencanaan Data",
-      activePath: "/perencanaan_data", // Semua path di bawah /perencanaan_data dianggap aktif
+      activePath: "/perencanaan_data",
     },
     { href: "/vendor/inputvendor", label: "Vendor" },
   ];
@@ -74,7 +97,7 @@ const Navbar = () => {
       />
 
       <nav
-        className={`flex justify-between items-center px-4 ${
+        className={`flex justify-between items-center ${
           isSticky ? "sticky" : "relative"
         }`}>
         {/* Logo Container */}
@@ -102,36 +125,61 @@ const Navbar = () => {
             {links.map((link, index) => {
               const isActive = router.pathname.startsWith(
                 link.activePath || link.href
-              ); // Menggunakan activePath jika ada
+              );
               const isHovered = hovered === index;
 
               return (
-                <li key={index}>
+                <li
+                  key={index}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}>
                   <Link
                     href={link.href}
                     className={`py-4 px-4
-                      ${
-                        isActive
-                          ? "text-emphasis-on_color-high text-H6"
-                          : "text-emphasis-on_surface-medium text-B1"
-                      } 
-                      leading-none rounded-full transition-all duration-300 ease-in-out transform 
-                      ${isActive ? "bg-custom-blue-500" : ""} 
-                      ${
-                        isActive
-                          ? isHovered
-                            ? "hover:bg-custom-blue-600 active:bg-custom-blue-700"
-                            : ""
-                          : isHovered
-                          ? "hover:bg-custom-neutral-200 active:bg-custom-neutral-300"
-                          : ""
-                      }
-                      ${isHovered ? "scale-105" : "scale-100"}
-                    `}
-                    onMouseEnter={() => setHovered(index)}
-                    onMouseLeave={() => setHovered(null)}>
+                  ${
+                    isActive
+                      ? "text-emphasis-on_color-high text-H6"
+                      : "text-emphasis-on_surface-medium text-B1"
+                  } 
+                  leading-none rounded-full transition-all duration-300 ease-in-out transform 
+                  ${isActive ? "bg-custom-blue-500" : ""} 
+                  ${
+                    isHovered
+                      ? "hover:bg-surface-light-overlay active:bg-custom-neutral-300"
+                      : ""
+                  }
+                  ${isHovered ? "scale-105" : "scale-100"}
+                `}>
                     {link.label}
                   </Link>
+
+                  {/* Perencanaan Data Menu */}
+                  {link.label === "Perencanaan Data" && isHovered && (
+                    <div
+                      className="absolute left-0 mt-[32px] w-56 bg-white rounded-[12px] shadow-lg p-2 z-50"
+                      style={{
+                        boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
+                      }}>
+                      {[
+                        {
+                          href: "/perencanaan_data/tahap1",
+                          label: "Pengisian Kuesioner",
+                        },
+                        {
+                          href: "/perencanaan_data/perencanaan_data_list",
+                          label: "Daftar Perencaan Data",
+                        },
+                      ].map((submenuItem, submenuIndex) => (
+                        <Link
+                          key={submenuIndex}
+                          href={submenuItem.href}
+                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+                          {submenuItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </li>
               );
             })}
@@ -141,8 +189,9 @@ const Navbar = () => {
         {/* Profile Container */}
         <div
           className="relative"
-          onMouseEnter={() => setIsProfileHovered(true)}
-          onMouseLeave={() => setIsProfileHovered(false)}>
+          onMouseEnter={handleProfileMouseEnter}
+          onMouseLeave={handleProfileMouseLeave}>
+          {/* Profile Button */}
           <div className="bg-custom-neutral-100 flex items-center rounded-full px-3 pe-6 h-[66px] space-x-3 cursor-pointer">
             <div className="p-2 bg-custom-neutral-0 rounded-full">
               <User
