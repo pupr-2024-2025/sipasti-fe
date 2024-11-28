@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextInput from "../components/input";
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/dropdown";
 import Button from "../components/button";
 import Checkbox from "../components/checkbox";
 import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg";
 import Tooltip from "./tooltip";
+import useStore from "../pages/perencanaan_data/tahap3/store";
 
 const Table = ({ columns, data, setParentState }) => {
+  const store = useStore ? useStore() : {};
+  const { checkedValue = [] } = store;
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -23,6 +26,23 @@ const Table = ({ columns, data, setParentState }) => {
   );
   const [selectedRows, setSelectedRows] = useState([]);
 
+  console.log("checkedValue", checkedValue);
+
+  // useEffect(() => {
+  //   setInputValues((prev) => {
+  //     const updatedValues = { ...prev };
+  //     checkedValue.forEach((id) => {
+  //       updatedValues[id] = {
+  //         ...updatedValues[id],
+  //         checkbox: true,
+  //       };
+  //     });
+  //     return updatedValues;
+  //   });
+  // }, [checkedValue]);
+
+  console.log("inputValues", inputValues);
+
   const handleInputChange = (rowId, columnAccessor, value) => {
     const dropdownFields = [
       "kelompok_material",
@@ -31,6 +51,7 @@ const Table = ({ columns, data, setParentState }) => {
       "kabupaten_kota",
       "cities_id",
     ];
+    console.log(value, columnAccessor);
 
     setInputValues((prev) => {
       const updatedRow = prev[rowId] || {};
@@ -43,6 +64,9 @@ const Table = ({ columns, data, setParentState }) => {
             : value,
         },
       };
+      console.log(inputValues);
+
+      // Update the parent state after inputValues is updated
       setParentState(updatedInputValues);
       return updatedInputValues;
     });
@@ -55,6 +79,23 @@ const Table = ({ columns, data, setParentState }) => {
       },
     }));
   };
+
+  // setParentState(inputValues);
+  // setErrors((prevErrors) => ({
+  //   ...prevErrors,
+  //   [rowId]: {
+  //     ...prevErrors[rowId],
+  //     [columnAccessor]: "",
+  //   },
+  // }));
+  // setParentState((prevState) => ({
+  //   ...prevState,
+  //   [rowId]: {
+  //     ...prevState[rowId],
+  //     [columnAccessor]: value?.value,
+  //   },
+  // }));
+  // };
 
   const handleCheckboxChange = (rowId, checked) => {
     handleInputChange(rowId, "checkbox", checked);
@@ -91,12 +132,6 @@ const Table = ({ columns, data, setParentState }) => {
           <table className="table-auto w-full min-w-max">
             <thead>
               <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
-                {/* Updated column title to "No" with 50px width */}
-                <th
-                  className="px-3 py-6 text-base font-normal"
-                  style={{ width: "50px" }}>
-                  No
-                </th>
                 {columns.map((column, index) => (
                   <th
                     key={index}
@@ -137,12 +172,6 @@ const Table = ({ columns, data, setParentState }) => {
                       ? "bg-custom-neutral-0"
                       : "bg-custom-neutral-100"
                   }`}>
-                  {/* Updated to show row number with width of 50px */}
-                  <td
-                    className="px-3 py-6 text-base font-normal text-center"
-                    style={{ width: "50px" }}>
-                    {index + 1}
-                  </td>
                   {columns.map((column) => (
                     <td
                       key={column.accessor}
@@ -206,6 +235,7 @@ const Table = ({ columns, data, setParentState }) => {
                             onSelect={(value) => {
                               handleInputChange(row.id, column.accessor, value);
                               column.onChange(value);
+                              console.log(row.id);
                             }}
                             isRequired={column.required}
                             errorMessage={errors[row.id]?.[column.accessor]}
@@ -234,7 +264,8 @@ const Table = ({ columns, data, setParentState }) => {
                         <Checkbox
                           label=""
                           checked={
-                            inputValues[row.id]?.[column.accessor] || false
+                            inputValues[row.id]?.checkbox ||
+                            checkedValue.includes(row.id)
                           }
                           onChange={(checked) => {
                             column.onChange(row, checked);

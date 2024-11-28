@@ -302,8 +302,7 @@ const Tahap1 = () => {
       ),
     },
   ];
-  console.log("hasil yang dikerluarkan irvan", typeof namaBalaiManual);
-  // console.log("hasil yang dikerluarkan irvan", namaBalaiManual.value);
+  console.log("type of nama balai", typeof namaBalaiManual);
   const areFieldsFilled = () => {
     console.log("=== Type Nama Balai", typeof namaBalaiManual);
     console.log("=== Value Nama Balai", namaBalaiManual);

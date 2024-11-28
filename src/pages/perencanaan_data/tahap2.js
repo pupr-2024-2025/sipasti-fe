@@ -808,10 +808,14 @@ const Tahap2 = ({ onNext, onBack }) => {
     setIsSubmitting(true);
 
     try {
+      // Pastikan handleSubmit mengembalikan true jika berhasil, false jika gagal
       const isSubmitSuccessful = await handleSubmit(type);
 
       if (isSubmitSuccessful) {
-        router.replace("/perencanaan_data/tahap3");
+        router.replace("/perencanaan_data/tahap3"); // Lanjut ke tahap3 jika submit berhasil
+      } else {
+        // Tidak ada tindakan jika submit gagal, tetap di tahap2
+        console.log("Submission failed, stay on tahap2.");
       }
     } catch (error) {
       console.error("Submission failed:", error);
@@ -823,38 +827,55 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   const handleSubmit = async () => {
     const informasi_umum_id = localStorage.getItem("informasi_umum_id");
+
+    // Pastikan properti selalu berupa array kosong jika null atau undefined
     const requestData = {
       informasi_umum_id,
-      material: stateMaterial,
-      peralatan: statePeralatan,
-      tenaga_kerja: stateTenagaKerja,
+      material: stateMaterial || [], // Jika null, ganti dengan []
+      peralatan: statePeralatan || [], // Jika null, ganti dengan []
+      tenaga_kerja: stateTenagaKerja || [], // Jika null, ganti dengan []
     };
 
     console.log("Request data:", JSON.stringify(requestData));
 
-    const response = await fetch(
-      "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
+    try {
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/perencanaan-data/store-identifikasi-kebutuhan",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Submit tahap 2 gagal: ${response.statusText}`);
       }
-    );
 
-    if (!response.ok) {
-      throw new Error(`Submit tahap 2 gagal: ${response.statusText}`);
+      const responseData = await response.json();
+      console.log("Response data:", responseData);
+
+      if (responseData.status === "error" || !responseData.data) {
+        alert(
+          responseData.message ||
+            "Terjadi kesalahan saat mengirim data. Silakan coba lagi."
+        );
+        return false;
+      }
+
+      localStorage.setItem(
+        "identifikasi_kebutuhan_id",
+        responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
+      );
+
+      return true;
+    } catch (error) {
+      console.error("Error during submission:", error);
+      alert("Terjadi kesalahan saat mengirim data.");
+      return false;
     }
-
-    const responseData = await response.json();
-    console.log("Response data:", responseData);
-
-    localStorage.setItem(
-      "identifikasi_kebutuhan_id",
-      responseData.data?.material[0]?.identifikasi_kebutuhan_id ?? 0
-    );
-    return true;
   };
 
   return (

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Table from "../../components/table";
-import Pagination from "../../components/pagination";
-import Tabs from "../../components/Tabs";
-import SearchBox from "../../components/searchbox";
-import Button from "../../components/button";
+import Table from "./table";
+import Pagination from "../../../components/pagination";
+import Tabs from "../../../components/Tabs";
+import SearchBox from "../../../components/searchbox";
+import Button from "../../../components/button";
 import axios from "axios";
-import Navbar from "../../components/navigationbar";
-import Stepper from "../../components/stepper";
+import Navbar from "../../../components/navigationbar";
+import Stepper from "../../../components/stepper";
 import { useRouter } from "next/router";
+import useStore from "./store";
 
-const Tahap3 = ({ onNext, onBack }) => {
+const Tahap3 = ({}) => {
   const [data, setData] = useState({ material: [], equipment: [], labor: [] });
   const [currentPage, setCurrentPage] = useState({
     material: 1,
@@ -29,12 +30,10 @@ const Tahap3 = ({ onNext, onBack }) => {
   const [allDataPeralatan, setAllDataPeralatan] = useState([]);
   const [allDataTenagaKerja, setAllDataTenagaKerja] = useState([]);
   const [activeFilterColumn, setActiveFilterColumn] = useState(null);
+  const [checkedMaterial, setCheckedMaterial] = useState([]);
+  const [checkedEquipment, setCheckedEquipment] = useState([]);
+  const [checkedLabor, setCheckedLabor] = useState([]);
   const router = useRouter();
-  // const [allDataVendor, setAllDataVendor] = useState([]);
-  // const [searchMaterialQuery, setSearchMaterialQuery] = useState("");
-  // const [searchPeralatanQuery, setSearchPeralatanQuery] = useState("");
-  // const [searchTenagaKerjaQuery, setSearchTenagaKerjaQuery] = useState("");
-  // const [searchVendorQuery, setSearchVendorQuery] = useState("");
   const [currentStep, setCurrentStep] = useState(2);
   const navigateToTahap2 = () => {
     window.location.href = "/perencanaan_data/tahap2";
@@ -46,6 +45,8 @@ const Tahap3 = ({ onNext, onBack }) => {
     "Penentuan Shortlist Vendor",
     "Perancangan Kuesioner",
   ];
+  const store = useStore ? useStore() : {};
+  const { setCheckedValue } = store;
 
   const getPaginatedData = (data, page) => {
     const startIndex = (page - 1) * itemsPerPage;
@@ -86,28 +87,24 @@ const Tahap3 = ({ onNext, onBack }) => {
   }, []);
 
   const handleCheckboxChange = (vendor, isChecked) => {
-    // Define the updatedVendors variable before using it
-    const updatedVendors = isChecked
-      ? [
-          ...selectedVendors,
-          {
-            data_vendor_id: vendor.id,
-            nama_vendor: vendor.nama_vendor,
-            pemilik_vendor: vendor.pemilik_vendor,
-            sumber_daya: vendor.sumber_daya,
-            alamat: vendor.alamat,
-            kontak: vendor.kontak,
-          },
-        ]
-      : selectedVendors.filter(
-          (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
-        );
-
-    // Now you can safely use updatedVendors here
-    localStorage.setItem("selectedVendors", JSON.stringify(updatedVendors));
-
-    // Update the state with the new list of vendors
-    setSelectedVendors(updatedVendors);
+    setSelectedVendors((prevSelectedVendors) => {
+      const updatedVendors = isChecked
+        ? [
+            ...prevSelectedVendors,
+            {
+              data_vendor_id: vendor.id,
+              nama_vendor: vendor.nama_vendor,
+              pemilik_vendor: vendor.pemilik_vendor,
+              sumber_daya: vendor.sumber_daya,
+              alamat: vendor.alamat,
+              kontak: vendor.kontak,
+            },
+          ]
+        : prevSelectedVendors.filter(
+            (selectedVendor) => selectedVendor.data_vendor_id !== vendor.id
+          );
+      return updatedVendors;
+    });
   };
 
   const validateInputs = () => {
@@ -188,14 +185,12 @@ const Tahap3 = ({ onNext, onBack }) => {
 
     setIsSubmitting(true);
 
-    // Validasi inputs
-    if (!validateInputs()) {
-      console.error("Input tidak valid, silakan periksa kembali.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
+      if (!validateInputs()) {
+        console.error("Input tidak valid, silakan periksa kembali.");
+        return;
+      }
+
       const payload = {
         identifikasi_kebutuhan_id,
         shortlist_vendor: selectedVendors.map((vendor) => ({
@@ -208,20 +203,78 @@ const Tahap3 = ({ onNext, onBack }) => {
         })),
       };
 
+      console.log("Payload yang akan dikirim:", payload);
+
+      if (payload.shortlist_vendor.length === 0) {
+        console.error("Silakan pilih vendor sebelum melanjutkan.");
+        return;
+      }
+
       const response = await axios.post(
         "https://api-ecatalogue-staging.online/api/perencanaan-data/store-shortlist-vendor",
         payload
       );
       console.log("Data berhasil dikirim:", response.data);
-
       router.replace("/perencanaan_data/tahap4");
     } catch (error) {
       console.error("Error posting data:", error);
-      alert(error.message);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const fetchVendorData = async (id) => {
+    console.log("Fetching vendor data for ID:", id);
+
+    try {
+      const response = await axios.get(
+        `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${id}`
+      );
+      const result = response.data;
+
+      console.log("Vendor data fetched successfully:", JSON.stringify(result));
+      if (result?.data) {
+        const { material, peralatan, tenaga_kerja } = result.data;
+        const materialIds = material.map((material) => material.id);
+        console.log(materialIds);
+        const peralatanIds = peralatan.map((peralatan) => peralatan.id);
+        console.log(peralatanIds);
+        const tenaga_kerjaIds = tenaga_kerja.map(
+          (tenaga_kerja) => tenaga_kerja.id
+        );
+        console.log(tenaga_kerjaIds);
+
+        setMaterialData(material || []);
+        setEquipmentData(peralatan || []);
+        setLaborData(tenaga_kerja || []);
+        setAllDataMaterial(material || []);
+        setAllDataPeralatan(peralatan || []);
+        setAllDataTenagaKerja(tenaga_kerja || []);
+
+        setCheckedMaterial(materialIds);
+        setCheckedEquipment(peralatanIds);
+        setCheckedLabor(tenaga_kerjaIds);
+
+        setCheckedValue(materialIds);
+
+        console.log("State updated with vendor data.");
+      }
+    } catch (error) {
+      console.error("Error fetching vendor data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
+    if (storedId) {
+      setIdentifikasi_Kebutuhan_id(storedId);
+      fetchVendorData(storedId);
+    } else {
+      console.warn(
+        "identifikasi_kebutuhan_id tidak ditemukan di localStorage."
+      );
+    }
+  }, []);
 
   const filterOptions = [
     { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
@@ -241,8 +294,6 @@ const Tahap3 = ({ onNext, onBack }) => {
       accessor: "select",
       type: "checkbox",
       width: "48px",
-      checked: (row) =>
-        selectedVendors.some((vendor) => vendor.data_vendor_id === row.id),
       onChange: handleCheckboxChange,
     },
     {
@@ -300,7 +351,21 @@ const Tahap3 = ({ onNext, onBack }) => {
               data={materialData}
               errors={formErrors}
               setParentState={() => {}}
+              checkedValue={checkedMaterial}
             />
+            {/* <div>
+              {materialData.map((item) => (
+                <div key={item.id} className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    value={item.id}
+                    checked={checkedMaterial.includes(item.id)}
+                    onChange={(e) => handleCheckboxChange(e, "material")}
+                  />
+                  <label>{item.name}</label>
+                </div>
+              ))}
+            </div> */}
           </div>
           <Pagination
             currentPage={currentPage.material}
@@ -333,6 +398,7 @@ const Tahap3 = ({ onNext, onBack }) => {
               data={equipmentData}
               errors={formErrors}
               setParentState={() => {}}
+              checkedValue={checkedEquipment}
             />
           </div>
           <Pagination
@@ -366,6 +432,7 @@ const Tahap3 = ({ onNext, onBack }) => {
               data={laborData}
               errors={formErrors}
               setParentState={() => {}}
+              checkedValue={checkedLabor}
             />
           </div>
           <Pagination
