@@ -8,6 +8,7 @@ import Button from "../../components/button";
 import { Trash } from "iconsax-react";
 import SearchBox from "../../components/searchbox";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 const Tahap2 = ({ onNext, onBack }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -242,12 +243,53 @@ const Tahap2 = ({ onNext, onBack }) => {
 
   let result = [];
 
-  // const [filteredDataMaterial, setFilteredDataMaterial] =
-  //   useState(dataMaterial);
-  // const [filteredDataPeralatan, setFilteredDataPeralatan] =
-  //   useState(dataPeralatan);
-  // const [filteredDataTenagaKerja, setFilteredDataTenagaKerja] =
-  //   useState(dataTenagaKerja);
+  const fetchIdentifikasiKebutuhan = async (id) => {
+    console.log("Isi balaiOptions:", id);
+    try {
+      const response = await axios.get(
+        `https://api-ecatalogue-staging.online/api/perencanaan-data/get-identifikasi-kebutuhan/${id}`
+      );
+      const result = response.data;
+
+      // console.log("Get data informasi umum", result.data.nama_balai);
+
+      //   if (result?.data) {
+      //     setKodeRUPManual(result.data.kode_rup || "");
+      //     setNamaPaketManual(result.data.nama_paket || "");
+      //     setNamaPPKManual(result.data.nama_ppk || "");
+      //     setJabatanPPKManual(result.data.jabatan_ppk || "");
+      //     console.log("nama balai yang terisi", result.data.nama_balai);
+
+      //     console.log("Isi formatted options : " + balaiOptions);
+      //     const selectedBalai = balaiOptions.find((option) => {
+      //       console.log("Isi dari option value : " + option.value);
+      //       return option.value === parseInt(result.data.nama_balai);
+      //     });
+      //     if (typeof selectedBalai === "undefined") {
+      //       console.log("error undefined data");
+      //     }
+      //     console.log("isi selected balai : " + selectedBalai?.label ?? "");
+      //     setNamaBalaiManual(selectedBalai?.value ?? 0);
+      // }
+      console.log("oh my wow", result);
+    } catch (error) {
+      console.error("Gagal memuat data Informasi Umum:", error);
+    }
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromTahap3 = params.get("fromTahap3");
+
+    if (fromTahap3 === "true") {
+      const identifikasi_kebutuhan_id = localStorage.getItem(
+        "identifikasi_kebutuhan_id"
+      );
+      if (identifikasi_kebutuhan_id) {
+        fetchIdentifikasiKebutuhan(identifikasi_kebutuhan_id);
+      }
+    }
+  }, []); // Tambahkan balaiOptions ke dependensi
 
   const handleSearch = (query) => {
     console.log(`Searching for: ${query}`);

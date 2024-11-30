@@ -27,7 +27,7 @@ const Tahap1 = () => {
 
   // State for Input Manual tab
   const [koderupManual, setKodeRUPManual] = useState("");
-  const [namaBalaiManual, setNamaBalaiManual] = useState("");
+  const [namaBalaiManual, setNamaBalaiManual] = useState(0);
   const [namaPaketManual, setNamaPaketManual] = useState("");
   const [namaPPKManual, setNamaPPKManual] = useState("");
   const [jabatanPPKManual, setJabatanPPKManual] = useState("");
@@ -153,11 +153,6 @@ const Tahap1 = () => {
         setNamaPPKManual(result.data.nama_ppk || "");
         setJabatanPPKManual(result.data.jabatan_ppk || "");
         console.log("nama balai yang terisi", result.data.nama_balai);
-
-        // Cocokkan nama balai dengan opsi balaiOptions
-        // const selectedBalai = formattedOptions.find(
-        //   (option) => option.value === parseInt(result.data.nama_balai)
-        // );
         console.log("Isi formatted options : " + balaiOptions);
         const selectedBalai = balaiOptions.find((option) => {
           console.log("Isi dari option value : " + option.value);
@@ -248,7 +243,7 @@ const Tahap1 = () => {
             placeholder="Pilih Balai"
             onSelect={(selectedOption) => {
               console.log("Irvan kotak", balaiOptions);
-              setNamaBalaiManual(balaiOptions[selectedOption]?.label || "");
+              setNamaBalaiManual(balaiOptions[selectedOption]?.value || "");
             }}
             isRequired={true}
             value={namaBalaiManual}
@@ -313,8 +308,8 @@ const Tahap1 = () => {
     console.log("=== Type Jabatan PPK", typeof jabatanPPKManual);
     console.log("=== Value Jabatan PPK", jabatanPPKManual);
     return (
-      typeof namaBalaiManual === "string" &&
-      namaBalaiManual.trim() !== "" &&
+      typeof namaBalaiManual === "number" &&
+      // namaBalaiManual.trim() !== "" &&
       typeof namaPaketManual === "string" &&
       namaPaketManual.trim() !== "" &&
       typeof namaPPKManual === "string" &&
