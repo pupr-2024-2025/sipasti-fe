@@ -22,6 +22,7 @@ const Tahap2 = ({ onNext, onBack }) => {
   const [filteredData, setFilteredData] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+  const [materialAPI, setMaterialAPI] = useState([]);
   const navigateToTahap1 = () => {
     window.location.href = "/perencanaan_data/tahap1?fromTahap2=true";
   };
@@ -249,29 +250,23 @@ const Tahap2 = ({ onNext, onBack }) => {
       const response = await axios.get(
         `https://api-ecatalogue-staging.online/api/perencanaan-data/get-identifikasi-kebutuhan/${id}`
       );
-      const result = response.data;
-
-      // console.log("Get data informasi umum", result.data.nama_balai);
-
-      //   if (result?.data) {
-      //     setKodeRUPManual(result.data.kode_rup || "");
-      //     setNamaPaketManual(result.data.nama_paket || "");
-      //     setNamaPPKManual(result.data.nama_ppk || "");
-      //     setJabatanPPKManual(result.data.jabatan_ppk || "");
-      //     console.log("nama balai yang terisi", result.data.nama_balai);
-
-      //     console.log("Isi formatted options : " + balaiOptions);
-      //     const selectedBalai = balaiOptions.find((option) => {
-      //       console.log("Isi dari option value : " + option.value);
-      //       return option.value === parseInt(result.data.nama_balai);
-      //     });
-      //     if (typeof selectedBalai === "undefined") {
-      //       console.log("error undefined data");
-      //     }
-      //     console.log("isi selected balai : " + selectedBalai?.label ?? "");
-      //     setNamaBalaiManual(selectedBalai?.value ?? 0);
-      // }
-      console.log("oh my wow", result);
+      const result = response.data.data.material;
+      console.log("Material from API", result);
+      const newRowsFromAPI = result.map((item, index) => ({
+        id: dataMaterial.length + index + 1,
+        namaMaterial: item.nama_material || "",
+        satuan: item.satuan || "",
+        spesifikasi: item.spesifikasi || "",
+        ukuran: item.ukuran || "",
+        kodefikasi: item.kodefikasi || "",
+        jumlahKebutuhan: item.jumlah_kebutuhan || "",
+        merk: item.merk || "",
+        provincies_id: item.provincies_id || "",
+        cities_id: item.cities_id || "",
+        kelompokMaterial: item.kelompok_material || "",
+      }));
+      setDataMaterial((prevData) => [...newRowsFromAPI, ...prevData]);
+      setFilteredDataMaterial((prevData) => [...newRowsFromAPI, ...prevData]);
     } catch (error) {
       console.error("Gagal memuat data Informasi Umum:", error);
     }
@@ -289,7 +284,7 @@ const Tahap2 = ({ onNext, onBack }) => {
         fetchIdentifikasiKebutuhan(identifikasi_kebutuhan_id);
       }
     }
-  }, []); // Tambahkan balaiOptions ke dependensi
+  }, []);
 
   const handleSearch = (query) => {
     console.log(`Searching for: ${query}`);
