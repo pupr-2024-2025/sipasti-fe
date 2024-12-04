@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import TextInput from "../components/input";
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/dropdown";
 import Button from "../components/button";
 import Checkbox from "../components/checkbox";
 import Image from "next/image";

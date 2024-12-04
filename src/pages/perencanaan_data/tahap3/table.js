@@ -169,8 +169,8 @@ const Table = ({ columns, data, setParentState }) => {
                     selectedRows.includes(row.id)
                       ? "bg-custom-blue-200"
                       : index % 2 === 0
-                      ? "bg-custom-neutral-0"
-                      : "bg-custom-neutral-100"
+                      ? "bg-neutral-50"
+                      : "bg-neutral-100"
                   }`}>
                   {columns.map((column) => (
                     <td

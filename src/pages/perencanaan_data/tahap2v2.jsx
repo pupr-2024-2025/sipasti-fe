@@ -34,8 +34,10 @@ export default function Tahap2V2() {
     selectedValue,
     provincesOptions,
     initialValues,
+    citiesOptions,
     setSelectedValue,
     setProvincesOptions,
+    setCitiesOptions,
     setInitialValues,
   } = useStore();
 
@@ -46,7 +48,14 @@ export default function Tahap2V2() {
       );
       const data = await response.json();
       console.log(data.data);
-      setProvincesOptions(data.data);
+      const transformedData = data.data.map(
+        ({ id_province, province_name, cities }) => ({
+          value: id_province,
+          label: province_name,
+          cities,
+        })
+      );
+      setProvincesOptions(transformedData);
     };
 
     fetchProvincesOptions();
@@ -82,10 +91,30 @@ export default function Tahap2V2() {
       const result = response.data.data.material;
       console.log("Material from API", result);
       setInitialValues({ materials: result });
+      // setInitialValues((prev) => {
+      //   console.log('prev', prev);
+      // })
+      // setInitialValues((prev) => ({
+      //   ...prev,
+      //   materials: result.map((material) => ({
+      //     nama_material: material.nama_material,
+      //     satuan: material.satuan,
+      //     spesifikasi: material.spesifikasi,
+      //     ukuran: material.ukuran,
+      //     kodefikasi: material.kodefikasi,
+      //     kelompok_material: material.kelompok_material,
+      //     jumlah_kebutuhan: material.jumlah_kebutuhan,
+      //     merk: material.merk,
+      //     provincies_id: material.provincies_id,
+      //     cities_id: material.cities_id,
+      //   })),
+      // }));
     } catch (error) {
       console.error("Gagal memuat data Informasi Umum:", error);
     }
   };
+
+  console.log("initialValues", initialValues);
 
   const items = ["Material", "Peralatan", "Tenaga Kerja"];
 
@@ -108,12 +137,6 @@ export default function Tahap2V2() {
           />
         </div>
       </div>
-      <Pagination
-        currentPage={currentPage}
-        itemsPerPage={itemsPerPage}
-        totalData={MaterialForm.length}
-        onPageChange={setCurrentPage}
-      />
       <div className="mt-6">
         <Tabs tabs={tabs} />
       </div>
@@ -134,7 +157,7 @@ export default function Tahap2V2() {
               setFieldValue={setFieldValue}
               hide={selectedValue !== 0}
               provincesOptions={provincesOptions}
-              kelompokMaterialOptions={kelompokMaterialOptions}
+              kelompokMaterialOptions={kelompokMaterialOptions} // Tambahkan ini
             />
             <PeralatanForm
               values={values}
@@ -151,6 +174,12 @@ export default function Tahap2V2() {
             {/* <button type="submit" className="text-black">
               Submit
             </button> */}
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalData={MaterialForm.length}
+              onPageChange={setCurrentPage}
+            />
             <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
               <Button
                 variant="outlined_yellow"
@@ -174,7 +203,15 @@ export default function Tahap2V2() {
   );
 }
 
-const MaterialForm = ({ values, setFieldValue, hide, provincesOptions }) => {
+const MaterialForm = ({
+  values,
+  setFieldValue,
+  hide,
+  provincesOptions,
+  kelompokMaterialOptions,
+}) => {
+  console.log("MaterialForm", values);
+  console.log("provincesOptions", provincesOptions);
   return (
     <div
       className={`${
@@ -324,15 +361,17 @@ const MaterialForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                         <Field name={`materials.${index}.kelompok_material`}>
                           {({ field, form }) => (
                             <Dropdown
-                              label="Kelompok Material"
+                              // label="Kelompok Material"
                               options={kelompokMaterialOptions}
-                              value={field.value}
-                              onSelect={(selectedOption) => {
-                                form.setFieldValue(
+                              value={kelompokMaterialOptions.find(
+                                (el) => el.value === field.value
+                              )}
+                              onSelect={(val) =>
+                                setFieldValue(
                                   `materials.${index}.kelompok_material`,
-                                  selectedOption ? selectedOption.value : ""
-                                );
-                              }}
+                                  val
+                                )
+                              }
                               placeholder="Pilih Kelompok Material"
                               isRequired={true}
                               errorMessage={
@@ -340,6 +379,28 @@ const MaterialForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                                   ?.kelompok_material
                               }
                               labelPosition="top"
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`materials.${index}.jumlah_kebutuhan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `materials.${index}.jumlah_kebutuhan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Jumlah Kebutuhan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.materials?.[index]
+                                  ?.jumlah_kebutuhan
+                              }
                             />
                           )}
                         </Field>
@@ -365,7 +426,7 @@ const MaterialForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           )}
                         </Field>
                       </td>
-                      <td className="px-3 py-6">
+                      {/* <td className="px-3 py-6">
                         <Field
                           as="select"
                           name={`materials.${index}.provincies_id`}
@@ -379,7 +440,59 @@ const MaterialForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                             </option>
                           ))}
                         </Field>
+                      </td> */}
+                      <td className="px-3 py-6">
+                        <Field name={`materials.${index}.provinsi`}>
+                          {({ field, form }) => (
+                            <Dropdown
+                              options={provincesOptions}
+                              value={() => {
+                                const selectedProvince = provincesOptions.find(
+                                  (province) =>
+                                    province.value ===
+                                    values.materials[index]?.provincies_id
+                                );
+                                return selectedProvince;
+                              }}
+                              onSelect={(val) =>
+                                setFieldValue(`materials.${index}`, val)
+                              }
+                              placeholder="Pilih Provinsi"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.materials?.[index]?.province
+                              }
+                              labelPosition="top"
+                            />
+                          )}
+                        </Field>
                       </td>
+                      {/* <td className="px-3 py-6">
+                        <Field name={`materials.${index}.kota`}>
+                          {({ field, form }) => (
+                            <Dropdown
+                              options={citiesOptions}
+                              value={() => {
+                                const selectedProvince = citiesOptions.find(
+                                  (province) =>
+                                    province.value ===
+                                    values.materials[index]?.cities_id
+                                );
+                                return selectedProvince;
+                              }}
+                              onSelect={(val) =>
+                                setFieldValue(`materials.${index}`, val)
+                              }
+                              placeholder="Pilih Kota"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.materials?.[index]?.cities
+                              }
+                              labelPosition="top"
+                            />
+                          )}
+                        </Field>
+                      </td> */}
                       <td className="px-3 py-6">
                         <Field
                           as="select"

@@ -69,11 +69,7 @@ const Dropdown = ({
           onBlur={handleBlur}
           options={formattedOptions}
           placeholder={placeholder}
-          className={`react-select ${
-            error
-              ? "border-custom-red-500"
-              : "border border-surface-light-outline"
-          }`}
+          className={`react-select ${error ? "border-custom-red-500" : ""}`}
           classNamePrefix="select"
           isClearable={false}
           styles={{

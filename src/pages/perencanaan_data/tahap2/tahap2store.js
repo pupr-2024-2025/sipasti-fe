@@ -5,18 +5,18 @@ const useStore = create((set) => ({
   provincesOptions: [],
   initialValues: {
     materials: [
-      {
-        nama_material: "",
-        satuan: "",
-        spesifikasi: "",
-        ukuran: "",
-        kodefikasi: "",
-        kelompok_material: "",
-        jumlah_kebutuhan: 0,
-        merk: "",
-        provincies_id: 0,
-        cities_id: 0,
-      },
+      // {
+      //   nama_material: "",
+      //   satuan: "",
+      //   spesifikasi: "",
+      //   ukuran: "",
+      //   kodefikasi: "",
+      //   kelompok_material: "",
+      //   jumlah_kebutuhan: 0,
+      //   merk: "",
+      //   provincies_id: 0,
+      //   cities_id: 0,
+      // },
     ],
     peralatans: [
       {
@@ -45,6 +45,7 @@ const useStore = create((set) => ({
   },
   setSelectedValue: (value) => set({ selectedValue: value }),
   setProvincesOptions: (options) => set({ provincesOptions: options }),
+  setCitiesOptions: (options) => set({ citiesOptions: options }),
   setInitialValues: (values) =>
     set((state) => ({
       initialValues: {

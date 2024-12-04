@@ -45,7 +45,8 @@ const Navbar = () => {
       label: "Perencanaan Data",
       activePath: "/perencanaan_data",
     },
-    { href: "/vendor/inputvendor", label: "Responden/Vendor" },
+    { href: "", label: "Responden/Vendor", activePath: "/vendor" },
+    { href: "", label: "Monitoring", activePath: "/pj_balai" },
   ];
 
   useEffect(() => {
@@ -189,12 +190,37 @@ const Navbar = () => {
                       }}>
                       {[
                         {
-                          href: "/perencanaan_data/tahap1",
+                          href: "/vendor/inputvendor",
                           label: "Input Data Responden/Vendor",
                         },
                         {
                           href: "/perencanaan_data/perencanaan_data_list",
                           label: "Informasi Responden/Vendor",
+                        },
+                      ].map((submenuItem, submenuIndex) => (
+                        <Link
+                          key={submenuIndex}
+                          href={submenuItem.href}
+                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+                          {submenuItem.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {link.label === "Monitoring" && isHovered && (
+                    <div
+                      className="absolute left-0 mt-[32px] w-56 bg-white rounded-[12px] shadow-lg p-2 z-50"
+                      style={{
+                        boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
+                      }}>
+                      {[
+                        {
+                          href: "/pj_balai/monitoring_perencanaan_data",
+                          label: "Monitoring",
+                        },
+                        {
+                          href: "/pj_balai/penugasan_tim/penugasan_tim",
+                          label: "Penugasan Tim",
                         },
                       ].map((submenuItem, submenuIndex) => (
                         <Link
