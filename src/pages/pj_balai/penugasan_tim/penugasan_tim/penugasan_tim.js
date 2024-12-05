@@ -3,6 +3,11 @@ import axios from "axios";
 
 const usePenugasanTimStore = create((set) => ({
   userOptions: [],
+  suratPenugasanPengawas: null,
+  skPenugasan: null,
+  setSuratPenugasanPengawas: (file) => set({ suratPenugasanPengawas: file }),
+  setSkPenugasan: (file) => set({ skPenugasan: file }),
+
   fetchUserOptions: async () => {
     try {
       const response = await axios.get(
@@ -17,6 +22,18 @@ const usePenugasanTimStore = create((set) => ({
       }
     } catch (error) {
       console.error("Error fetching user options:", error);
+    }
+  },
+  savePengawasData: async (data) => {
+    try {
+      const response = await axios.post(
+        "http://api-ecatalogue-staging.online/api/pengumpulan-data/store-pengawas",
+        data
+      );
+      console.log("Data berhasil disimpan:", response.data);
+      set({ pengawasData: data });
+    } catch (error) {
+      console.error("Gagal menyimpan data pengawas:", error);
     }
   },
 }));

@@ -15,16 +15,50 @@ export default function PenugasanTim() {
   const { userOptions, fetchUserOptions } = usePenugasanTimStore();
   const [skPenugasan, setSkPenugasan] = useState(null);
   const [suratPenugasanPengawas, setSuratPenugasanPengawas] = useState(null);
+  const [error, setError] = useState("");
+  const [progress, setProgress] = useState(0);
   const [suratPenugasanPengawasState, setSuratPenugasanPengawasState] =
-    useState(null);
+    useState("default");
+
   const handleCancelSuratPenugasanPengawas = () => {
-    setSuratPenugasanPengawas(null); // Reset file
-    console.log("Pengunggahan file dibatalkan.");
+    console.log("Cancelling file upload...");
+
+    setSuratPenugasanPengawas(null);
+    setSkPenugasan(null);
+
+    setProgress(0);
+    setSuratPenugasanPengawasState("default");
+
+    setError("");
   };
 
-  const handleSuratPenugasanPengawas = (file) => {
-    console.log("File yang diunggah:", file);
-    setSuratPenugasanPengawas(file); // Simpan file ke state
+  const handleSuratPenugasanPengawas = (files) => {
+    if (files.length === 0) {
+      setError("File wajib dipilih.");
+      return;
+    }
+
+    const file = files[0];
+    setSkPenugasan(file);
+    setSuratPenugasanPengawasState("processing");
+    setError("");
+    try {
+      setSkPenugasan(file);
+      setSuratPenugasanPengawasState("done");
+    } catch (error) {
+      console.error("Error processing logo file:", error);
+      setSuratPenugasanPengawasState("default");
+    }
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setSuratPenugasanPengawasState("done");
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 200);
   };
 
   useEffect(() => {
@@ -119,8 +153,9 @@ export default function PenugasanTim() {
           }}
           onSubmit={(values) => {
             console.log("Data pengawas:", values.pengawas);
+            usePenugasanTimStore.getState().savePengawasData(values.pengawas);
           }}>
-          {({ values }) => (
+          {({ values, submitForm }) => (
             <Form className="h-full flex flex-col">
               <div className="mt-3 bg-neutral-100 px-6 py-8 min-h-[596px] rounded-[16px] space-y-8">
                 <FieldArray
@@ -141,12 +176,6 @@ export default function PenugasanTim() {
                             options={userOptions}
                             size="Medium"
                             errorMessage="Nama Pengawas tidak boleh kosong"
-                            onSelect={(selectedOption) => {
-                              console.log(
-                                `Selected option for pengawas ${index}:`,
-                                selectedOption
-                              );
-                            }}
                           />
                           <div className="flex space-x-2 items-center">
                             <div
@@ -183,7 +212,6 @@ export default function PenugasanTim() {
                     </div>
                   )}
                 />
-
                 <FileInput
                   onFileSelect={handleSuratPenugasanPengawas}
                   setSelectedFile={setSuratPenugasanPengawas}
@@ -193,16 +221,17 @@ export default function PenugasanTim() {
                   Label="Unggah SK/Surat Penugasan"
                   HelperText="Format .PDF dan maksimal 2MB"
                   state={suratPenugasanPengawasState}
-                  onCancel={handleSuratPenugasanPengawas}
+                  onCancel={handleCancelSuratPenugasanPengawas}
                   selectedFile={skPenugasan}
                   maxSizeMB={2}
-                  // onFileSelect={(file) => {
-                  //   console.log("Selected file:", file);
-                  // }}
                 />
               </div>
               <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-                <Button type="submit" variant="solid_blue" size="Medium">
+                <Button
+                  variant="solid_blue"
+                  size="Medium"
+                  onClick={submitForm} // Trigger Formik submit
+                >
                   Simpan
                 </Button>
               </div>
