@@ -3,13 +3,34 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../../../components/navigationbar";
 import Tabs from "../../../components/Tabs";
+import Dropdown from "../../../components/dropdown";
 import TextInput from "../../../components/input";
 import Button from "../../../components/button";
 import FileInput from "../../../components/FileInput";
 import { Trash, Add } from "iconsax-react";
 import colors from "../../../styles/colors";
+import usePenugasanTimStore from "./penugasan_tim/penugasan_tim";
 
 export default function PenugasanTim() {
+  const { userOptions, fetchUserOptions } = usePenugasanTimStore();
+  const [skPenugasan, setSkPenugasan] = useState(null);
+  const [suratPenugasanPengawas, setSuratPenugasanPengawas] = useState(null);
+  const [suratPenugasanPengawasState, setSuratPenugasanPengawasState] =
+    useState(null);
+  const handleCancelSuratPenugasanPengawas = () => {
+    setSuratPenugasanPengawas(null); // Reset file
+    console.log("Pengunggahan file dibatalkan.");
+  };
+
+  const handleSuratPenugasanPengawas = (file) => {
+    console.log("File yang diunggah:", file);
+    setSuratPenugasanPengawas(file); // Simpan file ke state
+  };
+
+  useEffect(() => {
+    fetchUserOptions();
+  }, [fetchUserOptions]);
+
   const tabs = [
     {
       label: "Tim Teknis Balai",
@@ -111,14 +132,21 @@ export default function PenugasanTim() {
                           key={index}
                           className="flex items-center space-x-4">
                           <Field
-                            as={TextInput}
+                            as={Dropdown}
                             name={`pengawas.${index}`}
                             label={`Nama Pengawas ${index + 1}`}
                             labelPosition="left"
                             placeholder="Masukkan Pengawas"
-                            isRequired="true"
+                            isRequired={true}
+                            options={userOptions}
                             size="Medium"
                             errorMessage="Nama Pengawas tidak boleh kosong"
+                            onSelect={(selectedOption) => {
+                              console.log(
+                                `Selected option for pengawas ${index}:`,
+                                selectedOption
+                              );
+                            }}
                           />
                           <div className="flex space-x-2 items-center">
                             <div
@@ -157,12 +185,20 @@ export default function PenugasanTim() {
                 />
 
                 <FileInput
+                  onFileSelect={handleSuratPenugasanPengawas}
+                  setSelectedFile={setSuratPenugasanPengawas}
                   buttonText="Pilih Berkas"
                   multiple={false}
                   accept=".pdf"
                   Label="Unggah SK/Surat Penugasan"
                   HelperText="Format .PDF dan maksimal 2MB"
+                  state={suratPenugasanPengawasState}
+                  onCancel={handleSuratPenugasanPengawas}
+                  selectedFile={skPenugasan}
                   maxSizeMB={2}
+                  // onFileSelect={(file) => {
+                  //   console.log("Selected file:", file);
+                  // }}
                 />
               </div>
               <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
@@ -181,12 +217,17 @@ export default function PenugasanTim() {
       content: (
         <div className="h-full flex flex-col">
           <div className="mt-3 bg-neutral-100 px-6 py-8 h-[596px] rounded-[16px] space-y-8">
-            <TextInput
+            <Dropdown
               label="Nama Petugas Lapangan"
               labelPosition="left"
               placeholder="Masukkan Petugas Lapangan"
               isRequired="true"
               size="Medium"
+              options={[
+                { value: "1", label: "Opsi 1" },
+                { value: "2", label: "Opsi 2" },
+                { value: "3", label: "Opsi 3" },
+              ]}
               //   value={koderupSipasti}
               errorMessage="Nama Petugas Lapangan tidak boleh kosong"
               //   onChange={(e) => setKodeRUPSipasti(e.target.value)}
@@ -219,12 +260,17 @@ export default function PenugasanTim() {
       content: (
         <div className="h-full flex flex-col">
           <div className="mt-3 bg-neutral-100 px-6 py-8 h-[596px] rounded-[16px] space-y-8">
-            <TextInput
+            <Dropdown
               label="Nama Pengolah Data"
               labelPosition="left"
-              placeholder="Masukkan Pengolah Data"
+              placeholder="Masukkan nama pengolah data"
               isRequired="true"
               size="Medium"
+              options={[
+                { value: "1", label: "Opsi 1" },
+                { value: "2", label: "Opsi 2" },
+                { value: "3", label: "Opsi 3" },
+              ]}
               //   value={koderupSipasti}
               errorMessage="Nama Pengolah Data tidak boleh kosong"
               //   onChange={(e) => setKodeRUPSipasti(e.target.value)}

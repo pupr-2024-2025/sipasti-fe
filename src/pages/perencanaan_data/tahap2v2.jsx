@@ -4,7 +4,7 @@ import axios from "axios";
 import useStore from "./tahap2/tahap2store";
 import Navbar from "../../components/navigationbar";
 import Stepper from "../../components/stepper";
-import Tabs from "../../components/Tabs";
+// import Tabs from "../../components/Tabs";
 import Button from "../../components/button";
 import Pagination from "../../components/pagination";
 import TextInput from "../../components/input";
@@ -43,19 +43,37 @@ export default function Tahap2V2() {
 
   useEffect(() => {
     const fetchProvincesOptions = async () => {
-      const response = await fetch(
-        "https://api-ecatalogue-staging.online/api/provinces-and-cities"
-      );
-      const data = await response.json();
-      console.log(data.data);
-      const transformedData = data.data.map(
-        ({ id_province, province_name, cities }) => ({
-          value: id_province,
-          label: province_name,
-          cities,
-        })
-      );
-      setProvincesOptions(transformedData);
+      try {
+        const response = await fetch(
+          "https://api-ecatalogue-staging.online/api/provinces-and-cities"
+        );
+        const data = await response.json();
+        console.log(data.data);
+        const transformedData = data.data.map(
+          ({ id_province, province_name, cities }) => ({
+            value: id_province,
+            label: province_name,
+            cities,
+          })
+        );
+        setProvincesOptions(transformedData);
+
+        // Setelah data provinsi selesai, lanjutkan proses berikutnya
+        const params = new URLSearchParams(window.location.search);
+        const fromTahap3 = params.get("fromTahap3");
+
+        if (fromTahap3 === "true") {
+          const identifikasi_kebutuhan_id = localStorage.getItem(
+            "identifikasi_kebutuhan_id"
+          );
+          console.log("identifikasi_kebutuhan_id", identifikasi_kebutuhan_id);
+          if (identifikasi_kebutuhan_id) {
+            fetchIdentifikasiKebutuhan(identifikasi_kebutuhan_id);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching provinces options:", error);
+      }
     };
 
     fetchProvincesOptions();
@@ -66,21 +84,6 @@ export default function Tahap2V2() {
     { label: "Peralatan", index: 1 },
     { label: "Tenaga Kerja", index: 2 },
   ];
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const fromTahap3 = params.get("fromTahap3");
-
-    if (fromTahap3 === "true") {
-      const identifikasi_kebutuhan_id = localStorage.getItem(
-        "identifikasi_kebutuhan_id"
-      );
-      console.log("identifikasi_kebutuhan_id", identifikasi_kebutuhan_id);
-      if (identifikasi_kebutuhan_id) {
-        fetchIdentifikasiKebutuhan(identifikasi_kebutuhan_id);
-      }
-    }
-  }, []);
 
   const fetchIdentifikasiKebutuhan = async (id) => {
     console.log("Isi balaiOptions:", id);
@@ -138,7 +141,12 @@ export default function Tahap2V2() {
         </div>
       </div>
       <div className="mt-6">
-        <Tabs tabs={tabs} />
+        {/* <Tabs tabs={tabs} /> */}
+        <Tabs
+          items={items}
+          onChange={(index) => setSelectedValue(index)}
+          selectedValue={selectedValue}
+        />
       </div>
       {/* <Tabs
         items={items}
@@ -703,26 +711,45 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
 //   },
 // ];
 
-// function Tabs({ index, items, onChange, selectedValue }) {
-//   const handleClick = (index) => {
-//     onChange(index);
-//   };
+const Tabs = ({ index, items, onChange, selectedValue, button }) => {
+  const handleClick = (tabIndex) => {
+    onChange(tabIndex);
+  };
 
-//   return (
-//     <div>
-//       {items.map((item, index) => (
-//         <button
-//           key={index}
-//           color={selectedValue === index ? "blue" : "gray"}
-//           onClick={() => handleClick(index)}>
-//           <div
-//             className={`${
-//               selectedValue === index ? "text-blue-400" : "text-black"
-//             }`}>
-//             {item}
-//           </div>
-//         </button>
-//       ))}
-//     </div>
-//   );
-// }
+  return (
+    <div>
+      <div className="flex justify-between">
+        <div className="inline-flex space-x-2 bg-custom-neutral-100 rounded-[16px] p-2 h-[60px]">
+          {items.map((item, tabIndex) => (
+            <button
+              key={tabIndex}
+              onClick={() => handleClick(tabIndex)}
+              className={`px-4 py-3 text-Small rounded-[12px] transition-all duration-300 cursor-pointer whitespace-nowrap ${
+                selectedValue === tabIndex
+                  ? "bg-custom-blue-500 text-emphasis-on_color-high"
+                  : "text-emphasis-on_surface-medium hover:bg-surface-light-overlay"
+              }`}>
+              {item}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center space-x-3">
+          {button && (
+            <button
+              className={`${
+                button.variant === "solid_blue"
+                  ? "bg-custom-blue-500 text-white"
+                  : "bg-gray-200 text-gray-800"
+              } px-4 py-2 rounded-lg`}
+              onClick={
+                button.onClick || (() => console.log("Button clicked!"))
+              }>
+              {button.label || "Button"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

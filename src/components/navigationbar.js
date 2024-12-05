@@ -215,7 +215,7 @@ const Navbar = () => {
                       }}>
                       {[
                         {
-                          href: "/pj_balai/monitoring_perencanaan_data",
+                          href: "/pj_balai/monitoring/monitoring_perencanaan_data",
                           label: "Monitoring",
                         },
                         {
