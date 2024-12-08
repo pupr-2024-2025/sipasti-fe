@@ -173,7 +173,7 @@ const Login = () => {
                 variant="red_text"
                 size="ExtraSmall"
                 className="custom-padding">
-                Lupa Password
+                Lupa Kata Sandi
               </Button>
             </div>
 
@@ -223,7 +223,7 @@ const Login = () => {
         {/* Footer */}
         <div className="flex flex-row justify-between items-center">
           <p className="text-B2 text-neutral-500">
-            2024© SIPASTI V.3.0 All Reserved by PUPR
+            2024Â© SIPASTI V.3.0 All Reserved by PUPR
           </p>
           <div className="gap-x-2 flex items-center">
             <Button onClick={handleLogin} variant="blue_text" size="B2">

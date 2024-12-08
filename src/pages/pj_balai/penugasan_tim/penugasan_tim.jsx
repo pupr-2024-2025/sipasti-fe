@@ -121,6 +121,7 @@ export default function PenugasanTim() {
               errorMessage="Nama anggota tidak boleh kosong"
               //   onChange={(e) => setJabatanPPKSipasti(e.target.value)}
             />
+
             <FileInput
               //   onFileSelect={handleLogoFileSelect}
               //   setSelectedFile={setLogoUrl}
@@ -155,7 +156,7 @@ export default function PenugasanTim() {
             console.log("Data pengawas:", values.pengawas);
             usePenugasanTimStore.getState().savePengawasData(values.pengawas);
           }}>
-          {({ values, submitForm }) => (
+          {({ values, submitForm, setFieldValue }) => (
             <Form className="h-full flex flex-col">
               <div className="mt-3 bg-neutral-100 px-6 py-8 min-h-[596px] rounded-[16px] space-y-8">
                 <FieldArray
@@ -174,6 +175,12 @@ export default function PenugasanTim() {
                             placeholder="Masukkan Pengawas"
                             isRequired={true}
                             options={userOptions}
+                            onSelect={(selectedOption) =>
+                              setFieldValue(
+                                `pengawas.${index}`,
+                                selectedOption.value
+                              )
+                            }
                             size="Medium"
                             errorMessage="Nama Pengawas tidak boleh kosong"
                           />

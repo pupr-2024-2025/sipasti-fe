@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
 import { CloseCircle } from "iconsax-react";
 import Select from "react-select";
 import colors from "../styles/colors";
+import { useEffect, useState } from "react";
 
-const Dropdown = ({
+const DropdownAPI = ({
   options,
-  label,
-  placeholder = "Pilih Opsi",
-  onSelect,
   value,
   isRequired = false,
-  errorMessage = "Wajib diisi",
-  labelPosition = "top",
-  labelWidth = "150px",
-  disableMapping = false,
+  errorMessage,
+  onChange,
+  placeholder,
 }) => {
-  const [selectedValue, setSelectedValue] = useState(value || null);
   const [error, setError] = useState("");
   const [isBrowser, setIsBrowser] = useState(false);
 
@@ -23,18 +18,8 @@ const Dropdown = ({
     setIsBrowser(typeof window !== "undefined");
   }, []);
 
-  console.log("options", label, disableMapping);
-
-  const formattedOptions = disableMapping
-    ? options
-    : options.map((option) => ({
-        value: option.value,
-        label: option.label,
-      }));
-
   const handleChange = (selectedOption) => {
-    setSelectedValue(selectedOption);
-    onSelect(selectedOption);
+    onChange(selectedOption);
 
     if (isRequired && !selectedOption) {
       setError(errorMessage);
@@ -43,36 +28,14 @@ const Dropdown = ({
     }
   };
 
-  const handleBlur = () => {
-    if (isRequired && !selectedValue) {
-      setError(errorMessage);
-    }
-  };
-
   return (
-    <div
-      className={`relative flex ${
-        labelPosition === "left" ? "flex-row items-center" : "flex-col"
-      } w-full`}>
-      {label && (
-        <label
-          className={`text-B2 text-emphasis-on_surface-high ${
-            labelPosition === "left" ? "mr-4" : "mb-1"
-          }`}
-          style={{
-            width: labelPosition === "left" ? labelWidth : "auto",
-            minWidth: labelPosition === "left" ? labelWidth : "auto",
-          }}>
-          {label}
-          {isRequired && <span className="text-custom-red-500"> *</span>}
-        </label>
-      )}
-      <div className={`w-full ${labelPosition === "left" ? "flex-1" : ""}`}>
+    <div className="relative flex flex-col w-full">
+      <div className="w-full">
         <Select
-          value={selectedValue}
+          options={options}
+          value={value}
           onChange={handleChange}
-          onBlur={handleBlur}
-          options={formattedOptions}
+          isRequired={isRequired}
           placeholder={placeholder}
           className={`react-select ${error ? "border-custom-red-500" : ""}`}
           classNamePrefix="select"
@@ -146,4 +109,4 @@ const Dropdown = ({
   );
 };
 
-export default Dropdown;
+export default DropdownAPI;

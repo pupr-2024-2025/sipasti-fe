@@ -1,14 +1,62 @@
+// ForgotPassword.js
 import React, { useState } from "react";
 import TextInput from "../components/input";
 import Button from "../components/button";
 import { CloseCircle } from "iconsax-react";
+import CustomAlert from "../components/alert";
 
 const ForgotPassword = ({ onClose }) => {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState({
+    open: false,
+    message: "",
+    severity: "info",
+  });
 
-  const handleSubmit = () => {
-    console.log("Reset password email sent to:", email);
-    onClose();
+  const handleSubmit = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        "https://api-ecatalogue-staging.online/api/forgot-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || data.status === "error") {
+        setAlert({
+          open: true,
+          message:
+            data.message ||
+            "Terjadi kesalahan saat mengirim permintaan reset kata sandi.",
+          severity: "error",
+        });
+        return;
+      }
+
+      setAlert({
+        open: true,
+        message: "Permintaan reset kata sandi berhasil dikirim.",
+        severity: "success",
+      });
+
+      onClose();
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: "Terjadi kesalahan saat memproses permintaan.",
+        severity: "error",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -44,12 +92,19 @@ const ForgotPassword = ({ onClose }) => {
           onClick={handleSubmit}
           variant="solid_blue"
           size="Medium"
-          disabled={!email}>
-          {" "}
-          {/* Nonaktifkan jika email kosong */}
-          Kirim
+          disabled={!email || isLoading}>
+          {isLoading ? "Mengirim..." : "Kirim"}
         </Button>
       </div>
+
+      {alert.open && (
+        <CustomAlert
+          message={alert.message}
+          severity={alert.severity}
+          openInitially={alert.open}
+          onClose={() => setAlert({ ...alert, open: false })}
+        />
+      )}
     </div>
   );
 };

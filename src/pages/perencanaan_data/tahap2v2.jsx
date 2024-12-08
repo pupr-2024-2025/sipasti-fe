@@ -9,8 +9,11 @@ import Button from "../../components/button";
 import Pagination from "../../components/pagination";
 import TextInput from "../../components/input";
 import Dropdown from "../../components/dropdown";
+import DropdownAPI from "../../components/DropdownAPI";
+import SearchBox from "../../components/searchbox";
 
 export default function Tahap2V2() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [currentStep, setCurrentStep] = useState(1);
@@ -26,6 +29,68 @@ export default function Tahap2V2() {
     { value: "Bahan Olahan", label: "Bahan Olahan" },
     { value: "Bahan Jadi", label: "Bahan Jadi" },
   ];
+
+  const handleSearch = (query) => {
+    console.log(`Searching for: ${query}`);
+
+    const lowerCaseQuery = query.toLowerCase();
+
+    // Jika query kosong, reset ke data asli
+    if (!query) {
+      setFilteredDataMaterial(dataMaterial);
+      setFilteredDataPeralatan(dataPeralatan);
+      setFilteredDataTenagaKerja(dataTenagaKerja);
+      return;
+    }
+
+    // Filter data material
+    const newFilteredDataMaterial = dataMaterial.filter((item) => {
+      return columnsMaterial.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataMaterial(newFilteredDataMaterial);
+
+    // Filter data peralatan
+    const newFilteredDataPeralatan = dataPeralatan.filter((item) => {
+      return columnsPeralatan.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataPeralatan(newFilteredDataPeralatan);
+
+    const newFilteredDataTenagaKerja = dataTenagaKerja.filter((item) => {
+      return columnsTenagaKerja.some((column) => {
+        const value = item[column.accessor];
+        // Jika accessor adalah untuk dropdown, periksa apakah nilai ada dalam options
+        if (column.type === "dropdown API") {
+          return column.options.some((option) =>
+            option.label.toLowerCase().includes(lowerCaseQuery)
+          );
+        }
+        return value && value.toString().toLowerCase().includes(lowerCaseQuery);
+      });
+    });
+    setFilteredDataTenagaKerja(newFilteredDataTenagaKerja);
+
+    console.log(`Filtered Material Data:`, newFilteredDataMaterial);
+    console.log(`Filtered Peralatan Data:`, newFilteredDataPeralatan);
+    console.log(`Filtered Tenaga Kerja Data:`, newFilteredDataTenagaKerja);
+  };
 
   const navigateToTahap1 = () => {
     window.location.href = "/perencanaan_data/tahap1?fromTahap2=true";
@@ -79,12 +144,6 @@ export default function Tahap2V2() {
     fetchProvincesOptions();
   }, [setProvincesOptions]);
 
-  const tabs = [
-    { label: "Material", index: 0 },
-    { label: "Peralatan", index: 1 },
-    { label: "Tenaga Kerja", index: 2 },
-  ];
-
   const fetchIdentifikasiKebutuhan = async (id) => {
     console.log("Isi balaiOptions:", id);
     try {
@@ -94,24 +153,6 @@ export default function Tahap2V2() {
       const result = response.data.data.material;
       console.log("Material from API", result);
       setInitialValues({ materials: result });
-      // setInitialValues((prev) => {
-      //   console.log('prev', prev);
-      // })
-      // setInitialValues((prev) => ({
-      //   ...prev,
-      //   materials: result.map((material) => ({
-      //     nama_material: material.nama_material,
-      //     satuan: material.satuan,
-      //     spesifikasi: material.spesifikasi,
-      //     ukuran: material.ukuran,
-      //     kodefikasi: material.kodefikasi,
-      //     kelompok_material: material.kelompok_material,
-      //     jumlah_kebutuhan: material.jumlah_kebutuhan,
-      //     merk: material.merk,
-      //     provincies_id: material.provincies_id,
-      //     cities_id: material.cities_id,
-      //   })),
-      // }));
     } catch (error) {
       console.error("Gagal memuat data Informasi Umum:", error);
     }
@@ -139,74 +180,86 @@ export default function Tahap2V2() {
             labels={stepLabels}
           />
         </div>
+        <h4 className="text-H4 text-emphasis-on_surface-high">
+          Identifikasi Kebutuhan
+        </h4>
       </div>
-      <div className="mt-6">
-        {/* <Tabs tabs={tabs} /> */}
-        <Tabs
-          items={items}
-          onChange={(index) => setSelectedValue(index)}
-          selectedValue={selectedValue}
-        />
-      </div>
-      {/* <Tabs
-        items={items}
-        onChange={(index) => setSelectedValue(index)}
-        selectedValue={selectedValue}
-      /> */}
-
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        enableReinitialize={true}>
-        {({ values, setFieldValue }) => (
-          <Form>
-            <MaterialForm
-              values={values}
-              setFieldValue={setFieldValue}
-              hide={selectedValue !== 0}
-              provincesOptions={provincesOptions}
-              kelompokMaterialOptions={kelompokMaterialOptions} // Tambahkan ini
+      <div className="space-y-4">
+        <div className="flex flex-row justify-between items-center">
+          <div className="mt-6">
+            <Tabs
+              items={items}
+              onChange={(index) => setSelectedValue(index)}
+              selectedValue={selectedValue}
             />
-            <PeralatanForm
-              values={values}
-              setFieldValue={setFieldValue}
-              hide={selectedValue !== 1}
-              provincesOptions={provincesOptions}
+          </div>
+          <div className="flex flex-row justify-between items-center space-x-4">
+            <SearchBox
+              placeholder="Cari Material..."
+              onSearch={handleSearch}
+              withFilter={true}
             />
-            <TenagaKerjaForm
-              values={values}
-              setFieldValue={setFieldValue}
-              hide={selectedValue !== 2}
-              provincesOptions={provincesOptions}
-            />
-            {/* <button type="submit" className="text-black">
+            <Button
+              variant="solid_blue"
+              size="Medium"
+              onClick={() => setIsModalOpen(true)}>
+              Tambah Data
+            </Button>
+          </div>
+        </div>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}>
+          {({ values, setFieldValue }) => (
+            <Form>
+              <MaterialForm
+                values={values}
+                setFieldValue={setFieldValue}
+                hide={selectedValue !== 0}
+                provincesOptions={provincesOptions}
+                kelompokMaterialOptions={kelompokMaterialOptions} // Tambahkan ini
+              />
+              <PeralatanForm
+                values={values}
+                setFieldValue={setFieldValue}
+                hide={selectedValue !== 1}
+                provincesOptions={provincesOptions}
+              />
+              <TenagaKerjaForm
+                values={values}
+                setFieldValue={setFieldValue}
+                hide={selectedValue !== 2}
+                provincesOptions={provincesOptions}
+              />
+              {/* <button type="submit" className="text-black">
               Submit
             </button> */}
-            <Pagination
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
-              totalData={MaterialForm.length}
-              onPageChange={setCurrentPage}
-            />
-            <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-              <Button
-                variant="outlined_yellow"
-                size="Medium"
-                onClick={navigateToTahap1}>
-                Kembali
-              </Button>
+              <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                totalData={MaterialForm.length}
+                onPageChange={setCurrentPage}
+              />
+              <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+                <Button
+                  variant="outlined_yellow"
+                  size="Medium"
+                  onClick={navigateToTahap1}>
+                  Kembali
+                </Button>
 
-              <Button
-                variant="solid_blue"
-                size="Medium"
-                // onClick={onsubmit}
-              >
-                Simpan & Lanjut
-              </Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
+                <Button
+                  variant="solid_blue"
+                  size="Medium"
+                  onClick={() => handleSubmit(values)}>
+                  Simpan & Lanjut
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
     </div>
   );
 }
@@ -254,7 +307,7 @@ const MaterialForm = ({
                       Provinsi
                     </th>
                     <th className="px-3 py-6 text-base font-normal">Kota</th>
-                    <th className="px-3 py-6 text-base font-normal">Actions</th>
+                    <th className="px-3 py-6 text-base font-normal">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="bg-surface-light-background">
@@ -434,37 +487,38 @@ const MaterialForm = ({
                           )}
                         </Field>
                       </td>
-                      {/* <td className="px-3 py-6">
-                        <Field
-                          as="select"
-                          name={`materials.${index}.provincies_id`}
-                          className="select-field">
-                          <option value="">Pilih Provinsi</option>
-                          {provincesOptions.map((province) => (
-                            <option
-                              key={province.id_province}
-                              value={province.id_province}>
-                              {province.province_name}
-                            </option>
-                          ))}
-                        </Field>
-                      </td> */}
                       <td className="px-3 py-6">
                         <Field name={`materials.${index}.provinsi`}>
                           {({ field, form }) => (
                             <Dropdown
                               options={provincesOptions}
                               value={() => {
+                                console.log(
+                                  "values.materials[index]?.provincies_id top",
+                                  values.materials[index]?.provincies_id
+                                );
                                 const selectedProvince = provincesOptions.find(
                                   (province) =>
                                     province.value ===
                                     values.materials[index]?.provincies_id
                                 );
+                                console.log(
+                                  "selectedProvince1",
+                                  selectedProvince
+                                );
                                 return selectedProvince;
                               }}
-                              onSelect={(val) =>
-                                setFieldValue(`materials.${index}`, val)
-                              }
+                              onSelect={(val) => {
+                                console.log("val", val.value);
+                                setFieldValue(
+                                  `materials.${index}.provincies_id`,
+                                  val.value
+                                );
+                                setFieldValue(
+                                  `materials.${index}.cities_id`,
+                                  ""
+                                );
+                              }}
                               placeholder="Pilih Provinsi"
                               isRequired={true}
                               errorMessage={
@@ -475,53 +529,63 @@ const MaterialForm = ({
                           )}
                         </Field>
                       </td>
-                      {/* <td className="px-3 py-6">
-                        <Field name={`materials.${index}.kota`}>
-                          {({ field, form }) => (
-                            <Dropdown
-                              options={citiesOptions}
-                              value={() => {
-                                const selectedProvince = citiesOptions.find(
-                                  (province) =>
-                                    province.value ===
-                                    values.materials[index]?.cities_id
-                                );
-                                return selectedProvince;
-                              }}
-                              onSelect={(val) =>
-                                setFieldValue(`materials.${index}`, val)
-                              }
-                              placeholder="Pilih Kota"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.cities
-                              }
-                              labelPosition="top"
-                            />
-                          )}
-                        </Field>
-                      </td> */}
                       <td className="px-3 py-6">
-                        <Field
-                          as="select"
-                          name={`materials.${index}.cities_id`}
-                          className="select-field">
-                          <option value="">Pilih Kota</option>
-                          {provincesOptions
-                            .filter(
+                        <Field name={`materials.${index}.kota`}>
+                          {({ field, form }) => {
+                            const selectedProvince = provincesOptions.find(
                               (province) =>
-                                province.id_province ===
+                                province.value ===
                                 values.materials[index]?.provincies_id
-                            )
-                            .map((province) =>
-                              province.cities.map((city) => (
-                                <option
-                                  key={city.cities_id}
-                                  value={city.cities_id}>
-                                  {city.cities_name}
-                                </option>
-                              ))
-                            )}
+                            );
+                            const cities = selectedProvince
+                              ? selectedProvince.cities
+                              : [];
+                            const transformedCities = cities.map((city) => ({
+                              value: city.cities_id,
+                              label: city.cities_name,
+                            }));
+                            console.log(
+                              "Provinsi yang terpilih",
+                              selectedProvince
+                            );
+                            console.log(
+                              `Cities ${values.materials[index]?.cities_id}`,
+                              transformedCities.find(
+                                (city) =>
+                                  city.value ===
+                                  values.materials[index]?.cities_id
+                              )
+                            );
+
+                            const selectedCity =
+                              values.materials[index]?.cities_id === ""
+                                ? null
+                                : transformedCities.find(
+                                    (city) =>
+                                      city.value ===
+                                      values.materials[index]?.cities_id
+                                  );
+
+                            console.log("selectedCity", selectedCity);
+
+                            return (
+                              <DropdownAPI
+                                options={transformedCities}
+                                value={selectedCity}
+                                onChange={(val) =>
+                                  setFieldValue(
+                                    `materials.${index}.cities_id`,
+                                    val.value
+                                  )
+                                }
+                                placeholder="Pilih Kota"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.cities_id
+                                }
+                              />
+                            );
+                          }}
                         </Field>
                       </td>
                       <td className="px-3 py-6 text-center">
@@ -550,77 +614,317 @@ const MaterialForm = ({
 
 const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
   return (
-    <div className={`${hide ? "hidden" : ""}`}>
-      <h1>Peralatan</h1>
+    <div
+      className={`${
+        hide ? "hidden" : ""
+      } rounded-[16px] border border-gray-200 overflow-hidden`}>
       <FieldArray name="peralatans">
         {({ push, remove }) => (
           <div>
-            {values.peralatans.map((_, index) => (
-              <div key={index}>
-                <Field
-                  name={`peralatans.${index}.nama_peralatan`}
-                  placeholder="Nama Peralatan"
-                />
-                <Field
-                  name={`peralatans.${index}.satuan`}
-                  placeholder="Satuan"
-                />
-                <Field
-                  name={`peralatans.${index}.spesifikasi`}
-                  placeholder="Spesifikasi"
-                />
-                <Field
-                  name={`peralatans.${index}.kapasitas`}
-                  placeholder="Kapasitas"
-                />
-                <Field
-                  name={`peralatans.${index}.kodefikasi`}
-                  placeholder="Kodefikasi"
-                />
-                <Field
-                  as="select"
-                  name={`materials.${index}.kelompok_peralatan`}
-                  placeholder="Kelompok Perlatan">
-                  <option value="">Pilih Kelompok Peralatan</option>
-                  <option value="Mekanis">Mekanis</option>
-                  <option value="Semi Mekanis">Semi Mekanis</option>
-                </Field>
-                <Field
-                  name={`peralatans.${index}.jumlah_kebutuhan`}
-                  placeholder="Jumlah Kebutuhan"
-                />
-                <Field name={`peralatans.${index}.merk`} placeholder="Merk" />
-                <Field as="select" name={`peralatans.${index}.provincies_id`}>
-                  <option value="">Pilih Provinsi</option>
-                  {provincesOptions.map((province) => (
-                    <option
-                      key={province.id_province}
-                      value={province.id_province}>
-                      {province.province_name}
-                    </option>
+            <div className="overflow-x-auto">
+              <table className="table-auto w-full min-w-max">
+                <thead>
+                  <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
+                    <th className="px-3 py-6 text-base font-normal">
+                      Nama Peralatan
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">Satuan</th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Spesifikasi
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Kapasitas
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Kodefikasi
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Kelompok Peralatan
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Jumlah Kebutuhan
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">Merk</th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Provinsi
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">Kota</th>
+                    <th className="px-3 py-6 text-base font-normal">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-surface-light-background">
+                  {values.peralatans.map((_, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.nama_peralatan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.nama_peralatan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Nama Peralatan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.nama_peralatan
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.satuan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.satuan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Satuan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.satuan
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.spesifikasi`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.spesifikasi`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Spesifikasi"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.spesifikasi
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.kapasitas`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.kapasitas`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Kapasitas"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.kapasitas
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.kodefikasi`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.kodefikasi`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Kodefikasi"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.kodefikasi
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.kelompok_peralatan`}>
+                          {({ field, form }) => (
+                            <Dropdown
+                              options={[
+                                { label: "Mekanis", value: "Mekanis" },
+                                {
+                                  label: "Semi Mekanis",
+                                  value: "Semi Mekanis",
+                                },
+                              ]}
+                              value={field.value}
+                              onSelect={(val) =>
+                                setFieldValue(
+                                  `peralatans.${index}.kelompok_peralatan`,
+                                  val
+                                )
+                              }
+                              placeholder="Pilih Kelompok Peralatan"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]
+                                  ?.kelompok_peralatan
+                              }
+                              labelPosition="top"
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.jumlah_kebutuhan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.jumlah_kebutuhan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Jumlah Kebutuhan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]
+                                  ?.jumlah_kebutuhan
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.merk`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `peralatans.${index}.merk`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Merk"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.merk
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.provincies_id`}>
+                          {({ field, form }) => (
+                            <Dropdown
+                              options={provincesOptions}
+                              value={() => {
+                                const selectedProvince = provincesOptions.find(
+                                  (province) => province.value === field.value
+                                );
+                                return selectedProvince;
+                              }}
+                              onSelect={(val) => {
+                                setFieldValue(
+                                  `peralatans.${index}.provincies_id`,
+                                  val.value
+                                );
+                                setFieldValue(
+                                  `peralatans.${index}.cities_id`,
+                                  ""
+                                );
+                              }}
+                              placeholder="Pilih Provinsi"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.peralatans?.[index]?.provincies_id
+                              }
+                              labelPosition="top"
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`peralatans.${index}.cities_id`}>
+                          {({ field, form }) => {
+                            const selectedProvince = provincesOptions.find(
+                              (province) =>
+                                province.value ===
+                                values.peralatans[index]?.provincies_id
+                            );
+                            const cities = selectedProvince
+                              ? selectedProvince.cities
+                              : [];
+                            const transformedCities = cities.map((city) => ({
+                              value: city.cities_id,
+                              label: city.cities_name,
+                            }));
+
+                            const selectedCity =
+                              values.peralatans[index]?.cities_id === ""
+                                ? null
+                                : transformedCities.find(
+                                    (city) =>
+                                      city.value ===
+                                      values.peralatans[index]?.cities_id
+                                  );
+
+                            return (
+                              <Dropdown
+                                options={transformedCities}
+                                value={selectedCity}
+                                onSelect={(val) =>
+                                  setFieldValue(
+                                    `peralatans.${index}.cities_id`,
+                                    val.value
+                                  )
+                                }
+                                placeholder="Pilih Kota"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.peralatans?.[index]?.cities_id
+                                }
+                              />
+                            );
+                          }}
+                        </Field>
+                      </td>
+
+                      <td className="px-3 py-6">
+                        <button
+                          onClick={() => remove(index)}
+                          className="text-red-500">
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </Field>
-                <Field as="select" name={`peralatans.${index}.cities_id`}>
-                  <option value="">Pilih Kota</option>
-                  {/* after province set it should only filter the cities based on the selected province */}
-                  {provincesOptions.map(
-                    (province) =>
-                      province.id_province ===
-                        (values.peralatans[index]?.provincies_id ?? 0) &&
-                      province.cities.map((city) => (
-                        <option key={city.cities_id} value={city.cities_id}>
-                          {city.cities_name}
-                        </option>
-                      ))
-                  )}
-                </Field>
-                <button onClick={() => remove(index)} className="text-black">
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button onClick={() => push()} className="text-black">
-              Add
+                </tbody>
+              </table>
+            </div>
+            <button
+              onClick={() => push()}
+              className="text-blue-500 font-medium mt-4">
+              Add New
             </button>
           </div>
         )}
@@ -631,60 +935,218 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
 
 const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
   return (
-    <div className={`${hide ? "hidden" : ""}`}>
-      <h1>Tenaga Kerja</h1>
+    <div
+      className={`${
+        hide ? "hidden" : ""
+      } rounded-[16px] border border-gray-200 overflow-hidden`}>
       <FieldArray name="tenagaKerjas">
         {({ push, remove }) => (
           <div>
-            {values.tenagaKerjas.map((_, index) => (
-              <div key={index}>
-                <Field
-                  name={`tenagaKerjas.${index}.jenis_tenaga_kerja`}
-                  placeholder="Jenis Tenaga Kerja"
-                />
-                <Field
-                  name={`tenagaKerjas.${index}.satuan`}
-                  placeholder="Satuan"
-                />
-                <Field
-                  name={`tenagaKerjas.${index}.jumlah_kebutuhan`}
-                  placeholder="Jumlah Kebutuhan"
-                />
-                <Field
-                  name={`tenagaKerjas.${index}.kodefikasi`}
-                  placeholder="Kodefikasi"
-                />
-                <Field as="select" name={`tenagaKerjas.${index}.provincies_id`}>
-                  <option value="">Pilih Provinsi</option>
-                  {provincesOptions.map((province) => (
-                    <option
-                      key={province.id_province}
-                      value={province.id_province}>
-                      {province.province_name}
-                    </option>
+            <div className="overflow-x-auto">
+              <table className="table-auto w-full min-w-max">
+                <thead>
+                  <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
+                    <th className="px-3 py-6 text-base font-normal">
+                      Jenis Tenaga Kerja
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">Satuan</th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Jumlah Kebutuhan
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Kodefikasi
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">
+                      Provinsi
+                    </th>
+                    <th className="px-3 py-6 text-base font-normal">Kota</th>
+                    <th className="px-3 py-6 text-base font-normal">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-surface-light-background">
+                  {values.tenagaKerjas.map((_, index) => (
+                    <tr key={index} className="border-b">
+                      <td className="px-3 py-6">
+                        <Field
+                          name={`tenagaKerjas.${index}.jenis_tenaga_kerja`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `tenagaKerjas.${index}.jenis_tenaga_kerja`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Jenis Tenaga Kerja"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.tenagaKerjas?.[index]
+                                  ?.jenis_tenaga_kerja
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`tenagaKerjas.${index}.satuan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `tenagaKerjas.${index}.satuan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Satuan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.tenagaKerjas?.[index]?.satuan
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`tenagaKerjas.${index}.jumlah_kebutuhan`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `tenagaKerjas.${index}.jumlah_kebutuhan`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Jumlah Kebutuhan"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.tenagaKerjas?.[index]
+                                  ?.jumlah_kebutuhan
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`tenagaKerjas.${index}.kodefikasi`}>
+                          {({ field, form }) => (
+                            <TextInput
+                              value={field.value}
+                              onChange={(e) =>
+                                form.setFieldValue(
+                                  `tenagaKerjas.${index}.kodefikasi`,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Kodefikasi"
+                              className="input-field"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.tenagaKerjas?.[index]?.kodefikasi
+                              }
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`tenagaKerjas.${index}.provincies_id`}>
+                          {({ field, form }) => (
+                            <Dropdown
+                              options={provincesOptions}
+                              value={() => {
+                                const selectedProvince = provincesOptions.find(
+                                  (province) => province.value === field.value
+                                );
+                                return selectedProvince;
+                              }}
+                              onSelect={(val) => {
+                                setFieldValue(
+                                  `tenagaKerjas.${index}.provincies_id`,
+                                  val.value
+                                );
+                                setFieldValue(
+                                  `tenagaKerjas.${index}.cities_id`,
+                                  ""
+                                );
+                              }}
+                              placeholder="Pilih Provinsi"
+                              isRequired={true}
+                              errorMessage={
+                                form.errors?.tenagaKerjas?.[index]
+                                  ?.provincies_id
+                              }
+                              labelPosition="top"
+                            />
+                          )}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6">
+                        <Field name={`tenagaKerjas.${index}.cities_id`}>
+                          {({ field, form }) => {
+                            const selectedProvince = provincesOptions.find(
+                              (province) =>
+                                province.value ===
+                                values.tenagaKerjas[index]?.provincies_id
+                            );
+                            const cities = selectedProvince
+                              ? selectedProvince.cities
+                              : [];
+                            const transformedCities = cities.map((city) => ({
+                              value: city.cities_id,
+                              label: city.cities_name,
+                            }));
+
+                            const selectedCity =
+                              values.tenagaKerjas[index]?.cities_id === ""
+                                ? null
+                                : transformedCities.find(
+                                    (city) =>
+                                      city.value ===
+                                      values.tenagaKerjas[index]?.cities_id
+                                  );
+
+                            return (
+                              <Dropdown
+                                options={transformedCities}
+                                value={selectedCity}
+                                onSelect={(val) =>
+                                  setFieldValue(
+                                    `tenagaKerjas.${index}.cities_id`,
+                                    val.value
+                                  )
+                                }
+                                placeholder="Pilih Kota"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.tenagaKerjas?.[index]?.cities_id
+                                }
+                                labelPosition="top"
+                              />
+                            );
+                          }}
+                        </Field>
+                      </td>
+                      <td className="px-3 py-6 text-center">
+                        <button
+                          onClick={() => remove(index)}
+                          className="text-red-500 hover:text-red-700">
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
                   ))}
-                </Field>
-                <Field as="select" name={`tenagaKerjas.${index}.cities_id`}>
-                  <option value="">Pilih Kota</option>
-                  {/* after province set it should only filter the cities based on the selected province */}
-                  {provincesOptions.map(
-                    (province) =>
-                      province.id_province ===
-                        (values.tenagaKerjas[index]?.provincies_id ?? 0) &&
-                      province.cities.map((city) => (
-                        <option key={city.cities_id} value={city.cities_id}>
-                          {city.cities_name}
-                        </option>
-                      ))
-                  )}
-                </Field>
-                <button onClick={() => remove(index)} className="text-black">
-                  Remove
-                </button>
-              </div>
-            ))}
-            <button onClick={() => push()} className="text-black">
-              Add
+                </tbody>
+              </table>
+            </div>
+            <button
+              onClick={() => push()}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+              Add Tenaga Kerja
             </button>
           </div>
         )}
@@ -692,24 +1154,6 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
     </div>
   );
 };
-// const tabs = [
-//   {
-//     label: "Material",
-//     content: <MaterialForm />, // Properly render the MaterialForm component
-//   },
-//   {
-//     label: "Peralatan",
-//     content: (
-//       // Isi konten tab Peralatan
-//     ),
-//   },
-//   {
-//     label: "Tenaga Kerja",
-//     content: (
-//       // Isi konten tab Tenaga Kerja
-//     ),
-//   },
-// ];
 
 const Tabs = ({ index, items, onChange, selectedValue, button }) => {
   const handleClick = (tabIndex) => {
