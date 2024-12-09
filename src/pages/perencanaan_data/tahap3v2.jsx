@@ -18,6 +18,14 @@ export default function Tahap3V2() {
   };
   const { initialValues, fetchStatusProgres } = useStore();
 
+  const filterOptions = [
+    { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
+    { label: "Sumber Daya", accessor: "sumber_daya", checked: false },
+    { label: "Pemilik Vendor", accessor: "pemilik_vendor", checked: false },
+    { label: "Alamat", accessor: "alamat", checked: false },
+    { label: "Kontak", accessor: "kontak", checked: false },
+  ];
+
   const stepLabels = [
     "Informasi Umum",
     "Identifikasi Kebutuhan",
@@ -114,8 +122,14 @@ export default function Tahap3V2() {
           <div className="flex flex-row items-center space-x-4">
             <SearchBox
               placeholder="Cari Material..."
-              //   onSearch={handleSearch}
+              onSearch={(query) => handleSearch(query, "material")}
+              filterOptions={filterOptions}
               withFilter={true}
+              onFilterClick={(filters) => {
+                console.log("Filter option clicked:", filters); // Debug
+                handleFilterClick(filters);
+              }}
+              //   onSearch={handleSearch}
             />
             <Button
               variant="solid_blue"

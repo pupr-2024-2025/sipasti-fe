@@ -4,48 +4,19 @@ const useStore = create((set) => ({
   selectedValue: 0,
   provincesOptions: [],
   initialValues: {
-    materials: [
-      // {
-      //   nama_material: "",
-      //   satuan: "",
-      //   spesifikasi: "",
-      //   ukuran: "",
-      //   kodefikasi: "",
-      //   kelompok_material: "",
-      //   jumlah_kebutuhan: 0,
-      //   merk: "",
-      //   provincies_id: 0,
-      //   cities_id: 0,
-      // },
-    ],
-    peralatans: [
-      // {
-      //   nama_peralatan: "",
-      //   satuan: "",
-      //   spesifikasi: "",
-      //   kapasitas: "",
-      //   kodefikasi: "",
-      //   kelompok_peralatan: "",
-      //   jumlah_kebutuhan: 0,
-      //   merk: "",
-      //   provincies_id: 0,
-      //   cities_id: 0,
-      // },
-    ],
-    tenagaKerjas: [
-      // {
-      //   jenis_tenaga_kerja: "",
-      //   satuan: "",
-      //   jumlah_kebutuhan: 0,
-      //   kodefikasi: "",
-      //   provincies_id: 0,
-      //   cities_id: 0,
-      // },
-    ],
+    materials: [],
+    peralatans: [],
+    tenagaKerjas: [],
   },
+  dataMaterial: [],
+  filteredDataMaterial: [],
+  rowsToAdd: 0,
+  isModalOpen: false,
+  pushMaterial: () => {},
+  pushPeralatan: null,
+  pushTenagaKerja: null,
   setSelectedValue: (value) => set({ selectedValue: value }),
   setProvincesOptions: (options) => set({ provincesOptions: options }),
-  setCitiesOptions: (options) => set({ citiesOptions: options }),
   setInitialValues: (values) =>
     set((state) => ({
       initialValues: {
@@ -53,6 +24,13 @@ const useStore = create((set) => ({
         ...values,
       },
     })),
+  setDataMaterial: (data) => set({ dataMaterial: data }),
+  setFilteredDataMaterial: (data) => set({ filteredDataMaterial: data }),
+  setRowsToAdd: (rows) => set({ rowsToAdd: rows }),
+  setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
+  setPushMaterial: (push) => set({ pushMaterial: push }),
+  setPushPeralatan: (push) => set({ pushPeralatan: push }),
+  setPushTenagaKerja: (push) => set({ pushTenagaKerja: push }),
 }));
 
 export default useStore;

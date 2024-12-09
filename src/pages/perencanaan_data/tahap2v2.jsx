@@ -11,6 +11,7 @@ import TextInput from "../../components/input";
 import Dropdown from "../../components/dropdown";
 import DropdownAPI from "../../components/DropdownAPI";
 import SearchBox from "../../components/searchbox";
+import AddRowModal from "../../components/addrowmodal";
 
 export default function Tahap2V2() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -106,6 +107,31 @@ export default function Tahap2V2() {
     setInitialValues,
   } = useStore();
 
+  console.log("selectedValue", selectedValue);
+
+  const renderSearchBox = (currentIndex) => {
+    const getPlaceholder = () => {
+      switch (currentIndex) {
+        case 0:
+          return "Cari Material...";
+        case 1:
+          return "Cari Peralatan...";
+        case 2:
+          return "Cari Tenaga Kerja...";
+        default:
+          return "";
+      }
+    };
+
+    return (
+      <SearchBox
+        placeholder={getPlaceholder()}
+        onSearch={handleSearch}
+        withFilter={true}
+      />
+    );
+  };
+
   useEffect(() => {
     const fetchProvincesOptions = async () => {
       try {
@@ -166,6 +192,8 @@ export default function Tahap2V2() {
     console.log(values);
   };
 
+  console.log("isModalOpen", isModalOpen);
+
   return (
     <div className="p-8">
       <Navbar />
@@ -184,6 +212,15 @@ export default function Tahap2V2() {
           Identifikasi Kebutuhan
         </h4>
       </div>
+      {isModalOpen && (
+        <AddRowModal
+          handleClose={() => setIsModalOpen(false)}
+          handleAddRow={(currentIndex, rowsToAdd) =>
+            console.log("Add row", currentIndex, rowsToAdd)
+          }
+          currentIndex={selectedValue}
+        />
+      )}
       <div className="space-y-4">
         <div className="flex flex-row justify-between items-center">
           <div className="mt-6">
@@ -194,11 +231,7 @@ export default function Tahap2V2() {
             />
           </div>
           <div className="flex flex-row justify-between items-center space-x-4">
-            <SearchBox
-              placeholder="Cari Material..."
-              onSearch={handleSearch}
-              withFilter={true}
-            />
+            {renderSearchBox(selectedValue)}
             <Button
               variant="solid_blue"
               size="Medium"
@@ -235,12 +268,7 @@ export default function Tahap2V2() {
               {/* <button type="submit" className="text-black">
               Submit
             </button> */}
-              <Pagination
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                totalData={MaterialForm.length}
-                onPageChange={setCurrentPage}
-              />
+
               <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
                 <Button
                   variant="outlined_yellow"
@@ -271,8 +299,29 @@ const MaterialForm = ({
   provincesOptions,
   kelompokMaterialOptions,
 }) => {
-  console.log("MaterialForm", values);
-  console.log("provincesOptions", provincesOptions);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  console.log("current page", currentPage);
+
+  const paginatedMaterials = values.materials.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // const {
+  //   setInitialValues
+  // } = useStore();
+
+  // useEffect(() => {
+  //   if (currentPage != 0) {
+  //     setInitialValues({ materials: [] });
+  //   }
+  // }, [currentPage, setInitialValues]);
+
+  console.log("paginatedMaterials", paginatedMaterials);
+
   return (
     <div
       className={`${
@@ -280,7 +329,40 @@ const MaterialForm = ({
       } rounded-[16px] border border-gray-200 overflow-hidden`}>
       <FieldArray name="materials">
         {({ push, remove }) => (
-          <div>
+          <div className="">
+            <div className="flex flex-row justify-between items-center">
+              <div className="mt-6">
+                <Tabs
+                  items={["Material", "Peralatan", "Tenaga Kerja"]}
+                  onChange={(index) => {}}
+                  selectedValue={0}
+                />
+              </div>
+              <div className="flex flex-row justify-between items-center space-x-4">
+                <SearchBox
+                  placeholder="Cari Material..."
+                  onSearch={() => {}}
+                  withFilter={true}
+                />
+                <Button
+                  variant="solid_blue"
+                  size="Medium"
+                  onClick={() => setIsModalOpen(true)}>
+                  Tambah Data
+                </Button>
+              </div>
+              {isModalOpen && (
+                <AddRowModal
+                  handleClose={() => setIsModalOpen(false)}
+                  handleAddRow={(rowsToAdd) => {
+                    for (let i = 0; i < rowsToAdd; i++) {
+                      push();
+                    }
+                  }}
+                  currentIndex={0}
+                />
+              )}
+            </div>
             <div className="overflow-x-auto">
               <table className="table-auto w-full min-w-max">
                 <thead>
@@ -311,300 +393,276 @@ const MaterialForm = ({
                   </tr>
                 </thead>
                 <tbody className="bg-surface-light-background">
-                  {values.materials.map((_, index) => (
-                    <tr key={index} className="border-b">
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.nama_material`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.nama_material`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Nama Material"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.material
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.satuan`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.satuan`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Satuan"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.satuan
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.spesifikasi`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.spesifikasi`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Spesifikasi"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.spesifikasi
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.ukuran`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.ukuran`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Ukuran"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.ukuran
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.kodefikasi`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.kodefikasi`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Kodefikasi"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.kodefikasi
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.kelompok_material`}>
-                          {({ field, form }) => (
-                            <Dropdown
-                              // label="Kelompok Material"
-                              options={kelompokMaterialOptions}
-                              value={kelompokMaterialOptions.find(
-                                (el) => el.value === field.value
-                              )}
-                              onSelect={(val) =>
-                                setFieldValue(
-                                  `materials.${index}.kelompok_material`,
-                                  val
-                                )
-                              }
-                              placeholder="Pilih Kelompok Material"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]
-                                  ?.kelompok_material
-                              }
-                              labelPosition="top"
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.jumlah_kebutuhan`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.jumlah_kebutuhan`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Jumlah Kebutuhan"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]
-                                  ?.jumlah_kebutuhan
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.merk`}>
-                          {({ field, form }) => (
-                            <TextInput
-                              value={field.value}
-                              onChange={(e) =>
-                                form.setFieldValue(
-                                  `materials.${index}.merk`,
-                                  e.target.value
-                                )
-                              }
-                              placeholder="Merk"
-                              className="input-field"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.merk
-                              }
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.provinsi`}>
-                          {({ field, form }) => (
-                            <Dropdown
-                              options={provincesOptions}
-                              value={() => {
-                                console.log(
-                                  "values.materials[index]?.provincies_id top",
+                  {paginatedMaterials.map((_, index) => {
+                    return (
+                      <tr key={index} className="border-b">
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.nama_material`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.nama_material`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Nama Material"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.material
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.satuan`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.satuan`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Satuan"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.satuan
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.spesifikasi`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.spesifikasi`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Spesifikasi"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.spesifikasi
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.ukuran`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.ukuran`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Ukuran"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.ukuran
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.kodefikasi`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.kodefikasi`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Kodefikasi"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.kodefikasi
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.kelompok_material`}>
+                            {({ field, form }) => (
+                              <Dropdown
+                                options={kelompokMaterialOptions}
+                                value={kelompokMaterialOptions.find(
+                                  (el) => el.value === field.value
+                                )}
+                                onSelect={(val) =>
+                                  setFieldValue(
+                                    `materials.${index}.kelompok_material`,
+                                    val
+                                  )
+                                }
+                                placeholder="Pilih Kelompok Material"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]
+                                    ?.kelompok_material
+                                }
+                                labelPosition="top"
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.jumlah_kebutuhan`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.jumlah_kebutuhan`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Jumlah Kebutuhan"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]
+                                    ?.jumlah_kebutuhan
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.merk`}>
+                            {({ field, form }) => (
+                              <TextInput
+                                value={field.value}
+                                onChange={(e) =>
+                                  form.setFieldValue(
+                                    `materials.${index}.merk`,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Merk"
+                                className="input-field"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.merk
+                                }
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.provinsi`}>
+                            {({ field, form }) => (
+                              <Dropdown
+                                options={provincesOptions}
+                                value={() => {
+                                  const selectedProvince =
+                                    provincesOptions.find(
+                                      (province) =>
+                                        province.value ===
+                                        values.materials[index]?.provincies_id
+                                    );
+                                  return selectedProvince;
+                                }}
+                                onSelect={(val) => {
+                                  setFieldValue(
+                                    `materials.${index}.provincies_id`,
+                                    val.value
+                                  );
+                                  setFieldValue(
+                                    `materials.${index}.cities_id`,
+                                    ""
+                                  ); // Reset cities_id
+                                }}
+                                placeholder="Pilih Provinsi"
+                                isRequired={true}
+                                errorMessage={
+                                  form.errors?.materials?.[index]?.province
+                                }
+                                labelPosition="top"
+                              />
+                            )}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6">
+                          <Field name={`materials.${index}.kota`}>
+                            {({ field, form }) => {
+                              const selectedProvince = provincesOptions.find(
+                                (province) =>
+                                  province.value ===
                                   values.materials[index]?.provincies_id
-                                );
-                                const selectedProvince = provincesOptions.find(
-                                  (province) =>
-                                    province.value ===
-                                    values.materials[index]?.provincies_id
-                                );
-                                console.log(
-                                  "selectedProvince1",
-                                  selectedProvince
-                                );
-                                return selectedProvince;
-                              }}
-                              onSelect={(val) => {
-                                console.log("val", val.value);
-                                setFieldValue(
-                                  `materials.${index}.provincies_id`,
-                                  val.value
-                                );
-                                setFieldValue(
-                                  `materials.${index}.cities_id`,
-                                  ""
-                                );
-                              }}
-                              placeholder="Pilih Provinsi"
-                              isRequired={true}
-                              errorMessage={
-                                form.errors?.materials?.[index]?.province
-                              }
-                              labelPosition="top"
-                            />
-                          )}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6">
-                        <Field name={`materials.${index}.kota`}>
-                          {({ field, form }) => {
-                            const selectedProvince = provincesOptions.find(
-                              (province) =>
-                                province.value ===
-                                values.materials[index]?.provincies_id
-                            );
-                            const cities = selectedProvince
-                              ? selectedProvince.cities
-                              : [];
-                            const transformedCities = cities.map((city) => ({
-                              value: city.cities_id,
-                              label: city.cities_name,
-                            }));
-                            console.log(
-                              "Provinsi yang terpilih",
-                              selectedProvince
-                            );
-                            console.log(
-                              `Cities ${values.materials[index]?.cities_id}`,
-                              transformedCities.find(
-                                (city) =>
-                                  city.value ===
-                                  values.materials[index]?.cities_id
-                              )
-                            );
+                              );
+                              const cities = selectedProvince
+                                ? selectedProvince.cities
+                                : [];
+                              const transformedCities = cities.map((city) => ({
+                                value: city.cities_id,
+                                label: city.cities_name,
+                              }));
 
-                            const selectedCity =
-                              values.materials[index]?.cities_id === ""
-                                ? null
-                                : transformedCities.find(
+                              return (
+                                <Dropdown
+                                  options={transformedCities}
+                                  value={transformedCities.find(
                                     (city) =>
                                       city.value ===
                                       values.materials[index]?.cities_id
-                                  );
-
-                            console.log("selectedCity", selectedCity);
-
-                            return (
-                              <DropdownAPI
-                                options={transformedCities}
-                                value={selectedCity}
-                                onChange={(val) =>
-                                  setFieldValue(
-                                    `materials.${index}.cities_id`,
-                                    val.value
-                                  )
-                                }
-                                placeholder="Pilih Kota"
-                                isRequired={true}
-                                errorMessage={
-                                  form.errors?.materials?.[index]?.cities_id
-                                }
-                              />
-                            );
-                          }}
-                        </Field>
-                      </td>
-                      <td className="px-3 py-6 text-center">
-                        <button
-                          onClick={() => remove(index)}
-                          className="text-red-500 hover:text-red-700">
-                          Remove
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                                  )}
+                                  onSelect={(val) =>
+                                    setFieldValue(
+                                      `materials.${index}.cities_id`,
+                                      val.value
+                                    )
+                                  }
+                                  placeholder="Pilih Kota"
+                                  isRequired={true}
+                                  errorMessage={
+                                    form.errors?.materials?.[index]?.cities_id
+                                  }
+                                  labelPosition="top"
+                                />
+                              );
+                            }}
+                          </Field>
+                        </td>
+                        <td className="px-3 py-6 text-center">
+                          <button
+                            onClick={() => remove(index)}
+                            className="text-red-500 hover:text-red-700">
+                            Remove
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
+              <Pagination
+                currentPage={currentPage}
+                itemsPerPage={itemsPerPage}
+                totalData={values.materials.length}
+                onPageChange={setCurrentPage}
+              />
             </div>
-            <button
-              onClick={() => push()}
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
-              Add Material
-            </button>
           </div>
         )}
       </FieldArray>
