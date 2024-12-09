@@ -10,6 +10,7 @@ import FileInput from "../../../components/FileInput";
 import { Trash, Add } from "iconsax-react";
 import colors from "../../../styles/colors";
 import usePenugasanTimStore from "./penugasan_tim/penugasan_tim";
+import CustomAlert from "../../../components/alert";
 
 export default function PenugasanTim() {
   const { userOptions, fetchUserOptions } = usePenugasanTimStore();
@@ -19,6 +20,7 @@ export default function PenugasanTim() {
   const [progress, setProgress] = useState(0);
   const [suratPenugasanPengawasState, setSuratPenugasanPengawasState] =
     useState("default");
+  const { alert, setAlert } = usePenugasanTimStore();
 
   const handleCancelSuratPenugasanPengawas = () => {
     console.log("Cancelling file upload...");
@@ -65,6 +67,7 @@ export default function PenugasanTim() {
     fetchUserOptions();
   }, [fetchUserOptions]);
 
+  console.log("sknya", skPenugasan);
   const tabs = [
     {
       label: "Tim Teknis Balai",
@@ -151,10 +154,14 @@ export default function PenugasanTim() {
         <Formik
           initialValues={{
             pengawas: [""],
+            skPenugasan: null,
           }}
           onSubmit={(values) => {
             console.log("Data pengawas:", values.pengawas);
-            usePenugasanTimStore.getState().savePengawasData(values.pengawas);
+            console.log("Data skPenugasan:", values.skPenugasan);
+            usePenugasanTimStore
+              .getState()
+              .savePengawasData(values.pengawas, values.skPenugasan); // Pass skPenugasan here
           }}>
           {({ values, submitForm, setFieldValue }) => (
             <Form className="h-full flex flex-col">
@@ -220,7 +227,10 @@ export default function PenugasanTim() {
                   )}
                 />
                 <FileInput
-                  onFileSelect={handleSuratPenugasanPengawas}
+                  onFileSelect={(files) => {
+                    handleSuratPenugasanPengawas(files);
+                    setFieldValue("skPenugasan", files[0]);
+                  }}
                   setSelectedFile={setSuratPenugasanPengawas}
                   buttonText="Pilih Berkas"
                   multiple={false}
@@ -228,17 +238,16 @@ export default function PenugasanTim() {
                   Label="Unggah SK/Surat Penugasan"
                   HelperText="Format .PDF dan maksimal 2MB"
                   state={suratPenugasanPengawasState}
-                  onCancel={handleCancelSuratPenugasanPengawas}
+                  onCancel={() => {
+                    handleCancelSuratPenugasanPengawas();
+                    setFieldValue("skPenugasan", null);
+                  }}
                   selectedFile={skPenugasan}
                   maxSizeMB={2}
                 />
               </div>
               <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-                <Button
-                  variant="solid_blue"
-                  size="Medium"
-                  onClick={submitForm} // Trigger Formik submit
-                >
+                <Button variant="solid_blue" size="Medium" onClick={submitForm}>
                   Simpan
                 </Button>
               </div>
@@ -342,6 +351,14 @@ export default function PenugasanTim() {
           Penugasan Tim Pelaksana
         </h4>
         <Tabs tabs={tabs} />
+        <CustomAlert
+          message={alert.message}
+          severity={alert.severity}
+          openInitially={alert.open}
+          onClose={() =>
+            setAlert({ open: false, severity: "info", message: "" })
+          }
+        />
       </div>
     </div>
   );

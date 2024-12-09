@@ -5,12 +5,13 @@ const usePenugasanTimStore = create((set) => ({
   userOptions: [],
   suratPenugasanPengawas: null,
   skPenugasan: null,
+  alert: { open: false, severity: "info", message: "" },
 
-  // State Management for Files
   setSuratPenugasanPengawas: (file) => set({ suratPenugasanPengawas: file }),
   setSkPenugasan: (file) => set({ skPenugasan: file }),
 
-  // Fetch User Options
+  setAlert: (alert) => set({ alert }),
+
   fetchUserOptions: async () => {
     try {
       const response = await axios.get(
@@ -22,16 +23,19 @@ const usePenugasanTimStore = create((set) => ({
           label: user.nama_lengkap,
         })) || [];
       set({ userOptions: options });
+      console.log("User options berhasil diambil:", options);
     } catch (error) {
-      console.error("Error fetching user options:", error);
+      console.error(
+        "Error fetching user options:",
+        error.response?.data || error.message
+      );
     }
   },
 
-  // Save Data with Dynamic User ID
-  savePengawasData: async (userId, file) => {
+  savePengawasData: async (pengawas, skPenugasan) => {
     const formData = new FormData();
-    formData.append("user_id", userId);
-    formData.append("sk_penugasan", file);
+    formData.append("user_id", pengawas);
+    formData.append("sk_penugasan", skPenugasan);
 
     try {
       const response = await axios.post(
@@ -39,12 +43,32 @@ const usePenugasanTimStore = create((set) => ({
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
-      console.log("Data berhasil disimpan:", response.data);
+
+      const status = response.data?.status || "success";
+      const message = response.data?.message || "Data berhasil disimpan.";
+
+      set({
+        alert: {
+          open: true,
+          severity: status === "success" ? "success" : "error",
+          message,
+        },
+      });
     } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Gagal menyimpan data pengawas.";
       console.error(
         "Gagal menyimpan data pengawas:",
-        error.response?.data || error
+        error.response?.data || error.message
       );
+
+      set({
+        alert: {
+          open: true,
+          severity: "error",
+          message: errorMessage,
+        },
+      });
     }
   },
 }));

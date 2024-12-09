@@ -195,7 +195,10 @@ const InputVendor = ({ onNext, onBack, onClose }) => {
 
       const formData = new FormData();
       formData.append("nama_vendor", nama_vendor);
-      formData.append("jenis_vendor_id", jsonVendorTypes.join(","));
+      formData.append(
+        "jenis_vendor_id",
+        jsonVendorTypes.length > 0 ? `[${jsonVendorTypes.join(",")}]` : "[]"
+      );
       formData.append(
         "kategori_vendor_id",
         kategori_vendor_id ? `[${kategori_vendor_id}]` : "[]"
