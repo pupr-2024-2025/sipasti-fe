@@ -5,6 +5,7 @@ import useStore from "./informasi_tahap_pengumpulan/informasi_tahap_pengumpulan"
 import { More } from "iconsax-react";
 import colors from "../../../styles/colors";
 import Link from "next/link";
+import Modal from "../../../components/Modal"; // Import the Modal component
 
 export default function PenugasanTim() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -17,6 +18,7 @@ export default function PenugasanTim() {
     left: 0,
     alignRight: false,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to manage modal visibility
 
   const handleToggleDropdown = (rowId, event) => {
     if (activeDropdown === rowId) {
@@ -51,6 +53,14 @@ export default function PenugasanTim() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
+  const openModal = () => {
+    setIsModalOpen(true); // Open the modal
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+  };
 
   return (
     <div className="p-8">
@@ -94,7 +104,7 @@ export default function PenugasanTim() {
                 {paginatedData.map((item, index) => (
                   <tr
                     key={item.id}
-                    className={` ${
+                    className={`${
                       index % 2 === 0
                         ? "bg-custom-neutral-0"
                         : "bg-custom-neutral-100"
@@ -113,7 +123,9 @@ export default function PenugasanTim() {
                         <button
                           className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-colors 
         hover:bg-custom-blue-50 cursor-pointer`}
-                          onClick={(e) => handleToggleDropdown(item.id, e)}>
+                          onClick={openModal}>
+                          {" "}
+                          {/* Open the modal when clicked */}
                           <More
                             size="24"
                             color={colors.Emphasis.Light.On_Surface.High}
@@ -134,6 +146,36 @@ export default function PenugasanTim() {
         totalData={status_progres.length}
         onPageChange={setCurrentPage}
       />
+
+      {/* Modal for showing table content */}
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <h4 className="text-lg font-semibold">Detail Kuesioner</h4>
+        <div className="mt-4">
+          {/* Table content inside the modal */}
+          <table className="table-auto w-full min-w-max">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="px-3 py-6 text-sm font-semibold">Column 1</th>
+                <th className="px-3 py-6 text-sm font-semibold">Column 2</th>
+                <th className="px-3 py-6 text-sm font-semibold">Column 3</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-3 py-6 text-sm">Dummy Data 1</td>
+                <td className="px-3 py-6 text-sm">Dummy Data 2</td>
+                <td className="px-3 py-6 text-sm">Dummy Data 3</td>
+              </tr>
+              <tr>
+                <td className="px-3 py-6 text-sm">Dummy Data 4</td>
+                <td className="px-3 py-6 text-sm">Dummy Data 5</td>
+                <td className="px-3 py-6 text-sm">Dummy Data 6</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </Modal>
+
       {/* Dropdown di luar tabel */}
       {activeDropdown && (
         <div
@@ -143,13 +185,16 @@ export default function PenugasanTim() {
             left: dropdownPosition.alignRight
               ? undefined
               : dropdownPosition.left,
-            right: dropdownPosition.alignRight ? 0 : undefined, // Jika alignRight true, gunakan right
+            right: dropdownPosition.alignRight ? 0 : undefined,
             zIndex: 10000,
             boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
           }}>
           <Link
-            href="/pj_balai/penugasan_tim/penugasan_tim"
-            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+            href="#"
+            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
+            onClick={openModal}>
+            {" "}
+            {/* Trigger the modal here */}
             Lihat Detail Kuesioner
           </Link>
         </div>
