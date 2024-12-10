@@ -9,8 +9,8 @@ import axios from "axios";
 import Modal from "../../components/modal";
 import Navbar from "../../components/navigationbar";
 import Stepper from "../../components/stepper";
-
 import { CloseCircle } from "iconsax-react";
+
 const Tahap4 = ({ onNext, onBack, onClose }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
