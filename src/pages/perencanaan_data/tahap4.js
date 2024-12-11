@@ -365,35 +365,35 @@ const Tahap4 = ({ onNext, onBack, onClose }) => {
                   label="Kode RUP"
                   labelPosition="left"
                   size="Medium"
-                  placeholder={commonInformation.kode_rup}
+                  value={commonInformation.kode_rup}
                   disabledActive={true}
                 />
                 <TextInput
                   label="Nama Balai"
                   labelPosition="left"
                   size="Medium"
-                  placeholder={commonInformation.nama_balai}
+                  value={commonInformation.nama_balai}
                   disabledActive={true}
                 />
                 <TextInput
                   label="Nama Paket"
                   labelPosition="left"
                   size="Medium"
-                  placeholder={commonInformation.nama_paket}
+                  value={commonInformation.nama_paket}
                   disabledActive={true}
                 />
                 <TextInput
                   label="Nama PPK"
                   labelPosition="left"
                   size="Medium"
-                  placeholder={commonInformation.nama_ppk}
+                  value={commonInformation.nama_ppk}
                   disabledActive={true}
                 />
                 <TextInput
                   label="Jabatan PPK"
                   labelPosition="left"
                   size="Medium"
-                  placeholder={commonInformation.jabatan_ppk}
+                  value={commonInformation.jabatan_ppk}
                   disabledActive={true}
                 />
               </div>

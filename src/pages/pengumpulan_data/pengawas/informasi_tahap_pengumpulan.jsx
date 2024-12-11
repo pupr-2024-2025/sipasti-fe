@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../../../components/navigationbar";
 import Pagination from "../../../components/pagination";
-import useStore from "./informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
+import informasi_tahap_pengumpulanStore from "./informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
 import { More } from "iconsax-react";
 import colors from "../../../styles/colors";
 import Link from "next/link";
@@ -10,56 +10,129 @@ import { CloseCircle } from "iconsax-react";
 import SearchBox from "../../../components/searchbox";
 
 export default function informasi_tahap_pengumpulan() {
-  const { vendor = [] } = useStore((state) => state.initialValues);
-  const { fetchVendor } = useStore();
+  const [activeVendorMenu, setActiveVendorMenu] = useState(null);
+  const [activeFilters, setActiveFilters] = useState({});
+  const { vendor = [] } = informasi_tahap_pengumpulanStore(
+    (state) => state.initialValues
+  );
+  const { fetchVendor } = informasi_tahap_pengumpulanStore();
   const [currentPage, setCurrentPage] = useState(1);
   const [currentModal, setCurrentModal] = useState(1);
   const itemsPerPage = 10;
   const itemsPerPageModal = 5;
-  const { initialValues, fetchStatusProgres } = useStore();
+  const { initialValues, fetchStatusProgres } =
+    informasi_tahap_pengumpulanStore();
   const { status_progres } = initialValues;
-  const [activeDropdown, setActiveDropdown] = useState(null);
-  const [dropdownPosition, setDropdownPosition] = useState({
+  const [activeMenu, setActiveMenu] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({
     top: 0,
     left: 0,
     alignRight: false,
   });
+
+  const handleFilterClick = (filters) => {
+    const updatedFilters = { ...activeFilters };
+    filters.forEach((filter) => {
+      updatedFilters[filter.accessor] = filter.checked;
+    });
+    setActiveFilters(updatedFilters);
+    applySearchAndFilter(searchQuery, updatedFilters);
+  };
+
+  const applySearchAndFilter = (query, filters) => {
+    const lowerQuery = query.toLowerCase();
+    const isFilterActive = Object.values(filters).some((value) => value);
+
+    const result = vendor.filter((item) => {
+      const matchesSearch =
+        item.nama_vendor?.toLowerCase().includes(lowerQuery) ||
+        item.pemilik_vendor?.toLowerCase().includes(lowerQuery) ||
+        item.alamat?.toLowerCase().includes(lowerQuery) ||
+        item.kontak?.toLowerCase().includes(lowerQuery);
+
+      if (!isFilterActive) {
+        return matchesSearch;
+      }
+
+      const matchesFilter = Object.keys(filters).some((key) => {
+        return filters[key] && item[key]?.toLowerCase().includes(lowerQuery);
+      });
+
+      return matchesSearch && matchesFilter;
+    });
+
+    setFilteredVendor(result);
+  };
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredVendor, setFilteredVendor] = useState([]);
+
   const filterOptions = [
-    { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
+    { label: "Responden/Vendor", accessor: "nama_vendor", checked: false },
     { label: "Sumber Daya", accessor: "sumber_daya", checked: false },
     { label: "Pemilik Vendor", accessor: "pemilik_vendor", checked: false },
     { label: "Alamat", accessor: "alamat", checked: false },
     { label: "Kontak", accessor: "kontak", checked: false },
   ];
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  useEffect(() => {
+    setFilteredVendor(vendor);
+  }, [vendor]);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    applySearchAndFilter(query, activeFilters);
   };
 
-  const handleToggleDropdown = (rowId, event) => {
-    if (activeDropdown === rowId) {
-      setActiveDropdown(null);
+  const handleToggleMenu = (rowId, event) => {
+    if (activeMenu === rowId) {
+      setActiveMenu(null);
     } else {
       const rect = event.target.getBoundingClientRect();
       const screenWidth = window.innerWidth;
-      const dropdownWidth = 200;
+      const menuWidth = 200;
 
       let positionLeft = rect.left + window.scrollX;
       let alignRight = false;
 
-      if (positionLeft + dropdownWidth > screenWidth) {
-        positionLeft = screenWidth - dropdownWidth - 10;
+      if (positionLeft + menuWidth > screenWidth) {
+        positionLeft = screenWidth - menuWidth - 10;
         alignRight = true;
       }
 
-      setDropdownPosition({
+      setMenuPosition({
         top: rect.bottom + window.scrollY,
         left: positionLeft,
         alignRight: alignRight,
       });
-      setActiveDropdown(rowId);
+      setActiveMenu(rowId);
+    }
+  };
+
+  const handleToggleVendorMenu = (vendorId, event) => {
+    if (activeVendorMenu === vendorId) {
+      setActiveVendorMenu(null);
+    } else {
+      const rect = event.target.getBoundingClientRect();
+      const screenWidth = window.innerWidth;
+      const menuWidth = 200;
+
+      let positionLeft = rect.left + window.scrollX;
+      let alignRight = false;
+
+      if (positionLeft + menuWidth > screenWidth) {
+        positionLeft = screenWidth - menuWidth - 10;
+        alignRight = true;
+      }
+
+      setMenuPosition({
+        top: rect.bottom + window.scrollY,
+        left: positionLeft,
+        alignRight: alignRight,
+      });
+      setActiveVendorMenu(vendorId);
     }
   };
 
@@ -71,21 +144,27 @@ export default function informasi_tahap_pengumpulan() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const paginatedVendor = Array.isArray(vendor)
-    ? vendor.slice(
+  const paginatedVendor = Array.isArray(filteredVendor)
+    ? filteredVendor.slice(
         (currentModal - 1) * itemsPerPageModal,
         currentModal * itemsPerPageModal
       )
     : [];
-
   const openModal = (id_paket) => {
+    console.log("Membuka modal untuk ID Paket:", id_paket);
     fetchVendor(id_paket);
     setIsModalOpen(true);
   };
 
+  useEffect(() => {
+    if (isModalOpen) {
+      setActiveMenu(null);
+    }
+  }, [isModalOpen]);
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setActiveVendorMenu(null);
   };
 
   return (
@@ -95,7 +174,7 @@ export default function informasi_tahap_pengumpulan() {
         <h3 className="text-H3 text-emphasis-on_surface-high">
           Informasi Tahapan Pengumpulan Data
         </h3>
-        <div className="rounded-[16px] border border-gray-200 overflow-hidden">
+        <div className="rounded-[16px] border border-surface-light-outline overflow-hidden">
           <div className="overflow-x-auto">
             <table className="table-auto w-full min-w-max">
               <thead>
@@ -135,9 +214,7 @@ export default function informasi_tahap_pengumpulan() {
                         <button
                           className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-colors 
         hover:bg-custom-blue-50 cursor-pointer`}
-                          onClick={() => openModal(item.id)}>
-                          {" "}
-                          {/* Open the modal when clicked */}
+                          onClick={(e) => handleToggleMenu(item.id, e)}>
                           <More
                             size="24"
                             color={colors.Emphasis.Light.On_Surface.High}
@@ -168,15 +245,11 @@ export default function informasi_tahap_pengumpulan() {
             </button>
           </div>
           <SearchBox
-            placeholder="Cari Material..."
-            onSearch={(query) => handleSearch(query, "material")}
+            placeholder="Cari Vendor..."
+            onSearch={handleSearch}
             filterOptions={filterOptions}
             withFilter={true}
-            onFilterClick={(filters) => {
-              console.log("Filter option clicked:", filters); // Debug
-              handleFilterClick(filters);
-            }}
-            //   onSearch={handleSearch}
+            onFilterClick={(filters) => handleFilterClick(filters)}
           />
           <div className="mt-4">
             <div className="rounded-[16px] border border-surface-light-outline overflow-hidden">
@@ -193,7 +266,7 @@ export default function informasi_tahap_pengumpulan() {
                       <th className="px-3 py-6 text-sm text-left w-[340px]">
                         Alamat
                       </th>
-                      <th className="px-3 py-6 text-sm text-left w-[52px]">
+                      <th className="px-3 py-6 text-sm text-center w-[52px]">
                         Aksi
                       </th>
                     </tr>
@@ -201,7 +274,13 @@ export default function informasi_tahap_pengumpulan() {
                   <tbody>
                     {vendor && Array.isArray(vendor) && vendor.length > 0 ? (
                       paginatedVendor.map((item, index) => (
-                        <tr key={index}>
+                        <tr
+                          key={index}
+                          className={`${
+                            index % 2 === 0
+                              ? "bg-custom-neutral-0"
+                              : "bg-custom-neutral-100"
+                          }`}>
                           <td className="px-3 py-6 text-sm">
                             {item.nama_vendor}
                           </td>
@@ -209,8 +288,13 @@ export default function informasi_tahap_pengumpulan() {
                           <td className="px-3 py-6 text-sm">
                             {item.alamat_vendor}
                           </td>
-                          <td className="px-3 py-6 text-sm">
-                            <button>
+                          <td className="px-3 py-6 justify-center content-center">
+                            <button
+                              className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-colors 
+        hover:bg-custom-blue-50 cursor-pointer`}
+                              onClick={(e) =>
+                                handleToggleVendorMenu(item.id, e)
+                              }>
                               <More
                                 size="24"
                                 color={colors.Emphasis.Light.On_Surface.High}
@@ -222,7 +306,7 @@ export default function informasi_tahap_pengumpulan() {
                     ) : (
                       <tr>
                         <td
-                          className="px-3 py-6 text-sm text-center"
+                          className="px-3 py-6 text-B1 text-center text-emphasis-on_surface-medium"
                           colSpan="4">
                           Tidak ada data tersedia
                         </td>
@@ -236,7 +320,7 @@ export default function informasi_tahap_pengumpulan() {
               <Pagination
                 currentPage={currentModal}
                 itemsPerPage={itemsPerPageModal}
-                totalData={vendor.length}
+                totalData={filteredVendor.length}
                 onPageChange={setCurrentModal}
               />
             )}
@@ -244,26 +328,53 @@ export default function informasi_tahap_pengumpulan() {
         </div>
       </Modal>
 
-      {/* Dropdown di luar tabel */}
-      {activeDropdown && (
+      {activeMenu && (
         <div
-          className="absolute bg-white rounded-[12px] shadow-lg p-2 w-56"
+          className="absolute bg-white rounded-[12px] mr-[12px] shadow-lg p-2 w-56"
           style={{
-            top: dropdownPosition.top,
-            left: dropdownPosition.alignRight
-              ? undefined
-              : dropdownPosition.left,
-            right: dropdownPosition.alignRight ? 0 : undefined,
+            top: menuPosition.top,
+            left: menuPosition.alignRight ? undefined : menuPosition.left,
+            right: menuPosition.alignRight ? 0 : undefined,
             zIndex: 10000,
             boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
           }}>
           <Link
             href="#"
             className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
-            onClick={openModal}>
-            {" "}
-            {/* Trigger the modal here */}
+            onClick={() => openModal(activeMenu)}>
             Lihat Detail Kuesioner
+          </Link>
+        </div>
+      )}
+
+      {activeVendorMenu === vendor.id && (
+        <div
+          className="absolute bg-white rounded-[12px] mr-[12px] shadow-lg p-2 w-56"
+          style={{
+            top: menuPosition.top,
+            left: menuPosition.alignRight ? undefined : menuPosition.left,
+            right: menuPosition.alignRight ? 0 : undefined,
+            zIndex: 10000,
+            boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
+          }}>
+          <Link
+            href="#"
+            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
+            // onClick={() => openModal(activeMenu)}
+          >
+            Link Kuesioner
+          </Link>
+          <Link
+            href="/pengumpulan_data/pengolah_data/entri_data/"
+            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+            Entri Data
+          </Link>
+          <Link
+            href="#"
+            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
+            // onClick={() => openModal(activeMenu)}
+          >
+            Pemeriksaan
           </Link>
         </div>
       )}

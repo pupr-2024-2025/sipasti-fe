@@ -16,7 +16,6 @@ const TextInput = ({
   isRequired = false,
   errorMessage = "Wajib diisi",
   labelPosition = "top",
-  labelWidth = "180px",
 }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [error, setError] = useState("");
@@ -78,7 +77,7 @@ const TextInput = ({
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
-              disabled={disabledActive} // Gunakan disabledActive di sini
+              disabled={disabledActive}
               className={`${sizes[size]} ${baseClasses} ${
                 disabledActive
                   ? variants.disabledActive
@@ -127,11 +126,8 @@ const TextInput = ({
           <div className="flex items-center space-x-12">
             {label && (
               <label
-                className="text-B2 text-emphasis-on_surface-high h-8 min-w-[180px] mr-2"
-                style={{
-                  whiteSpace: "nowrap",
-                  width: labelWidth,
-                }}>
+                className="text-B2 text-emphasis-on_surface-high h-8 min-w-[180px] mr-2 flex items-center"
+                style={{ whiteSpace: "nowrap" }}>
                 {label}
                 {isRequired && (
                   <span className="text-custom-red-500 ml-1">*</span>
@@ -177,7 +173,7 @@ const TextInput = ({
             </div>
           </div>
           {error && (
-            <div className="flex items-center mt-1 ml-[calc(12px + ${labelWidth})]">
+            <div className="flex items-center mt-1 ml-[236px]">
               <CloseCircle
                 color={colors.Solid.Basic.Red[500]}
                 variant="Linear"

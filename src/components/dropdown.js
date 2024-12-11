@@ -57,7 +57,7 @@ const Dropdown = ({
       {label && (
         <label
           className={`text-B2 text-emphasis-on_surface-high ${
-            labelPosition === "left" ? "mr-4" : "mb-1"
+            labelPosition === "left" ? "mr-16" : "mb-1"
           }`}
           style={{
             width: labelPosition === "left" ? labelWidth : "auto",

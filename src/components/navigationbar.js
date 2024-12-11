@@ -159,7 +159,6 @@ const Navbar = () => {
                 `}>
                     {link.label}
                   </Link>
-
                   {/* Perencanaan Data Menu */}
                   {link.label === "Perencanaan Data" && isHovered && (
                     <div
@@ -212,7 +211,7 @@ const Navbar = () => {
                       ))}
                     </div>
                   )}
-                  {/* Vendor */}
+                  {/* Vendor
                   {link.label === "Responden/Vendor" && isHovered && (
                     <div
                       className="absolute left-0 mt-[32px] w-56 bg-white rounded-[12px] shadow-lg p-2 z-50"
@@ -237,10 +236,12 @@ const Navbar = () => {
                         </Link>
                       ))}
                     </div>
-                  )}
+                  )} */}
                   {link.label === "Monitoring" && isHovered && (
                     <div
                       className="absolute left-0 mt-[32px] w-56 bg-white rounded-[12px] shadow-lg p-2 z-50"
+                      onMouseEnter={() => handleMouseEnter(index)}
+                      onMouseLeave={handleMouseLeave}
                       style={{
                         boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
                       }}>
@@ -248,18 +249,56 @@ const Navbar = () => {
                         {
                           href: "/pj_balai/monitoring/monitoring_perencanaan_data",
                           label: "Monitoring",
+                          submenus: [
+                            {
+                              href: "/pj_balai/monitoring/submenu1",
+                              label: "Perencanaan Data",
+                            },
+                            {
+                              href: "/pj_balai/monitoring/submenu2",
+                              label: "Pengumpulan Data",
+                            },
+                            {
+                              href: "/pj_balai/monitoring/submenu2",
+                              label: "Pemeriksaan Data",
+                            },
+                            {
+                              href: "/pj_balai/monitoring/submenu2",
+                              label: "Penyebarluasan Data",
+                            },
+                          ],
                         },
                         {
                           href: "/pj_balai/penugasan_tim/penugasan_tim",
                           label: "Penugasan Tim",
                         },
                       ].map((submenuItem, submenuIndex) => (
-                        <Link
-                          key={submenuIndex}
-                          href={submenuItem.href}
-                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
-                          {submenuItem.label}
-                        </Link>
+                        <div key={submenuIndex} className="relative group">
+                          <Link
+                            href={submenuItem.href}
+                            className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+                            {submenuItem.label}
+                          </Link>
+                          {submenuItem.submenus && (
+                            <div
+                              className="absolute left-full top-0 mt-0 ml-[16px] w-56 bg-white rounded-[12px] shadow-lg p-2 hidden group-hover:block z-50"
+                              style={{
+                                boxShadow:
+                                  "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
+                              }}>
+                              {submenuItem.submenus.map(
+                                (deepSubmenu, deepIndex) => (
+                                  <Link
+                                    key={deepIndex}
+                                    href={deepSubmenu.href}
+                                    className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+                                    {deepSubmenu.label}
+                                  </Link>
+                                )
+                              )}
+                            </div>
+                          )}
+                        </div>
                       ))}
                     </div>
                   )}

@@ -244,154 +244,159 @@ export default function PenugasanTim() {
                 values.skPenugasanTimTeknisBalai
               );
           }}>
-          {({ values, submitForm, setFieldValue }) => (
-            <Form>
-              <div className="">
-                <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
-                  <TextInput
-                    label="Nama Tim"
-                    labelPosition="left"
-                    placeholder="Masukkan Nama Tim"
-                    isRequired={true}
-                    size="Medium"
-                    labelWidth="100px"
-                    errorMessage="Nama tim tidak boleh kosong"
-                    value={values.nama_tim}
-                    onChange={(e) => setFieldValue("nama_tim", e.target.value)}
-                  />
-                  <div className="px-[236px]">
-                    <Button
-                      variant="disabled"
+          {({ values, submitForm, setFieldValue }) => {
+            console.log("checkedvalue", values);
+            return (
+              <Form>
+                <div className="">
+                  <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
+                    <TextInput
+                      label="Nama Tim"
+                      labelPosition="left"
+                      placeholder="Masukkan Nama Tim"
+                      isRequired={true}
                       size="Medium"
-                      // onClick={handleCariData}
-                    >
-                      Cari Data di SIPASTI
-                    </Button>
-                  </div>
-                  <Dropdown
-                    label="Ketua"
-                    labelPosition="left"
-                    placeholder="Pilih Ketua"
-                    size="Medium"
-                    isRequired={true}
-                    options={userOptions}
-                    value={values.ketua}
-                    onSelect={(selectedOption) =>
-                      setFieldValue("ketua", selectedOption.value)
-                    }
-                    errorMessage="Ketua tidak boleh kosong"
-                  />
-                  <Dropdown
-                    label="Sekretaris"
-                    labelPosition="left"
-                    placeholder="Pilih Sekretaris"
-                    size="Medium"
-                    isRequired={true}
-                    options={userOptions}
-                    value={values.sekretaris}
-                    onSelect={(selectedOption) =>
-                      setFieldValue("sekretaris", selectedOption.value)
-                    }
-                    errorMessage="Sekretaris tidak boleh kosong"
-                  />
-                  <FieldArray
-                    name="anggota"
-                    render={(arrayHelpers) => (
-                      <div className="space-y-4">
-                        {values.anggota.map((_, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center space-x-4">
-                            <Field
-                              as={Dropdown}
-                              name={`anggota.${index}`}
-                              label={`Nama Anggota ${index + 1}`}
-                              labelPosition="left"
-                              placeholder="Pilih nama anggota"
-                              isRequired={true}
-                              options={userOptions}
-                              value={values.anggota[index]}
-                              onSelect={(selectedOption) =>
-                                setFieldValue(
-                                  `anggota. ${index}`,
-                                  selectedOption.value
-                                )
-                              }
-                              size="Medium"
-                              errorMessage="Nama anggota tidak boleh kosong"
-                            />
-                            <div className="flex space-x-2 items-center">
-                              <div
-                                className={`w-12 h-12 flex items-center justify-center rounded-full ${
-                                  values.anggota.length > 1
-                                    ? "bg-custom-red-100 hover:bg-custom-red-200 cursor-pointer"
-                                    : "bg-custom-gray-200 cursor-not-allowed"
-                                }`}
-                                onClick={() => {
-                                  if (values.anggota.length > 1) {
-                                    arrayHelpers.remove(index);
+                      labelWidth="100px"
+                      errorMessage="Nama tim tidak boleh kosong"
+                      value={values.nama_tim}
+                      onChange={(e) =>
+                        setFieldValue("nama_tim", e.target.value)
+                      }
+                    />
+                    <div className="px-[236px]">
+                      <Button
+                        variant="disabled"
+                        size="Medium"
+                        // onClick={handleCariData}
+                      >
+                        Cari Data di SIPASTI
+                      </Button>
+                    </div>
+                    <Dropdown
+                      label="Ketua"
+                      labelPosition="left"
+                      placeholder="Pilih Ketua"
+                      size="Medium"
+                      isRequired={true}
+                      options={userOptions}
+                      value={values.ketua}
+                      onSelect={(selectedOption) =>
+                        setFieldValue("ketua", selectedOption.value)
+                      }
+                      errorMessage="Ketua tidak boleh kosong"
+                    />
+                    <Dropdown
+                      label="Sekretaris"
+                      labelPosition="left"
+                      placeholder="Pilih Sekretaris"
+                      size="Medium"
+                      isRequired={true}
+                      options={userOptions}
+                      value={values.sekretaris}
+                      onSelect={(selectedOption) =>
+                        setFieldValue("sekretaris", selectedOption.value)
+                      }
+                      errorMessage="Sekretaris tidak boleh kosong"
+                    />
+                    <FieldArray
+                      name="anggota"
+                      render={(arrayHelpers) => (
+                        <div className="space-y-4">
+                          {values.anggota.map((_, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center space-x-4">
+                              <Field
+                                as={Dropdown}
+                                name={`anggota.${index}`}
+                                label={`Nama Anggota ${index + 1}`}
+                                labelPosition="left"
+                                placeholder="Pilih nama anggota"
+                                isRequired={true}
+                                options={userOptions}
+                                value={values.anggota[index]}
+                                onSelect={(selectedOption) =>
+                                  setFieldValue(
+                                    `anggota.${index}`,
+                                    selectedOption.value
+                                  )
+                                }
+                                size="Medium"
+                                errorMessage="Nama anggota tidak boleh kosong"
+                              />
+                              <div className="flex space-x-2 items-center">
+                                <div
+                                  className={`w-12 h-12 flex items-center justify-center rounded-full ${
+                                    values.anggota.length > 1
+                                      ? "bg-custom-red-100 hover:bg-custom-red-200 cursor-pointer"
+                                      : "bg-custom-gray-200 cursor-not-allowed"
+                                  }`}
+                                  onClick={() => {
                                     if (values.anggota.length > 1) {
                                       arrayHelpers.remove(index);
+                                      if (values.anggota.length > 1) {
+                                        arrayHelpers.remove(index);
+                                      }
                                     }
-                                  }
-                                }}>
-                                <Trash
-                                  size="24"
-                                  color={
-                                    values.anggota.length > 1
-                                      ? colors.Solid.Basic.Red[500]
-                                      : colors.Emphasis.Light.On_Surface.Small
-                                  }
-                                />
-                              </div>
-                              <div
-                                className="w-12 h-12 flex items-center justify-center rounded-full bg-custom-blue-100 hover:bg-custom-blue-200 cursor-pointer"
-                                onClick={() => {
-                                  arrayHelpers.push("");
-                                  arrayHelpers.push("");
-                                }}>
-                                <Add
-                                  size="24"
-                                  color={colors.Solid.Basic.Blue[500]}
-                                />
+                                  }}>
+                                  <Trash
+                                    size="24"
+                                    color={
+                                      values.anggota.length > 1
+                                        ? colors.Solid.Basic.Red[500]
+                                        : colors.Emphasis.Light.On_Surface.Small
+                                    }
+                                  />
+                                </div>
+                                <div
+                                  className="w-12 h-12 flex items-center justify-center rounded-full bg-custom-blue-100 hover:bg-custom-blue-200 cursor-pointer"
+                                  onClick={() => {
+                                    arrayHelpers.push("");
+                                    arrayHelpers.push("");
+                                  }}>
+                                  <Add
+                                    size="24"
+                                    color={colors.Solid.Basic.Blue[500]}
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  />
-                  <FileInput
-                    onFileSelect={(files) => {
-                      handleSuratPenugasanTimTeknisBalai(files);
-                      setFieldValue("skPenugasanTimTeknisBalai", files[0]);
-                    }}
-                    setSelectedFile={setSuratPenugasanTimTeknisBalai}
-                    buttonText="Pilih Berkas"
-                    multiple={false}
-                    accept=".pdf"
-                    Label="Unggah SK/Surat Penugasan"
-                    HelperText="Format .PDF dan maksimal 2MB"
-                    state={suratPenugasanTimTeknisBalaiState}
-                    onCancel={() => {
-                      handleCancelSuratPenugasanTimTeknisBalai();
-                      setFieldValue("skPenugasanTimTeknisBalai", null);
-                    }}
-                    selectedFile={skPenugasantimTeknisBalai}
-                    maxSizeMB={2}
-                  />
+                          ))}
+                        </div>
+                      )}
+                    />
+                    <FileInput
+                      onFileSelect={(files) => {
+                        handleSuratPenugasanTimTeknisBalai(files);
+                        setFieldValue("skPenugasanTimTeknisBalai", files[0]);
+                      }}
+                      setSelectedFile={setSuratPenugasanTimTeknisBalai}
+                      buttonText="Pilih Berkas"
+                      multiple={false}
+                      accept=".pdf"
+                      Label="Unggah SK/Surat Penugasan"
+                      HelperText="Format .PDF dan maksimal 2MB"
+                      state={suratPenugasanTimTeknisBalaiState}
+                      onCancel={() => {
+                        handleCancelSuratPenugasanTimTeknisBalai();
+                        setFieldValue("skPenugasanTimTeknisBalai", null);
+                      }}
+                      selectedFile={skPenugasantimTeknisBalai}
+                      maxSizeMB={2}
+                    />
+                  </div>
+                  <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
+                    <Button
+                      variant="solid_blue"
+                      size="Medium"
+                      onClick={submitForm}>
+                      Simpan
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
-                  <Button
-                    variant="solid_blue"
-                    size="Medium"
-                    onClick={submitForm}>
-                    Simpan
-                  </Button>
-                </div>
-              </div>
-            </Form>
-          )}
+              </Form>
+            );
+          }}
         </Formik>
       ),
     },
@@ -742,9 +747,9 @@ export default function PenugasanTim() {
     <div className="p-8">
       <Navbar />
       <div className="space-y-3 pt-8">
-        <h4 className="text-H4 text-emphasis-on_surface-high">
+        <h3 className="text-H3 text-emphasis-on_surface-high">
           Penugasan Tim Pelaksana
-        </h4>
+        </h3>
         <Tabs tabs={tabs} />
         <CustomAlert
           message={alert.message}

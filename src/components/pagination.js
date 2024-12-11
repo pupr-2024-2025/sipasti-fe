@@ -3,20 +3,20 @@ import { ArrowLeft2, ArrowRight2 } from "iconsax-react";
 
 const Pagination = ({ currentPage, itemsPerPage, totalData, onPageChange }) => {
   const [hoveredPage, setHoveredPage] = useState(null);
-  const [pressedPage, setPressedPage] = useState(null); // New state for pressed page
+  const [pressedPage, setPressedPage] = useState(null);
 
   const totalPages = Math.ceil(totalData / itemsPerPage);
 
   const handlePageClick = (page) => {
     if (page !== currentPage) {
       onPageChange(page);
-      setPressedPage(page); // Set pressed page when clicking
+      setPressedPage(page);
     }
   };
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-    const maxPageNumbers = 5; // Limit of page numbers to display
+    const maxPageNumbers = 5;
     let startPage, endPage;
 
     if (totalPages <= maxPageNumbers) {
@@ -43,7 +43,7 @@ const Pagination = ({ currentPage, itemsPerPage, totalData, onPageChange }) => {
             onMouseEnter={() => setHoveredPage(i)}
             onMouseLeave={() => {
               setHoveredPage(null);
-              setPressedPage(null); // Reset pressed state on mouse leave
+              setPressedPage(null);
             }}
             className={`rounded-full transition-transform duration-200 ease-in-out ${
               i === currentPage

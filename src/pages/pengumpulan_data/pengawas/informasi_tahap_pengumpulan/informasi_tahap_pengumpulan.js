@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const useStore = create((set) => ({
+const informasi_tahap_pengumpulanStore = create((set) => ({
   initialValues: {
     status_progres: [],
     vendor: [],
@@ -48,4 +48,4 @@ const useStore = create((set) => ({
   },
 }));
 
-export default useStore;
+export default informasi_tahap_pengumpulanStore;
