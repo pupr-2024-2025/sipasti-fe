@@ -275,8 +275,7 @@ export default function Tahap2() {
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
-          enableReinitialize={true}
-        >
+          enableReinitialize={true}>
           {({ values, setFieldValue }) => (
             <Form>
               <MaterialForm
@@ -306,8 +305,7 @@ export default function Tahap2() {
                 <Button
                   variant="outlined_yellow"
                   size="Medium"
-                  onClick={navigateToTahap1}
-                >
+                  onClick={navigateToTahap1}>
                   Kembali
                 </Button>
 
@@ -369,7 +367,7 @@ const MaterialForm = ({
       checked: false,
     },
     { label: "Jumlah Kebutuhan", accessor: "merk", checked: false },
-    { label: "Provnisi", accessor: "provinsi", checked: false },
+    { label: "Provinsi", accessor: "provinsi", checked: false },
     { label: "Kota", accessor: "kota", checked: false },
   ];
 
@@ -412,8 +410,7 @@ const MaterialForm = ({
                   variant="solid_blue"
                   size="Medium"
                   className="ml-4"
-                  onClick={() => setIsModalOpen(true)}
-                >
+                  onClick={() => setIsModalOpen(true)}>
                   Tambah Data
                 </Button>
               </div>
@@ -432,8 +429,7 @@ const MaterialForm = ({
             <div
               className={`${
                 hide ? "hidden" : ""
-              } rounded-[16px] border border-gray-200 overflow-hidden`}
-            >
+              } rounded-[16px] border border-gray-200 overflow-hidden`}>
               <div className="overflow-x-auto">
                 <table className="table-auto w-full min-w-max">
                   <thead>
@@ -494,12 +490,10 @@ const MaterialForm = ({
                       return (
                         <tr
                           key={actualIndex}
-                          className={` ${!isShow ? "hidden" : ""}`}
-                        >
+                          className={` ${!isShow ? "hidden" : ""}`}>
                           <td className="px-3 py-6">
                             <Field
-                              name={`materials.${actualIndex}.nama_material`}
-                            >
+                              name={`materials.${actualIndex}.nama_material`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -544,8 +538,7 @@ const MaterialForm = ({
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`materials.${actualIndex}.spesifikasi`}
-                            >
+                              name={`materials.${actualIndex}.spesifikasi`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -612,8 +605,7 @@ const MaterialForm = ({
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`materials.${actualIndex}.kelompok_material`}
-                            >
+                              name={`materials.${actualIndex}.kelompok_material`}>
                               {({ field, form }) => (
                                 <Dropdown
                                   options={kelompokMaterialOptions}
@@ -644,8 +636,7 @@ const MaterialForm = ({
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`materials.${actualIndex}.jumlah_kebutuhan`}
-                            >
+                              name={`materials.${actualIndex}.jumlah_kebutuhan`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -770,8 +761,7 @@ const MaterialForm = ({
                           <td className="px-3 py-6 text-center">
                             <button
                               onClick={() => remove(actualIndex)}
-                              className="text-red-500 hover:text-red-700"
-                            >
+                              className="text-red-500 hover:text-red-700">
                               Hapus
                             </button>
                           </td>
@@ -781,13 +771,13 @@ const MaterialForm = ({
                   </tbody>
                 </table>
               </div>
-              <Pagination
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                totalData={values.materials.length}
-                onPageChange={setCurrentPage}
-              />
             </div>
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalData={values.materials.length}
+              onPageChange={setCurrentPage}
+            />
           </div>
         )}
       </FieldArray>
@@ -802,7 +792,27 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
 
   const [peralatanQuerySearch, setPeralatanQuerySearch] = useState("");
 
-  const { setSelectedValue } = useStore();
+  // const filterOptions = [
+  //   { label: "Nama Material", accessor: "nama_material", checked: false },
+
+  const filterOptions = [
+    { label: "Nama Peralatan", accessor: "nama_peralatan", checked: false },
+    { label: "Spesifikasi", accessor: "spesifikasi", checked: false },
+    { label: "Kapasitas", accessor: "kapasitas", checked: false },
+    { label: "Kodefikasi", accessor: "kodefikasi", checked: false },
+    {
+      label: "Kelompok Peralatan",
+      accessor: "kelompok_peralatan",
+      checked: false,
+    },
+    { label: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan", checked: false },
+    { label: "Merk", accessor: "merk", checked: false },
+    { label: "Provinsi", accessor: "provinsi", checked: false },
+    { label: "Kota", accessor: "kota", checked: false },
+  ];
+
+  const { setSelectedValue, peralatanFilters, setPeralatanFilters } =
+    useStore();
 
   const paginatedPeralatan = values.peralatans.slice(
     (currentPage - 1) * itemsPerPage,
@@ -829,12 +839,21 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                     setPeralatanQuerySearch(e);
                   }}
                   withFilter={true}
+                  filterOptions={filterOptions}
+                  onFilterClick={(filters) => {
+                    let peralatanFilters = [];
+                    filters.forEach((filter) => {
+                      if (filter.checked) {
+                        peralatanFilters.push(filter.accessor);
+                      }
+                    });
+                    setPeralatanFilters(peralatanFilters);
+                  }}
                 />
                 <Button
                   variant="solid_blue"
                   size="Medium"
-                  onClick={() => setIsModalOpen(true)}
-                >
+                  onClick={() => setIsModalOpen(true)}>
                   Tambah Data
                 </Button>
               </div>
@@ -853,8 +872,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
             <div
               className={`${
                 hide ? "hidden" : ""
-              } rounded-[16px] border border-gray-200 overflow-hidden`}
-            >
+              } rounded-[16px] border border-gray-200 overflow-hidden`}>
               <div className="overflow-x-auto">
                 <table className="table-auto w-full min-w-max">
                   <thead>
@@ -889,27 +907,34 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                     </tr>
                   </thead>
                   <tbody className="bg-surface-light-background">
-                    {paginatedPeralatan.map((_, index) => {
+                    {paginatedPeralatan.map((item, index) => {
                       const actualIndex =
                         (currentPage - 1) * itemsPerPage + index;
-                      if (peralatanQuerySearch) {
-                        if (
-                          !(
-                            values?.peralatans[actualIndex]?.nama_peralatan ||
-                            ""
-                          )
+
+                      const shouldShowItem = (item) => {
+                        if (item === undefined) return true;
+                        if (!peralatanFilters.length) {
+                          return Object.values(item).some((val) =>
+                            String(val)
+                              .toLowerCase()
+                              .includes(peralatanQuerySearch.toLowerCase())
+                          );
+                        }
+                        return peralatanFilters.some((key) =>
+                          String(item[key])
                             .toLowerCase()
                             .includes(peralatanQuerySearch.toLowerCase())
-                        ) {
-                          return null;
-                        }
-                      }
+                        );
+                      };
+
+                      const isShow = shouldShowItem(item);
                       return (
-                        <tr key={actualIndex} className="border-b">
+                        <tr
+                          key={actualIndex}
+                          className={` ${!isShow ? "hidden" : ""}`}>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.nama_peralatan`}
-                            >
+                              name={`peralatans.${actualIndex}.nama_peralatan`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -954,8 +979,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.spesifikasi`}
-                            >
+                              name={`peralatans.${actualIndex}.spesifikasi`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1000,8 +1024,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.kodefikasi`}
-                            >
+                              name={`peralatans.${actualIndex}.kodefikasi`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1024,8 +1047,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.kelompok_peralatan`}
-                            >
+                              name={`peralatans.${actualIndex}.kelompok_peralatan`}>
                               {({ field, form }) => (
                                 <Dropdown
                                   options={[
@@ -1067,8 +1089,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.jumlah_kebutuhan`}
-                            >
+                              name={`peralatans.${actualIndex}.jumlah_kebutuhan`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1112,8 +1133,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatans.${actualIndex}.provincies_id`}
-                            >
+                              name={`peralatans.${actualIndex}.provincies_id`}>
                               {({ field, form }) => (
                                 <Dropdown
                                   options={provincesOptions}
@@ -1201,8 +1221,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                           <td className="px-3 py-6">
                             <button
                               onClick={() => remove(actualIndex)}
-                              className="text-red-500"
-                            >
+                              className="text-red-500">
                               Hapus
                             </button>
                           </td>
@@ -1212,13 +1231,13 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                   </tbody>
                 </table>
               </div>
-              <Pagination
-                currentPage={currentPage}
-                itemsPerPage={itemsPerPage}
-                totalData={values.peralatans.length}
-                onPageChange={setCurrentPage}
-              />
             </div>
+            <Pagination
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              totalData={values.peralatans.length}
+              onPageChange={setCurrentPage}
+            />
           </div>
         )}
       </FieldArray>
@@ -1231,7 +1250,21 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const { setSelectedValue } = useStore();
+  const { setSelectedValue, tenagaKerjaFilters, setTenagaKerjaFilters } =
+    useStore();
+
+  const filterOptions = [
+    {
+      label: "Jenis Tenaga Kerja",
+      accessor: "jenis_tenaga_kerja",
+      checked: false,
+    },
+    { label: "Satuan", accessor: "satuan", checked: false },
+    { label: "Jumlah Kebutuhan", accessor: "jumlah_kebutuhan", checked: false },
+    { label: "Kodefikasi", accessor: "kodefikasi", checked: false },
+    { label: "Provinsi", accessor: "provinsi", checked: false },
+    { label: "Kota", accessor: "kota", checked: false },
+  ];
 
   const [tenagaKerjaQuerySearch, setTenagaKerjaQuerySearch] = useState("");
 
@@ -1260,12 +1293,21 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                     setTenagaKerjaQuerySearch(e);
                   }}
                   withFilter={true}
+                  filterOptions={filterOptions}
+                  onFilterClick={(filters) => {
+                    let tenagaKerjaFilters = [];
+                    filters.forEach((filter) => {
+                      if (filter.checked) {
+                        tenagaKerjaFilters.push(filter.accessor);
+                      }
+                    });
+                    setTenagaKerjaFilters(tenagaKerjaFilters);
+                  }}
                 />
                 <Button
                   variant="solid_blue"
                   size="Medium"
-                  onClick={() => setIsModalOpen(true)}
-                >
+                  onClick={() => setIsModalOpen(true)}>
                   Tambah Data
                 </Button>
               </div>
@@ -1284,8 +1326,7 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
             <div
               className={`${
                 hide ? "hidden" : ""
-              } rounded-[16px] border border-gray-200 overflow-hidden`}
-            >
+              } rounded-[16px] border border-gray-200 overflow-hidden`}>
               <table className="table-auto w-full min-w-max">
                 <thead>
                   <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
@@ -1307,27 +1348,34 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                   </tr>
                 </thead>
                 <tbody className="bg-surface-light-background">
-                  {paginatedTenagaKerjas.map((_, index) => {
+                  {paginatedTenagaKerjas.map((item, index) => {
                     const actualIndex =
                       (currentPage - 1) * itemsPerPage + index;
-                    if (tenagaKerjaQuerySearch) {
-                      if (
-                        !(
-                          values?.tenagaKerjas[actualIndex]
-                            ?.jenis_tenaga_kerja || ""
-                        )
+
+                    const shouldShowItem = (item) => {
+                      if (item === undefined) return true;
+                      if (!tenagaKerjaFilters.length) {
+                        return Object.values(item).some((val) =>
+                          String(val)
+                            .toLowerCase()
+                            .includes(tenagaKerjaQuerySearch.toLowerCase())
+                        );
+                      }
+                      return tenagaKerjaFilters.some((key) =>
+                        String(item[key])
                           .toLowerCase()
                           .includes(tenagaKerjaQuerySearch.toLowerCase())
-                      ) {
-                        return null;
-                      }
-                    }
+                      );
+                    };
+
+                    const isShow = shouldShowItem(item);
                     return (
-                      <tr key={actualIndex} className="border-b">
+                      <tr
+                        key={actualIndex}
+                        className={` ${!isShow ? "hidden" : ""}`}>
                         <td className="px-3 py-6">
                           <Field
-                            name={`tenagaKerjas.${actualIndex}.jenis_tenaga_kerja`}
-                          >
+                            name={`tenagaKerjas.${actualIndex}.jenis_tenaga_kerja`}>
                             {({ field, form }) => (
                               <TextInput
                                 value={field.value}
@@ -1372,8 +1420,7 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                         </td>
                         <td className="px-3 py-6">
                           <Field
-                            name={`tenagaKerjas.${actualIndex}.jumlah_kebutuhan`}
-                          >
+                            name={`tenagaKerjas.${actualIndex}.jumlah_kebutuhan`}>
                             {({ field, form }) => (
                               <TextInput
                                 value={field.value}
@@ -1396,8 +1443,7 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                         </td>
                         <td className="px-3 py-6">
                           <Field
-                            name={`tenagaKerjas.${actualIndex}.kodefikasi`}
-                          >
+                            name={`tenagaKerjas.${actualIndex}.kodefikasi`}>
                             {({ field, form }) => (
                               <TextInput
                                 value={field.value}
@@ -1420,8 +1466,7 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                         </td>
                         <td className="px-3 py-6">
                           <Field
-                            name={`tenagaKerjas.${actualIndex}.provincies_id`}
-                          >
+                            name={`tenagaKerjas.${actualIndex}.provincies_id`}>
                             {({ field, form }) => (
                               <Dropdown
                                 options={provincesOptions}
@@ -1507,8 +1552,7 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                         <td className="px-3 py-6 text-center">
                           <button
                             onClick={() => remove(actualIndex)}
-                            className="text-red-500 hover:text-red-700"
-                          >
+                            className="text-red-500 hover:text-red-700">
                             Hapus
                           </button>
                         </td>
@@ -1549,8 +1593,7 @@ const Tabs = ({ index, items, onChange, selectedValue, button }) => {
                 selectedValue === tabIndex
                   ? "bg-custom-blue-500 text-emphasis-on_color-high"
                   : "text-emphasis-on_surface-medium hover:bg-surface-light-overlay"
-              }`}
-            >
+              }`}>
               {item}
             </button>
           ))}
@@ -1565,8 +1608,9 @@ const Tabs = ({ index, items, onChange, selectedValue, button }) => {
                   ? "bg-custom-blue-500 text-white"
                   : "bg-gray-200 text-gray-800"
               } px-4 py-2 rounded-lg`}
-              onClick={button.onClick || (() => console.log("Button clicked!"))}
-            >
+              onClick={
+                button.onClick || (() => console.log("Button clicked!"))
+              }>
               {button.label || "Button"}
             </button>
           )}

@@ -98,37 +98,45 @@ function App() {
           verified_by: item.verified_by,
         }));
 
-      const payload = new FormData();
-      payload.append("identifikasi_kebutuhan_id", identifikasi_kebutuhan_id);
-      payload.append("data_vendor_id", data_vendor_id);
-      payload.append("catatan_blok_1", values.catatan_blok_1 || "");
-      payload.append("catatan_blok_2", values.catatan_blok_2 || "");
-      payload.append("catatan_blok_3", values.catatan_blok_3 || "");
-      payload.append("catatan_blok_4", values.catatan_blok_4 || "");
-      payload.append("berita_acara", selectedberitaacara);
-      payload.append("verifikasi_validasi", JSON.stringify(verifikasiValidasi));
+      const hasTidakMemenuhi = verifikasiValidasi.some(
+        (item) => item.status_pemeriksaan === "tidak memenuhi"
+      );
 
-      console.log("Payload yang dikirim:");
-      payload.forEach((value, key) => {
-        console.log(key, value);
-      });
+      if (hasTidakMemenuhi) {
+        setAlert({
+          message: "Perlu Perbaikan /survei ulang oleh petugas lapangan.",
+          severity: "warning",
+          open: true,
+        });
+      }
 
-      // Sending data to the API
+      const payload = {
+        identifikasi_kebutuhan_id,
+        data_vendor_id,
+        catatan_blok_1: values.catatan_blok_1 || "",
+        catatan_blok_2: values.catatan_blok_2 || "",
+        catatan_blok_3: values.catatan_blok_3 || "",
+        catatan_blok_4: values.catatan_blok_4 || "",
+        berita_acara: selectedberitaacara,
+        verifikasi_validasi: verifikasiValidasi,
+      };
+
       const response = await submitData(payload, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers: { "Content-Type": "application/json" },
       });
 
-      console.log("Response from API:", response);
+      console.log("Debugging Info:", {
+        payload,
+        response,
+      });
 
-      // Check the response status and set the alert accordingly
-      if (response.status === "success") {
+      if (!hasTidakMemenuhi && response.status === "success") {
         setAlert({
           message: "Data berhasil dikirim!",
           severity: "success",
           open: true,
         });
       } else if (response.status === "error") {
-        // If response.message is an array, show the first item
         const errorMessage = Array.isArray(response.message)
           ? response.message[0]
           : response.message || "Something went wrong";
@@ -138,8 +146,7 @@ function App() {
           severity: "error",
           open: true,
         });
-      } else {
-        // If the response status is unknown or not "error" or "success"
+      } else if (!hasTidakMemenuhi) {
         setAlert({
           message: "Terjadi kesalahan yang tidak terduga.",
           severity: "error",
@@ -1042,16 +1049,16 @@ function App() {
                             <td className="px-3 py-4 text-sm text-center">
                               <input
                                 type="radio"
-                                id={`status-${item.id_pemeriksaan}-tidak_memenuhi`}
+                                id={`status-${item.id_pemeriksaan}-tidak memenuhi`}
                                 name={`status-${item.id_pemeriksaan}`}
-                                value="tidak_memenuhi"
+                                value="tidak memenuhi"
                                 checked={
-                                  item.status_pemeriksaan === "tidak_memenuhi"
+                                  item.status_pemeriksaan === "tidak memenuhi"
                                 }
                                 onChange={() =>
                                   handleChange(
                                     item.id_pemeriksaan,
-                                    "tidak_memenuhi"
+                                    "tidak memenuhi"
                                   )
                                 }
                                 className="mr-2"

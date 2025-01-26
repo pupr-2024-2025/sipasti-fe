@@ -288,8 +288,7 @@ export default function EntriData() {
                 display: "flex",
                 alignItems: "center",
                 gap: "256px",
-              }}
-            >
+              }}>
               <div className="text-B2" style={{ minWidth: "200px" }}>
                 Tanggal Survei
               </div>
@@ -362,8 +361,7 @@ export default function EntriData() {
                 display: "flex",
                 alignItems: "center",
                 gap: "256px",
-              }}
-            >
+              }}>
               <div className="text-B2" style={{ minWidth: "200px" }}>
                 Tanggal Pengawasan
               </div>
@@ -507,8 +505,7 @@ export default function EntriData() {
                             index % 2 === 0
                               ? "bg-custom-neutral-0"
                               : "bg-custom-neutral-100"
-                          }`}
-                        >
+                          }`}>
                           <td className="px-3 py-6 text-sm text-center">
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
@@ -564,8 +561,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.satuan_setempat_panjang`}
-                            >
+                              name={`material.${index}.satuan_setempat_panjang`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -588,8 +584,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.satuan_setempat_lebar`}
-                            >
+                              name={`material.${index}.satuan_setempat_lebar`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -612,8 +607,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.satuan_setempat_tinggi`}
-                            >
+                              name={`material.${index}.satuan_setempat_tinggi`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -636,8 +630,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.konversi_satuan_setempat`}
-                            >
+                              name={`material.${index}.konversi_satuan_setempat`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -660,8 +653,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.harga_satuan_setempat`}
-                            >
+                              name={`material.${index}.harga_satuan_setempat`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -684,8 +676,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`material.${index}.harga_konversi_satuan_setempat`}
-                            >
+                              name={`material.${index}.harga_konversi_satuan_setempat`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -854,8 +845,7 @@ export default function EntriData() {
                             index % 2 === 0
                               ? "bg-custom-neutral-0"
                               : "bg-custom-neutral-100"
-                          }`}
-                        >
+                          }`}>
                           <td className="px-3 py-6 text-sm text-center">
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
@@ -909,8 +899,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatan.${index}.harga_sewa_satuan_setempat`}
-                            >
+                              name={`peralatan.${index}.harga_sewa_satuan_setempat`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -933,8 +922,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`peralatan.${index}.harga_sewa_konversi`}
-                            >
+                              name={`peralatan.${index}.harga_sewa_konversi`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1084,8 +1072,7 @@ export default function EntriData() {
                             index % 2 === 0
                               ? "bg-custom-neutral-0"
                               : "bg-custom-neutral-100"
-                          }`}
-                        >
+                          }`}>
                           <td className="px-3 py-6 text-sm text-center">
                             {(currentPage - 1) * itemsPerPage + index + 1}
                           </td>
@@ -1107,8 +1094,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`tenaga_kerja.${index}.harga_per_satuan_setempat`}
-                            >
+                              name={`tenaga_kerja.${index}.harga_per_satuan_setempat`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1131,8 +1117,7 @@ export default function EntriData() {
                           </td>
                           <td className="px-3 py-6">
                             <Field
-                              name={`tenagarkerjas.${index}.harga_konversi_perjam`}
-                            >
+                              name={`tenagarkerjas.${index}.harga_konversi_perjam`}>
                               {({ field, form }) => (
                                 <TextInput
                                   value={field.value}
@@ -1193,7 +1178,7 @@ export default function EntriData() {
       <Navbar />
       <div className="space-y-3 pt-8">
         <h3 className="text-H3 text-emphasis-on_surface-high">
-          Entri Data Hasil Survei
+          Entri Data Softcopy Hasil Survei
         </h3>
         <h4 className="text-H4 text-emphasis-on_surface-high mt-4">
           Blok I: Keterangan Tempat
@@ -1330,8 +1315,7 @@ const Tabs = ({ index, items, onChange, selectedValue, button }) => {
                 selectedValue === tabIndex
                   ? "bg-custom-blue-500 text-emphasis-on_color-high"
                   : "text-emphasis-on_surface-medium hover:bg-surface-light-overlay"
-              }`}
-            >
+              }`}>
               {item}
             </button>
           ))}
@@ -1346,8 +1330,9 @@ const Tabs = ({ index, items, onChange, selectedValue, button }) => {
                   ? "bg-custom-blue-500 text-white"
                   : "bg-gray-200 text-gray-800"
               } px-4 py-2 rounded-lg`}
-              onClick={button.onClick || (() => console.log("Button clicked!"))}
-            >
+              onClick={
+                button.onClick || (() => console.log("Button clicked!"))
+              }>
               {button.label || "Button"}
             </button>
           )}

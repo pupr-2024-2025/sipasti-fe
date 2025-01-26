@@ -488,17 +488,9 @@ export default function informasi_tahap_pengumpulan() {
                                       {(role === "superadmin" ||
                                         role === "Pengolah Data") && (
                                         <Link
-                                          href={`/pengumpulan_data/pengolah_data/entri_data_softcopy/${item.shortlist_id}`}
+                                          href={`/pengumpulan_data/pengolah_data/entri_data/${item.shortlist_id}`}
                                           className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
-                                          Entri Data Soft Copy
-                                        </Link>
-                                      )}
-                                      {(role === "superadmin" ||
-                                        role === "Pengolah Data") && (
-                                        <Link
-                                          href={`/pengumpulan_data/pengolah_data/entri_data_hardcopy/${item.shortlist_id}`}
-                                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
-                                          Entri Data Hard Copy
+                                          Entri Data
                                         </Link>
                                       )}
                                       {(role === "superadmin" ||
