@@ -25,6 +25,8 @@ export default function EntriData() {
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState("");
   const {
+    verifikasi_dokumen_softcopy = [],
+    dataStatic,
     selectedValue,
     petugasLapanganuserOptions,
     pengawasUserOptions,
@@ -1173,6 +1175,27 @@ export default function EntriData() {
     );
   };
 
+  const filteredData = verifikasi_dokumen_softcopy.filter((item) =>
+    ["A1", "A2", "A3", "A4", "A5", "B1", "B2"].includes(item.item_number)
+  );
+
+  const combinedData = dataStatic.map((item) => {
+    const apiData =
+      filteredData.find(
+        (filteredItem) => filteredItem.item_number === item.item_number
+      ) || {};
+
+    return {
+      nomor: item.nomor,
+      kelengkapan_dokumen: item.kelengkapan_dokumen,
+      status_pemeriksaan: apiData.status_pemeriksaan || null,
+      verified_by: apiData.verified_by || null,
+      showRadio: ["A1", "A2", "A3", "A4", "A5", "B1", "B2"].includes(
+        item.item_number
+      ),
+    };
+  });
+
   return (
     <div className="p-8">
       <Navbar />
@@ -1279,6 +1302,89 @@ export default function EntriData() {
               setFieldValue={setFieldValue}
               hide={selectedValue !== 2}
             />
+            {/* Tabel Data API (Static) */}
+            <div className="rounded-[16px] border border-gray-200 overflow-hidden mt-4">
+              <div className="overflow-x-auto">
+                <table className="table-fixed w-full">
+                  <thead>
+                    <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
+                      <th className="px-3 py-6 text-sm text-center w-[40px]">
+                        No
+                      </th>
+                      <th className="px-3 py-6 text-sm text-left w-[180px]">
+                        Daftar SIMAK
+                      </th>
+                      <th className="px-3 py-6 text-sm text-center w-[200px] hidden">
+                        Status Pemeriksaan
+                      </th>
+                      <th className="px-3 py-6 text-sm text-center w-[140px]">
+                        Memenuhi
+                      </th>
+                      <th className="px-3 py-6 text-sm text-center w-[140px]">
+                        Tidak Memenuhi
+                      </th>
+                      <th className="px-3 py-6 text-sm text-center w-[140px] hidden">
+                        Verified By
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {combinedData.length > 0 ? (
+                      combinedData.map((item, index) => (
+                        <tr
+                          key={index}
+                          className={`${
+                            index % 2 === 0
+                              ? "bg-custom-neutral-0"
+                              : "bg-custom-neutral-100"
+                          }`}>
+                          <td className="px-3 py-4 text-sm text-center">
+                            {item.nomor}
+                          </td>
+                          <td className="px-3 py-4 text-sm">
+                            {item.kelengkapan_dokumen}
+                          </td>
+                          <td className="px-3 py-4 text-sm text-center hidden">
+                            {item.status_pemeriksaan}
+                          </td>
+                          <td className="px-3 py-4 text-sm hidden">
+                            {item.verified_by}
+                          </td>
+                          <td className="px-3 py-4 text-sm text-center">
+                            {item.showRadio ? (
+                              <input
+                                type="radio"
+                                name={`radio-${index}`}
+                                checked={item.status_pemeriksaan === "memenuhi"}
+                                disabled={!item.showRadio}
+                              />
+                            ) : null}
+                          </td>
+                          <td className="px-3 py-4 text-sm text-center">
+                            {item.showRadio ? (
+                              <input
+                                type="radio"
+                                name={`radio-${index}`}
+                                checked={item.status_pemeriksaan !== "memenuhi"}
+                                disabled={!item.showRadio}
+                              />
+                            ) : null}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={5}
+                          style={{ textAlign: "center", padding: "10px" }}>
+                          Tidak ada data
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
             <div className="flex flex-row justify-end items-right space-x-4 mt-3 bg-neutral-100 px-6 py-8 rounded-[16px]">
               <Button variant="solid_blue" size="Medium" type="submit">
                 Simpan

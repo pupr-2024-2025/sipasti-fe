@@ -44,6 +44,8 @@ const Button = ({
       "text-custom-red-500 hover:text-custom-red-600 active:text-custom-red-700 focus:outline-none focus:ring-2 focus:ring-red-700",
     outlined_icon:
       "ring-2 ring-custom-blue-500 text-custom-blue-500 hover:bg-custom-blue-500/10 active:bg-custom-blue-700/20 focus:outline-none focus:ring-2 focus:ring-blue-700 flex justify-center items-center rounded-full h-10 w-10",
+    filled_icon:
+      "text-custom-emphasis-on_surface-high hover:bg-custom-emphasis-on_surface-high/10 active:bg-custom-blue-700/20 focus:outline-none flex justify-center items-center rounded-full h-10 w-10",
     disabled: "bg-gray-300 text-gray-500 cursor-not-allowed opacity-50",
   };
 

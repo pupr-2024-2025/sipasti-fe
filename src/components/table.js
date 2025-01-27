@@ -220,7 +220,7 @@ const Table = ({ columns, data, setParentState }) => {
                       ) : column.type === "iconButton" ? (
                         <Button
                           size="Small"
-                          variant="outlined_icon"
+                          variant="filled_icon"
                           iconLeft={<column.icon />}
                           onClick={() =>
                             column.onClick

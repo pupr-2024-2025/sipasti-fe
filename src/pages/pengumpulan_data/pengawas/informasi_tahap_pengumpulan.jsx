@@ -21,6 +21,7 @@ export default function informasi_tahap_pengumpulan() {
   const fetchPDF = informasi_tahap_pengumpulanStore((state) => state.fetchPDF);
   const { fetchVendor, fetchGenerateLink } = informasi_tahap_pengumpulanStore();
   const [currentPage, setCurrentPage] = useState(1);
+  const [informasiFilters, setInformasiFilters] = useState([]);
   const [currentModal, setCurrentModal] = useState(1);
   const itemsPerPage = 10;
   const itemsPerPageModal = 5;
@@ -46,6 +47,13 @@ export default function informasi_tahap_pengumpulan() {
     });
     setActiveFilters(updatedFilters);
     applySearchAndFilter(searchQuery, updatedFilters);
+  };
+
+  const handleFilterInformasiClick = (filters) => {
+    const selectedFilters = filters
+      .filter((filter) => filter.checked)
+      .map((filter) => filter.accessor);
+    setinformasiFilters(selectedFilters);
   };
 
   const applySearchAndFilter = React.useCallback(
@@ -194,6 +202,46 @@ export default function informasi_tahap_pengumpulan() {
     }
   };
 
+  // const handleSearchInformasiPerencanaanData = (query) => {
+  //   setSearchQuery(query);
+  //   setCurrentPage(1);
+  // };
+
+  // useEffect(() => {
+  //   let filteredData = [...allData];
+
+  //   // Apply search
+  //   if (searchQuery) {
+  //     filteredData = filteredData.filter((item) =>
+  //       Object.values(item).some((val) =>
+  //         String(val).toLowerCase().includes(searchQuery.toLowerCase())
+  //       )
+  //     );
+  //   }
+
+  //   // Apply filters
+  //   if (informasiFilters.length > 0) {
+  //     filteredData = filteredData.filter((item) =>
+  //       informasiFilters.some((key) =>
+  //         String(item[key]).toLowerCase().includes(searchQuery.toLowerCase())
+  //       )
+  //     );
+  //   }
+
+  //   // Ensure unique IDs (if necessary)
+  //   filteredData = filteredData.filter(
+  //     (value, index, self) => index === self.findIndex((t) => t.id === value.id)
+  //   );
+
+  //   setTableData(filteredData);
+  // }, [searchQuery, informasiFilters, allData]);
+  // const handleFilterClickInformasiPerencanaanData = (filters) => {
+  //   const selectedFilters = filters
+  //     .filter((filter) => filter.checked)
+  //     .map((filter) => filter.accessor);
+  //   setinformasiFilters(selectedFilters);
+  // };
+
   const handleToggleMenu = (rowId, event) => {
     if (activeMenu === rowId) {
       setActiveMenu(null);
@@ -327,9 +375,18 @@ export default function informasi_tahap_pengumpulan() {
     <div className="p-8">
       <Navbar />
       <div className="space-y-3 pt-8">
-        <h3 className="text-H3 text-emphasis-on_surface-high">
-          Informasi Tahapan Pengumpulan Data
-        </h3>
+        <div className="flex flex-row justify-between items-center mt-8 mb-7">
+          <h3 className="text-H3 text-emphasis-on_surface-high">
+            Informasi Tahapan Pengumpulan Data
+          </h3>
+          <SearchBox
+            placeholder="Cari Data..."
+            // onSearch={handleSearchInformasiPerencanaanData}
+            withFilter={true}
+            filterOptions={filterOptions}
+            // onFilterClick={handleFilterClickInformasiPerencanaanData}
+          />
+        </div>
         <div className="rounded-[16px] border border-surface-light-outline overflow-hidden">
           <div className="overflow-x-auto">
             <table className="table-auto w-full min-w-max">

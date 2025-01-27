@@ -376,12 +376,12 @@ const MaterialForm = ({
   console.log("materialFilters", materialFilters);
 
   return (
-    <div className={`${hide ? "hidden" : ""} rounded-[16px]overflow-hidden`}>
+    <div className={`${hide ? "hidden" : ""} rounded-[16px]overflow-visible`}>
       <FieldArray name="materials">
         {({ push, remove }) => (
           <div className="">
             <div className="flex flex-row justify-between items-center my-6">
-              <div className="">
+              <div className="overflow-visible">
                 <Tabs
                   items={["Material", "Peralatan", "Tenaga Kerja"]}
                   onChange={(index) => setSelectedValue(index)}
@@ -820,11 +820,11 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
   );
 
   return (
-    <div className={`${hide ? "hidden" : ""} rounded-[16px] overflow-hidden`}>
+    <div className={`${hide ? "hidden" : ""} rounded-[16px] overflow-visible`}>
       <FieldArray name="peralatans">
         {({ push, remove }) => (
-          <div>
-            <div className="flex flex-row justify-between items-center">
+          <div className="">
+            <div className="flex flex-row justify-between items-center my-6">
               <div className="">
                 <Tabs
                   items={["Material", "Peralatan", "Tenaga Kerja"]}
@@ -832,7 +832,7 @@ const PeralatanForm = ({ values, setFieldValue, hide, provincesOptions }) => {
                   selectedValue={1}
                 />
               </div>
-              <div className="flex flex-row justify-between items-center space-x-4 my-6">
+              <div className="flex flex-row justify-between items-center space-x-4">
                 <SearchBox
                   placeholder="Cari Peralatan..."
                   onSearch={(e) => {
@@ -1274,10 +1274,10 @@ const TenagaKerjaForm = ({ values, setFieldValue, hide, provincesOptions }) => {
   );
 
   return (
-    <div className={`${hide ? "hidden" : ""} rounded-[16px] overflow-hidden`}>
+    <div className={`${hide ? "hidden" : ""} rounded-[16px] overflow-visible`}>
       <FieldArray name="tenagaKerjas">
         {({ push, remove }) => (
-          <div>
+          <div className="relative">
             <div className="flex flex-row justify-between items-center">
               <div className="">
                 <Tabs

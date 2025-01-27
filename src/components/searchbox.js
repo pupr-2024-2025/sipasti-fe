@@ -79,7 +79,11 @@ const SearchBox = ({
               style={{
                 boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.1)",
                 maxHeight: "316px",
-                overflowY: "auto",
+                overflowY: "auto", // Scroll untuk elemen ini saja
+                zIndex: 100000,
+                position: "absolute",
+                // position: "relative", // Pastikan ada, biar child `absolute` tetap ngikut
+                // overflow: "visible",
               }}>
               <h4 className="text-small text-emphasis-on_surface-medium mb-3">
                 Pilih Filter

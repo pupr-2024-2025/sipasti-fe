@@ -16,7 +16,8 @@ const entri_datastore = create((set) => ({
     material: [],
     peralatan: [],
     tenaga_kerja: [],
-    verifikasi_dokumen: [],
+    verifikasi_dokumen_hardcopy: [],
+    verifikasi_dokumen_softcopy: [],
   },
   dataEntri: null,
   material: null,
@@ -34,16 +35,24 @@ const entri_datastore = create((set) => ({
       );
       const data = response.data.data;
 
+      const updatedData = (data.verifikasi_dokumen || []).map((item) => ({
+        ...item,
+        status_pemeriksaan: item.status_pemeriksaan || "Memenuhi",
+      }));
+
       set((state) => ({
         dataEntri: data,
         material: data.material || [],
         peralatan: data.peralatan || [],
         tenaga_kerja: data.tenaga_kerja || [],
+        verifikasi_dokumen_softcopy: data.verifikasi_dokumen || [],
         initialValues: {
           ...state.initialValues,
           data_vendor_id: data.data_vendor_id || "",
           identifikasi_kebutuhan_id: data.identifikasi_kebutuhan_id || "",
         },
+        pemeriksaanData:
+          updatedData.length === 1 ? [updatedData[0]] : updatedData,
         data_vendor_id: data.data_vendor_id || "",
         identifikasi_kebutuhan_id: data.identifikasi_kebutuhan_id || "",
       }));
@@ -61,7 +70,7 @@ const entri_datastore = create((set) => ({
       );
       const data = response.data.data;
 
-      const updatedData = (data.data.verifikasi_dokumen || []).map((item) => ({
+      const updatedData = (data.verifikasi_dokumen || []).map((item) => ({
         ...item,
         status_pemeriksaan: item.status_pemeriksaan || "Memenuhi",
       }));
@@ -71,7 +80,7 @@ const entri_datastore = create((set) => ({
         material: data.material || [],
         peralatan: data.peralatan || [],
         tenaga_kerja: data.tenaga_kerja || [],
-        verifikasi_dokumen: data.data.verifikasi_dokumen || [],
+        verifikasi_dokumen_hardcopy: data.verifikasi_dokumen || [],
         initialValues: {
           ...state.initialValues,
           data_vendor_id: data.data_vendor_id || "",

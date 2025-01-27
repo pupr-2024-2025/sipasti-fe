@@ -9,19 +9,22 @@ export const datadetail_store = create((set) => ({
   pengawasUserOptions: [],
   pemeriksaanData: [],
   dataEntri: null,
+  identifikasi_kebutuhan_id: null,
+  data_vendor_id: null,
   initialValues: {
     user_id_petugas_lapangan: "",
     user_id_pengawas: "",
-    data_vendor_id: "",
-    identifikasi_kebutuhan_id: "",
+    // data_vendor_id: "",
+    // identifikasi_kebutuhan_id: "",
     nama_pemberi_informasi: "",
-    tanggal_survei: "",
+    // tanggal_survei: "",
   },
 
   material: null,
   peralatan: null,
   tenaga_kerja: null,
   setSelectedValue: (value) => set({ selectedValue: value }),
+  // For Dropdown
   fetchUserOptions: async () => {
     try {
       const response = await axios.get(
@@ -31,12 +34,31 @@ export const datadetail_store = create((set) => ({
         response.data?.data.map((user) => ({
           value: user.user_id,
           label: user.nama_lengkap,
+          nip: user.nip,
         })) || [];
       set({ userOptions: options });
-      console.log("User options berhasil diambil:", options);
     } catch (error) {
       console.error(
         "Error fetching user options:",
+        error.response?.data || error.message
+      );
+    }
+  },
+  fetchPengawasUserOptions: async () => {
+    try {
+      const response = await axios.get(
+        "https://api-ecatalogue-staging.online/api/pengumpulan-data/list-user?role=Pengawas"
+      );
+      const options =
+        response.data?.data.map((user) => ({
+          value: user.user_id,
+          label: user.nama_lengkap,
+          nip: user.nip,
+        })) || [];
+      set({ pengawasUserOptions: options });
+    } catch (error) {
+      console.error(
+        "Error fetching pengawas user options:",
         error.response?.data || error.message
       );
     }
@@ -52,17 +74,29 @@ export const datadetail_store = create((set) => ({
       set((state) => ({
         dataEntri: data.data,
         material: data.data.material || [],
-        peralatan: data.data.peralatan || [],
+        peralatan: data?.data?.peralatan || [],
         tenaga_kerja: data.data.tenaga_kerja || [],
+        identifikasi_kebutuhan_id: data.data.identifikasi_kebutuhan_id ?? null,
+        data_vendor_id: data.data.data_vendor_id ?? null,
         initialValues: {
           ...state.initialValues,
-          data_vendor_id: data.data.data_vendor_id || "",
-          identifikasi_kebutuhan_id: data.data.identifikasi_kebutuhan_id || "",
+          // data_vendor_id: data.data.data_vendor_id || "",
+          // identifikasi_kebutuhan_id: data.data.identifikasi_kebutuhan_id || "",
           nama_pemberi_informasi:
             data.data.keterangan_pemberi_informasi?.nama_pemberi_informasi ||
             "",
+          peralatan: data.data.peralatan || [],
+          material: data.data.material || [],
+          tenaga_kerja: data.data.tenaga_kerja || [],
+          user_id_petugas_lapangan:
+            data.data?.keterangan_petugas_lapangan.id_petugas_lapangan.toString(),
+          user_id_pengawas:
+            data.data?.keterangan_petugas_lapangan.id_pengawas.toString(),
           tanggal_survei:
             data.data.keterangan_petugas_lapangan?.tanggal_survei || "",
+          tanggal_pengawasan:
+            data.data.keterangan_petugas_lapangan?.tanggal_pengawasan || "",
+          catatan_blok_v: data.data?.catatan_blok_v || "",
         },
       }));
 
