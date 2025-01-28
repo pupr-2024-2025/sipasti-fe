@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../../components/navigationbar";
-import Pagination from "../../../components/pagination";
+import Navbar from "../../components/navigationbar";
+import Pagination from "../../components/pagination";
 import informasi_tahap_pengumpulanStore from "./informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
 import { More, ClipboardText } from "iconsax-react";
-import colors from "../../../styles/colors";
+import colors from "../../styles/colors";
 import Link from "next/link";
-import Modal from "../../../components/modal";
+import Modal from "../../components/modal";
 import { CloseCircle } from "iconsax-react";
-import SearchBox from "../../../components/searchbox";
-import TextInput from "../../../components/input";
-import Button from "../../../components/button";
+import SearchBox from "../../components/searchbox";
+import TextInput from "../../components/input";
+import Button from "../../components/button";
 
 export default function informasi_tahap_pengumpulan() {
   const [activeVendorMenu, setActiveVendorMenu] = useState(null);
@@ -32,7 +32,9 @@ export default function informasi_tahap_pengumpulan() {
     setUrlKuisionerResult,
     resetUrlKuisionerResult,
   } = informasi_tahap_pengumpulanStore();
-  const { status_progres } = initialValues;
+  const [status_progres, setStatusProgress] = useState(
+    initialValues.status_progres || []
+  );
   const [activeMenu, setActiveMenu] = useState(null);
   const [menuPosition, setMenuPosition] = useState({
     top: 0,
@@ -172,13 +174,13 @@ export default function informasi_tahap_pengumpulan() {
     );
   };
 
-  useEffect(() => {
-    if (Array.isArray(vendor)) {
-      setFilteredVendor(vendor);
-    } else {
-      setFilteredVendor([]);
-    }
-  }, [vendor]);
+  // useEffect(() => {
+  //   if (Array.isArray(vendor)) {
+  //     setFilteredVendor(vendor);
+  //   } else {
+  //     setFilteredVendor([]);
+  //   }
+  // }, [vendor]);
 
   const handleLinkClick = async (shortlist_id) => {
     if (!shortlist_id) {
@@ -196,11 +198,37 @@ export default function informasi_tahap_pengumpulan() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const newFilteredVendor = applySearchAndFilter(query, activeFilters);
-    if (JSON.stringify(filteredVendor) !== JSON.stringify(newFilteredVendor)) {
-      setFilteredVendor(newFilteredVendor);
-    }
+    setCurrentPage(1);
   };
+
+  useEffect(() => {
+    let filteredData = [];
+
+    console.log("Search Query:", searchQuery);
+    console.log("Initial Values:", initialValues);
+
+    if (
+      initialValues &&
+      typeof initialValues === "object" &&
+      Array.isArray(initialValues.status_progres)
+    ) {
+      filteredData = initialValues.status_progres.filter((item) => {
+        // console.log("Filtering item:", item);
+        const matches = Object.values(item).some((val) => {
+          const match = String(val)
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+          // console.log(`Value: ${val}, Match: ${match}`);
+          return match;
+        });
+        return matches;
+      });
+    }
+
+    console.log("Filtered Data:", filteredData);
+
+    setStatusProgress(filteredData);
+  }, [searchQuery, initialValues, setStatusProgress]);
 
   // const handleSearchInformasiPerencanaanData = (query) => {
   //   setSearchQuery(query);
@@ -382,6 +410,7 @@ export default function informasi_tahap_pengumpulan() {
           <SearchBox
             placeholder="Cari Data..."
             // onSearch={handleSearchInformasiPerencanaanData}
+            onSearch={handleSearch}
             withFilter={true}
             filterOptions={filterOptions}
             // onFilterClick={handleFilterClickInformasiPerencanaanData}

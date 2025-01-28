@@ -4,7 +4,7 @@ import Navbar from "../../../components/navigationbar";
 import Button from "../../../components/button";
 import Dropdown from "../../../components/dropdown";
 import { datadetail_store } from "../data_detail_store/data_detail";
-import { submitDataVerifikasiValidasi } from "../../../services/api";
+import { submitDataVerifikasiValidasi } from "../../../api/api";
 import FileInput from "../../../components/FileInput";
 import TextInput from "../../../components/input";
 import SearchBox from "../../../components/searchbox";

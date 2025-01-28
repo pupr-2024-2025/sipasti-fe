@@ -7,7 +7,13 @@ import Image from "next/image";
 import QuestionMark from "../../public/images/question_mark.svg";
 import Tooltip from "./tooltip";
 
-const Table = ({ columns, data, setParentState }) => {
+const Table = ({
+  columns,
+  data,
+  currentPage,
+  itemsPerPage,
+  setParentState,
+}) => {
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -93,7 +99,7 @@ const Table = ({ columns, data, setParentState }) => {
               <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
                 {/* Updated column title to "No" with 50px width */}
                 <th
-                  className="px-3 py-6 text-base font-normal"
+                  className="px-3 py-6 text-base font-normal text-center"
                   style={{ width: "50px" }}>
                   No
                 </th>
@@ -141,7 +147,7 @@ const Table = ({ columns, data, setParentState }) => {
                   <td
                     className="px-3 py-6 text-base font-normal text-center"
                     style={{ width: "50px" }}>
-                    {index + 1}
+                    {index + 1 + (currentPage - 1) * itemsPerPage}
                   </td>
                   {columns.map((column) => (
                     <td

@@ -1,11 +1,9 @@
-import axios from "axios";
-
-const API_URL = "https://api-ecatalogue-staging.online/api";
+import api from "./apiCalls";
 
 export const submitData = async (data, options) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/pengumpulan-data/verifikasi-pengawas`,
+    const response = await api.post(
+      "/pengumpulan-data/verifikasi-pengawas",
       data,
       options
     );
@@ -18,8 +16,8 @@ export const submitData = async (data, options) => {
 
 export const submitDataVerifikasiValidasi = async (data) => {
   try {
-    const response = await axios.post(
-      `${API_URL}/pemeriksaan-rekonsiliasi/store-verifikasi-validasi`,
+    const response = await api.post(
+      "/pemeriksaan-rekonsiliasi/store-verifikasi-validasi",
       data
     );
     return response.data;
@@ -31,9 +29,7 @@ export const submitDataVerifikasiValidasi = async (data) => {
 
 export const fetchDataEntriData = async (id) => {
   try {
-    const response = await axios.get(
-      `https://api-ecatalogue-staging.online/api/pengumpulan-data/get-entri-data/${id}`
-    );
+    const response = await api.get(`/pengumpulan-data/get-entri-data/${id}`);
     const data = response.data.data;
 
     set((state) => ({
