@@ -5,7 +5,7 @@ import Navbar from "../../../components/navigationbar";
 import CustomAlert from "../../../components/alert";
 import TextInput from "../../../components/input";
 import survei_kuesionerStore from "./survei_kuesioner_store/survei_kuesioner";
-import informasi_tahap_pengumpulanStore from "../pengawas/informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
+// import informasi_tahap_pengumpulanStore from "../pengawas/informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
 import SearchBox from "../../../components/searchbox";
 import Button from "../../../components/button";
 import Dropdown from "../../../components/dropdown";

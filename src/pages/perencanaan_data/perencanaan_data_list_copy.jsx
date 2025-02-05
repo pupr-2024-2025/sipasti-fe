@@ -4,9 +4,9 @@ import Table from "../../components/table";
 import Pagination from "../../components/pagination";
 import SearchBox from "../../components/searchbox";
 import { More, CloseCircle } from "iconsax-react";
-import Link from "next/link";
+import { useRouter } from "next/router"; // <-- Import useRouter
 import Modal from "../../components/modal";
-import usePengumpulanInformasiStore from "../../store/pengumpulanInformasiStore";
+import usePerencanaanStore from "../../store/perencanaanStore";
 
 const InformasiPengumpulanData = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,7 +28,9 @@ const InformasiPengumpulanData = () => {
     fetchVendor,
     setSelectedIdPaket,
     selectedIdPaket,
-  } = usePengumpulanInformasiStore();
+  } = usePerencanaanStore();
+
+  const router = useRouter(); // <-- Initialize useRouter
 
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -41,43 +43,9 @@ const InformasiPengumpulanData = () => {
       setSelectedIdPaket(storedId);
     }
   }, []);
-
-  useEffect(() => {
-    if (isModalOpen && selectedIdPaket) {
-      const iframe = document.getElementById("iframe-id");
-      if (iframe) {
-        iframe.contentWindow.postMessage({ id: selectedIdPaket }, "*");
-      }
-    }
-  }, [isModalOpen, selectedIdPaket]);
-
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  const handleIframeResize = (event) => {
-    if (event.origin !== window.location.origin) return;
-    if (event.data && event.data.height) {
-      setIframeHeight(event.data.height);
-    }
-  };
-
-  const openModal = useCallback(
-    (id) => {
-      console.log("Opening modal with idzzzzzzzz:", id);
-      if (!isModalOpen) {
-        localStorage.setItem("selectedIdPaket", id);
-        setSelectedIdPaket(id);
-        setIsModalOpen(true);
-      }
-    },
-    [isModalOpen]
-  );
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    localStorage.removeItem("selectedIdPaket");
-  };
 
   const columnsWithNumbering = [
     {
@@ -120,7 +88,7 @@ const InformasiPengumpulanData = () => {
       <div className="space-y-3">
         <div className="flex flex-row justify-between items-center mt-8 mb-7">
           <h1 className="text-H3 font-bold">
-            Informasi Tahap Pengumpulan Data
+            Informasi Tahap Perencanaan Data
           </h1>
           <SearchBox
             placeholder="Cari Data..."
@@ -156,8 +124,6 @@ const InformasiPengumpulanData = () => {
         totalData={tableData.length}
         onPageChange={setCurrentPage}
       />
-
-      {/* Active Menu Popup */}
       {activeMenu && (
         <div
           className="absolute bg-white rounded-[12px] mr-[12px] shadow-lg p-2 w-56"
@@ -168,43 +134,27 @@ const InformasiPengumpulanData = () => {
             zIndex: 10,
             boxShadow: "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
           }}>
-          <Link
-            href="#"
+          <button
             className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
             onClick={() => {
               const item = tableData.find((item) => item.id === activeMenu);
               if (item) {
                 console.log("Item found:", item);
-                openModal(item.id);
+
+                // Set localStorage values
+                localStorage.setItem("identifikasi_kebutuhan_id", item.id);
+                localStorage.setItem("informasi_umum_id", item.id);
+
+                // Push the new route
+                router.push(`/perencanaan_data/tahap1?fromTahap2=true`);
               } else {
                 console.log("Item not found for activeMenu:", activeMenu);
               }
             }}>
-            Lihat Detail Kuesioner
-          </Link>
+            Edit Kuesioner
+          </button>
         </div>
       )}
-
-      {/* Modal */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <div className="p-4">
-          <div className="flex justify-between items-center pl-4 pt-4 pr-4">
-            <div className="text-xl font-bold">Informasi Vendor</div>
-            <button onClick={closeModal}>
-              <CloseCircle size="24" />
-            </button>
-          </div>
-          <div className="mt-4">
-            <iframe
-              src={`./modal/vendor?id=${selectedIdPaket}`}
-              width="100%"
-              height={iframeHeight}
-              frameBorder="0"
-              title="Test1 Page Content"
-            />
-          </div>
-        </div>
-      </Modal>
     </div>
   );
 };

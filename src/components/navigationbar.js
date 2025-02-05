@@ -27,7 +27,6 @@ const Navbar = () => {
     }
   }, []);
 
-
   useEffect(() => {
     console.log("User role:", role);
   }, [role]);
@@ -75,7 +74,7 @@ const Navbar = () => {
       roles: ["superadmin", "Tim Teknis Balai"],
     },
     {
-      href: "/pengumpulan_data/pengawas/informasi_tahap_pengumpulan",
+      href: "/pengumpulan_data/informasi_tahap_pengumpulan",
       label: "Pengumpulan Data",
       activePath: "/pengumpulan_data",
       roles: ["superadmin", "Petugas Lapangan", "Pengolah Data", "Pengawas"],
@@ -84,11 +83,7 @@ const Navbar = () => {
       href: "/pemeriksaan_data/informasi_pemeriksaan_data",
       label: "Pemeriksaan",
       activePath: "/pemeriksaan_data",
-      roles: [
-        "superadmin",
-        "Koordinator Provinsi",
-        "Tim Teknis Balai",
-      ],
+      roles: ["superadmin", "Koordinator Provinsi", "Tim Teknis Balai"],
     },
     {
       href: "",
@@ -124,10 +119,10 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("username");
-  localStorage.removeItem("role");
-  window.location.href = "/login";
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+    window.location.href = "/login";
     // try {
     //   const response = await fetch(
     //     "http://api-ecatalogue-staging.online/api/logout",
@@ -386,12 +381,12 @@ const Navbar = () => {
             </div>
             <div className="space-y-1 flex flex-col">
               <span className="text-emphasis-on_surface-high text-ExtraSmall">
-              {role || "Loading..."}
+                {role || "Loading..."}
               </span>
               <span className="text-emphasis-on_surface-high text-H6">
-              {(username && username.includes("@gmail.com") 
-  ? username.replace("@gmail.com", "") 
-  : username) || "Loading..."}
+                {(username && username.includes("@gmail.com")
+                  ? username.replace("@gmail.com", "")
+                  : username) || "Loading..."}
               </span>
             </div>
           </div>

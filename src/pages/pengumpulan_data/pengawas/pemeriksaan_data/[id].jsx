@@ -4,7 +4,7 @@ import Navbar from "../../../../components/navigationbar";
 import Button from "../../../../components/button";
 import Dropdown from "../../../../components/dropdown";
 import { testStore } from "../pemeriksaan_data_store/pemeriksaan_data";
-import { submitData } from "../../../../services/api";
+import { submitData } from "../../../../api/api";
 import FileInput from "../../../../components/FileInput";
 import TextInput from "../../../../components/input";
 import SearchBox from "../../../../components/searchbox";

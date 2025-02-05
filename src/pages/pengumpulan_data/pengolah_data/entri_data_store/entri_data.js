@@ -66,7 +66,7 @@ const entri_datastore = create((set) => ({
   fetchDataHardCopy: async (id) => {
     try {
       const response = await axios.get(
-        `https://api-ecatalogue-staging.online/api/pengumpulan-data/get-entri-data-survey-kuisioner/${id}`
+        `https://api-ecatalogue-staging.online/api/pengumpulan-data/get-entri-data/${id}`
       );
       const data = response.data.data;
 

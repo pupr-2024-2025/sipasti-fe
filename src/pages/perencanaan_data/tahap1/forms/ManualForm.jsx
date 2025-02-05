@@ -40,11 +40,27 @@ const ManualForm = ({
           onSubmit={async (values) => {
             const isSuccess = await submitManual(values);
             if (isSuccess) {
-              router.push("/perencanaan_data/tahap2");
+              // Retrieve values from localStorage
+              const informasiUmumId = localStorage.getItem("informasi_umum_id");
+              const identifikasiKebutuhanId = localStorage.getItem(
+                "identifikasi_kebutuhan_id"
+              );
+
+              // Check if both are available and match
+              if (
+                informasiUmumId &&
+                identifikasiKebutuhanId &&
+                informasiUmumId === identifikasiKebutuhanId
+              ) {
+                // If they exist and match, navigate to /perencanaan_data/tahap2?fromTahap3=true
+                router.push("/perencanaan_data/tahap2?fromTahap3=true");
+              } else {
+                // Otherwise, navigate to /perencanaan_data/tahap2
+                router.push("/perencanaan_data/tahap2");
+              }
             }
           }}
-          enableReinitialize={true}
-        >
+          enableReinitialize={true}>
           <Form>
             <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
               <Field name="kodeRup" type="input">
@@ -70,8 +86,7 @@ const ManualForm = ({
                     <div className="flex flex-row items-center space-x-4">
                       <label
                         className={`text-B2 text-emphasis-on_surface-high h-8 min-w-[430px] mr-2 flex items-center`}
-                        style={{ whiteSpace: "nowrap" }}
-                      >
+                        style={{ whiteSpace: "nowrap" }}>
                         Nama Balai
                         <span className="text-custom-red-500 ml-1">*</span>
                       </label>
@@ -155,16 +170,14 @@ const ManualForm = ({
                 type="button"
                 variant="outlined_yellow"
                 size="Medium"
-                onClick={() => {}}
-              >
+                onClick={() => {}}>
                 Kembali
               </Button>
               <Button
                 type="submit"
                 variant="solid_blue"
                 size="Medium"
-                onClick={() => {}}
-              >
+                onClick={() => {}}>
                 Lanjut
               </Button>
             </div>

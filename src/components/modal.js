@@ -42,9 +42,8 @@ const Modal = ({ isOpen, onClose, children }) => {
       {/* Modal content */}
       <div className="fixed inset-0 flex justify-center items-center z-50">
         <div
-          className={`bg-surface-light-background p-4 rounded-[16px] shadow-lg relative max-w-[784px] w-full transition-all ${
-            isOpen ? "duration-[800ms]" : "duration-[500ms]"
-          } transform ${
+          className={`bg-surface-light-background p-4 rounded-[16px] shadow-lg relative w-[60%] max-w-[60vw] h-[60%] max-h-[60vh]
+ transition-all ${isOpen ? "duration-[800ms]" : "duration-[500ms]"} transform ${
             isOpen
               ? "opacity-100 translate-y-0 scale-100"
               : "opacity-0 translate-y-4 scale-95"

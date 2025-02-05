@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "https://api-ecatalogue-staging.online/api",
-  timeout: 10000,
+  // timeout: 1000000,
 });
 
 api.interceptors.request.use(

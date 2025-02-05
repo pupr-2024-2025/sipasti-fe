@@ -105,7 +105,7 @@ const Table = ({
                 </th>
                 {columns.map((column, index) => (
                   <th
-                    key={index}
+                    key={column.accessor}
                     className={`px-3 py-6 text-base font-normal ${
                       index !== columns.length - 1 ? "pr-6" : ""
                     }`}
@@ -135,7 +135,7 @@ const Table = ({
             <tbody className="bg-surface-light-background">
               {data.map((row, index) => (
                 <tr
-                  key={row.id}
+                  key={row.id || `row-${index}`}
                   className={`${
                     selectedRows.includes(row.id)
                       ? "bg-custom-blue-200"
@@ -233,6 +233,19 @@ const Table = ({
                               ? column.onClick(row)
                               : console.log(
                                   `Clicked icon button on row ${row.id}`
+                                )
+                          }
+                        />
+                      ) : column.type === "iconButtonWithEvent" ? (
+                        <Button
+                          size="Small"
+                          variant="filled_icon"
+                          iconLeft={<column.icon />}
+                          onClick={(event) =>
+                            column.onClick
+                              ? column.onClick(row, event)
+                              : console.log(
+                                  `Clicked icon button with event on row ${row.id}`
                                 )
                           }
                         />

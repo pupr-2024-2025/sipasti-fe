@@ -80,7 +80,7 @@ const SearchBox = ({
                 boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.1)",
                 maxHeight: "316px",
                 overflowY: "auto", // Scroll untuk elemen ini saja
-                zIndex: 100000,
+                zIndex: 10,
                 position: "absolute",
                 // position: "relative", // Pastikan ada, biar child `absolute` tetap ngikut
                 // overflow: "visible",
