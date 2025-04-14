@@ -66,7 +66,7 @@ const Vendor = () => {
         setIsModalOpen(true);
       }
     },
-    [isModalOpen, setSelectedIdPaket]
+    [isModalOpen, setSelectedIdLinkKuesioner]
   );
 
   const closeModal = () => {

@@ -8,7 +8,7 @@ import axios from "axios";
 import Navbar from "../../../components/navigationbar";
 import Stepper from "../../../components/stepper";
 import { useRouter } from "next/router";
-import useStore from "./store";
+import useStore from "../../../store/tahap_3_store/store";
 
 const Tahap3 = ({}) => {
   const [data, setData] = useState({ material: [], equipment: [], labor: [] });
@@ -45,7 +45,7 @@ const Tahap3 = ({}) => {
     "Penentuan Shortlist Vendor",
     "Perancangan Kuesioner",
   ];
-  const store = useStore ? useStore() : {};
+  const store = useStore();
   const { setCheckedValue } = store;
 
   const getPaginatedData = (data, page) => {
@@ -55,12 +55,10 @@ const Tahap3 = ({}) => {
   };
 
   useEffect(() => {
-    // Ambil identifikasi_kebutuhan_id dari localStorage
     const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
     if (storedId) {
       setIdentifikasi_Kebutuhan_id(storedId);
 
-      // Request ke API dengan ID langsung di URL
       axios
         .get(
           `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${storedId}`
@@ -223,46 +221,52 @@ const Tahap3 = ({}) => {
     }
   };
 
-  const fetchVendorData = async (id) => {
-    console.log("Fetching vendor data for ID:", id);
+  const fetchVendorData = useCallback(
+    async (id) => {
+      console.log("Fetching vendor data for ID:", id);
 
-    try {
-      const response = await axios.get(
-        `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${id}`
-      );
-      const result = response.data;
-
-      console.log("Vendor data fetched successfully:", JSON.stringify(result));
-      if (result?.data) {
-        const { material, peralatan, tenaga_kerja } = result.data;
-        const materialIds = material.map((material) => material.id);
-        console.log(materialIds);
-        const peralatanIds = peralatan.map((peralatan) => peralatan.id);
-        console.log(peralatanIds);
-        const tenaga_kerjaIds = tenaga_kerja.map(
-          (tenaga_kerja) => tenaga_kerja.id
+      try {
+        const response = await axios.get(
+          `https://api-ecatalogue-staging.online/api/perencanaan-data/get-data-vendor/${id}`
         );
-        console.log(tenaga_kerjaIds);
+        const result = response.data;
 
-        setMaterialData(material || []);
-        setEquipmentData(peralatan || []);
-        setLaborData(tenaga_kerja || []);
-        setAllDataMaterial(material || []);
-        setAllDataPeralatan(peralatan || []);
-        setAllDataTenagaKerja(tenaga_kerja || []);
+        console.log(
+          "Vendor data fetched successfully:",
+          JSON.stringify(result)
+        );
+        if (result?.data) {
+          const { material, peralatan, tenaga_kerja } = result.data;
+          const materialIds = material.map((material) => material.id);
+          console.log(materialIds);
+          const peralatanIds = peralatan.map((peralatan) => peralatan.id);
+          console.log(peralatanIds);
+          const tenaga_kerjaIds = tenaga_kerja.map(
+            (tenaga_kerja) => tenaga_kerja.id
+          );
+          console.log(tenaga_kerjaIds);
 
-        setCheckedMaterial(materialIds);
-        setCheckedEquipment(peralatanIds);
-        setCheckedLabor(tenaga_kerjaIds);
+          setMaterialData(material || []);
+          setEquipmentData(peralatan || []);
+          setLaborData(tenaga_kerja || []);
+          setAllDataMaterial(material || []);
+          setAllDataPeralatan(peralatan || []);
+          setAllDataTenagaKerja(tenaga_kerja || []);
 
-        setCheckedValue(materialIds);
+          setCheckedMaterial(materialIds);
+          setCheckedEquipment(peralatanIds);
+          setCheckedLabor(tenaga_kerjaIds);
 
-        console.log("State updated with vendor data.");
+          setCheckedValue(materialIds);
+
+          console.log("State updated with vendor data.");
+        }
+      } catch (error) {
+        console.error("Error fetching vendor data:", error);
       }
-    } catch (error) {
-      console.error("Error fetching vendor data:", error);
-    }
-  };
+    },
+    [setCheckedValue]
+  );
 
   useEffect(() => {
     const storedId = localStorage.getItem("identifikasi_kebutuhan_id");
@@ -274,7 +278,7 @@ const Tahap3 = ({}) => {
         "identifikasi_kebutuhan_id tidak ditemukan di localStorage."
       );
     }
-  }, []);
+  }, [fetchVendorData]);
 
   const filterOptions = [
     { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },

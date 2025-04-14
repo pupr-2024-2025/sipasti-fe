@@ -3,7 +3,7 @@ import { Field, FieldArray, Form, Formik } from "formik";
 import Navbar from "../../../../components/navigationbar";
 import Button from "../../../../components/button";
 import Dropdown from "../../../../components/dropdown";
-import { testStore } from "../pemeriksaan_data_store/pemeriksaan_data";
+import { testStore } from "../../../../store/pemeriksaan_data_store/pemeriksaan_data";
 import { submitData } from "../../../../api/api";
 import FileInput from "../../../../components/FileInput";
 import TextInput from "../../../../components/input";

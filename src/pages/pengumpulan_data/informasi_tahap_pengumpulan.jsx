@@ -40,7 +40,7 @@ const InformasiPengumpulanData = () => {
     if (storedId) {
       setSelectedIdPaket(storedId);
     }
-  }, []);
+  }, [fetchData, setSelectedIdPaket]);
 
   useEffect(() => {
     if (isModalOpen && selectedIdPaket) {
@@ -64,14 +64,14 @@ const InformasiPengumpulanData = () => {
 
   const openModal = useCallback(
     (id) => {
-      console.log("Opening modal with idzzzzzzzz:", id);
+      console.log("Opening modal with id:", id);
       if (!isModalOpen) {
         localStorage.setItem("selectedIdPaket", id);
         setSelectedIdPaket(id);
         setIsModalOpen(true);
       }
     },
-    [isModalOpen]
+    [isModalOpen, setSelectedIdPaket]
   );
 
   const closeModal = () => {

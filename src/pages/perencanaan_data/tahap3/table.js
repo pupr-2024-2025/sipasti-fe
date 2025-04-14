@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import TextInput from "../components/input";
-import Dropdown from "../components/dropdown";
-import Button from "../components/button";
-import Checkbox from "../components/checkbox";
+import TextInput from "../../../components/input";
+import Dropdown from "../../../components/dropdown";
+import Button from "../../../components/button";
+import Checkbox from "../../../components/checkbox";
 import Image from "next/image";
-import QuestionMark from "../../public/images/question_mark.svg";
-import Tooltip from "./tooltip";
-import useStore from "../pages/perencanaan_data/tahap3/store";
+import QuestionMark from "../../../../public/images/question_mark.svg";
+import Tooltip from "../../../components/tooltip";
+import useStore from "../../../store/tahap_3_store/store";
 
 const Table = ({ columns, data, setParentState }) => {
-  const store = useStore ? useStore() : {};
-  const { checkedValue = [] } = store;
+  const store = useStore();
+  const { checkedValue } = store || {};
+  const safeCheckedValue = checkedValue || [];
   const [inputValues, setInputValues] = useState(
     data.reduce((acc, row) => {
       acc[row.id] = {};
@@ -64,10 +65,6 @@ const Table = ({ columns, data, setParentState }) => {
             : value,
         },
       };
-      console.log(inputValues);
-
-      // Update the parent state after inputValues is updated
-      setParentState(updatedInputValues);
       return updatedInputValues;
     });
 

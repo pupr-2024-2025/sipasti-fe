@@ -1,10 +1,10 @@
 import { Field } from "formik";
 import Checkbox from "../../../../components/checkbox";
-import useTahap3Store from "../tahap3store";
+import useTahap3Store from "../../../../store/tahap_3_store/tahap3store";
 import SimpleTabs from "../../../../components/SimpleTabs";
 import SearchBox from "../../../../components/searchbox";
 import { Button } from "@mui/material";
-import useStore from "../tahap3store";
+import useStore from "../../../../store/tahap_3_store/tahap3store";
 
 const PeralatanShortlist = ({ values, rows, hide }) => {
   const tabs = ["Material", "Peralatan", "Tenaga Kerja"];

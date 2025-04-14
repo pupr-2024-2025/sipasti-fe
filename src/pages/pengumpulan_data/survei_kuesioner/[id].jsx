@@ -20,7 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 
 dayjs.locale("id");
 
-export default function survei_kuesioner() {
+export default function SurveiKuesioner() {
   const [currentAction, setCurrentAction] = useState("save");
   const [date, setDate] = useState(null);
   const [error, setError] = useState(false);
@@ -51,7 +51,7 @@ export default function survei_kuesioner() {
     if (role !== "Petugas Lapangan" && role !== "superadmin") {
       router.push("/access-denied");
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     fetchPetugasLapanganUserOptions();

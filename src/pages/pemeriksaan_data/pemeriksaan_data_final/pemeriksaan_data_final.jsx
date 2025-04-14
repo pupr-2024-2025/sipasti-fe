@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Field, FieldArray, Form, Formik } from "formik";
 import Navbar from "../../../components/navigationbar";
 import Button from "../../../components/button";
-import { pemeriksaan_dataStore } from "../pemeriksaan_data_final_store/pemeriksaan_data.js";
-import { submitDataVerifikasiValidasi } from "../../../services/api";
+import { pemeriksaan_dataStore } from "../../../store/pemeriksaan_data_final_store/pemeriksaan_data.js";
+import { submitDataVerifikasiValidasi } from "../../../api/api";
 import FileInput from "../../../components/FileInput";
 
 import { useStore } from "zustand";

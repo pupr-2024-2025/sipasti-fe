@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 
 const Checkbox = ({ label, checked: initialChecked = false, onChange }) => {
   const [checked, setChecked] = useState(initialChecked);
@@ -18,7 +19,7 @@ const Checkbox = ({ label, checked: initialChecked = false, onChange }) => {
         onClick={handleCheckboxChange}
         type="button"
         className="flex items-center">
-        <img
+        <Image
           src={checked ? "/images/checked.svg" : "/images/unchecked.svg"}
           alt={checked ? "Checked" : "Unchecked"}
         />

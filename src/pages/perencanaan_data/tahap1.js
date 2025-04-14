@@ -15,7 +15,7 @@ import { data } from "autoprefixer";
 import { Formik } from "formik";
 import SipastiForm from "./tahap1/forms/SipastiForm";
 import ManualForm from "./tahap1/forms/ManualForm";
-import tahap1Store from "./tahap1/forms/store/tahap1store";
+import tahap1Store from "../../store/tahap_1_store/tahap1store";
 
 const Tahap1V2 = () => {
   const [koderupSipasti, setKodeRUPSipasti] = useState("");
@@ -66,21 +66,21 @@ const Tahap1V2 = () => {
     const data =
       type === "sipasti"
         ? {
-          tipe_informasi_umum: "sipasti",
-          kode_rup: koderupSipasti,
-          nama_paket: namaPaketSipasti,
-          nama_ppk: namaPPKSipasti,
-          jabatan_ppk: jabatanPPKSipasti,
-          nama_balai: "",
-        }
+            tipe_informasi_umum: "sipasti",
+            kode_rup: koderupSipasti,
+            nama_paket: namaPaketSipasti,
+            nama_ppk: namaPPKSipasti,
+            jabatan_ppk: jabatanPPKSipasti,
+            nama_balai: "",
+          }
         : {
-          tipe_informasi_umum: "manual",
-          kode_rup: koderupManual,
-          nama_paket: namaPaketManual,
-          nama_ppk: namaPPKManual,
-          jabatan_ppk: jabatanPPKManual,
-          nama_balai: namaBalaiManual,
-        };
+            tipe_informasi_umum: "manual",
+            kode_rup: koderupManual,
+            nama_paket: namaPaketManual,
+            nama_ppk: namaPPKManual,
+            jabatan_ppk: jabatanPPKManual,
+            nama_balai: namaBalaiManual,
+          };
 
     try {
       const response = await fetch(url, {
@@ -148,51 +148,59 @@ const Tahap1V2 = () => {
         fetchInformasiUmum(informasiUmumId);
       }
     }
-  }, [balaiOptions]); // Tambahkan balaiOptions ke dependensi
+  }, [balaiOptions, fetchInformasiUmum]);
+
   console.log("nama balai manual", namaBalaiManual);
 
-  const fetchInformasiUmum = async (id) => {
-    console.log("Isi balaiOptions:", balaiOptions);
-    try {
-      const response = await axios.get(
-        `https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/${id}`
-      );
-      const result = response.data;
+  const fetchInformasiUmum = useCallback(
+    async (id) => {
+      console.log("Isi balaiOptions:", balaiOptions);
+      try {
+        const response = await axios.get(
+          `https://api-ecatalogue-staging.online/api/perencanaan-data/informasi-umum/${id}`
+        );
+        const result = response.data;
 
-      console.log("Get data informasi umum", result.data.nama_balai);
+        console.log("Get data informasi umum", result.data.nama_balai);
 
-      if (result?.data) {
-        // setKodeRUPManual(result.data.kode_rup || "");
-        // setNamaPaketManual(result.data.nama_paket || "");
-        // setNamaPPKManual(result.data.nama_ppk || "");
-        // setJabatanPPKManual(result.data.jabatan_ppk || "");
-        console.log("nama balai yang terisi", result.data.nama_balai);
-        console.log("Isi formatted options : " + balaiOptions);
-        const selectedBalai = balaiOptions.find((option) => {
-          console.log("Isi dari option value : " + option.value);
-          return option.value === parseInt(result.data.nama_balai);
-        });
-        if (typeof selectedBalai === "undefined") {
-          console.log("error undefined data");
+        if (result?.data) {
+          const selectedBalai = balaiOptions.find((option) => {
+            console.log("Isi dari option value : " + option.value);
+            return option.value === parseInt(result.data.nama_balai);
+          });
+          if (typeof selectedBalai === "undefined") {
+            console.log("error undefined data");
+          }
+          console.log("isi selected balai : " + selectedBalai?.label ?? "");
+          const dataSaved = {
+            kodeRup: result.data.kode_rup,
+            namaPaket: result.data.nama_paket,
+            namaPpk: result.data.nama_ppk,
+            jabatanPpk: result.data.jabatan_ppk,
+            namaBalai: selectedBalai,
+          };
+          setInitialValueManual(dataSaved);
+          setNamaBalaiManual(selectedBalai?.value ?? 0);
         }
-        console.log("isi selected balai : " + selectedBalai?.label ?? "");
-        const dataSaved = {
-          kodeRup: result.data.kode_rup,
-          namaPaket: result.data.nama_paket,
-          namaPpk: result.data.nama_ppk,
-          jabatanPpk: result.data.jabatan_ppk,
-          namaBalai: selectedBalai,
-        }
-        setInitialValueManual(dataSaved);
-        setNamaBalaiManual(selectedBalai?.value ?? 0);
+      } catch (error) {
+        console.error("Gagal memuat data Informasi Umum:", error);
       }
-    } catch (error) {
-      console.error("Gagal memuat data Informasi Umum:", error);
+      console.log("oh my wow", namaBalaiManual);
+    },
+    [balaiOptions, namaBalaiManual, setInitialValueManual]
+  );
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromTahap2 = params.get("fromTahap2");
+
+    if (fromTahap2 === "true") {
+      const informasiUmumId = localStorage.getItem("informasi_umum_id");
+      if (informasiUmumId) {
+        fetchInformasiUmum(informasiUmumId);
+      }
     }
-    console.log("oh my wow", namaBalaiManual);
-  };
-  console.log("ayam bakar ash shiddiq", namaBalaiManual);
-  
+  }, [balaiOptions, fetchInformasiUmum]);
+
   console.log("type of nama balai", typeof namaBalaiManual);
   const areFieldsFilled = () => {
     console.log("=== Type Nama Balai", typeof namaBalaiManual);
@@ -215,7 +223,7 @@ const Tahap1V2 = () => {
     );
   };
 
-  console.log('balaiOptions', balaiOptions)
+  console.log("balaiOptions", balaiOptions);
 
   const handleNextStep = async (type) => {
     if (isSubmitting) return;
@@ -266,9 +274,7 @@ const Tahap1V2 = () => {
           <h4 className="text-H4 text-emphasis-on_surface-high">
             Informasi Umum
           </h4>
-          <SipastiForm
-            hide={selectedTab !== 0}
-          />
+          <SipastiForm hide={selectedTab !== 0} />
           <ManualForm
             hide={selectedTab !== 1}
             balaiOptions={balaiOptions}

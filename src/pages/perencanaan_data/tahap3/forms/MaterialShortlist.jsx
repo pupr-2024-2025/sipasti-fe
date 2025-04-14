@@ -3,7 +3,7 @@ import Checkbox from "../../../../components/checkbox";
 import SearchBox from "../../../../components/searchbox";
 import { Button } from "@mui/material";
 import SimpleTabs from "../../../../components/SimpleTabs";
-import useTahap3Store from "../tahap3store";
+import useTahap3Store from "../../../../store/tahap_3_store/tahap3store";
 import { useEffect, useState } from "react";
 
 const MaterialShortlist = ({ values, rows, hide }) => {

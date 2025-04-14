@@ -1,7 +1,9 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import Navbar from "../../components/navigationbar";
 import Stepper from "../../components/stepper";
-import useStore from "./tahap3/tahap3store";
+import useStore from "../../store/tahap_3_store/tahap3store";
 import SearchBox from "../../components/searchbox";
 import Button from "../../components/button";
 import Checkbox from "../../components/checkbox";
@@ -22,7 +24,20 @@ export default function Tahap3() {
   const navigateToTahap1 = () => {
     window.location.href = "/perencanaan_data/tahap2?fromTahap3=true";
   };
-  const { initialValues, fetchStatusProgres } = useStore();
+  const [initialValues, setInitialValues] = useState({
+    material: [],
+    peralatan: [],
+    tenaga_kerja: [],
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const values = useStore.getState().initialValues;
+      setInitialValues(values);
+    }
+  }, []);
+
+  const fetchStatusProgres = useStore((state) => state.fetchStatusProgres);
 
   const filterOptions = [
     { label: "Responden/Vendor", accessor: "nama_vendor", checked: true },
@@ -48,15 +63,13 @@ export default function Tahap3() {
 
   const router = useRouter();
 
-  const {
-    currentTab,
-    alertMessage,
-    alertSeverity,
-    isAlertOpen,
-    setAlertMessage,
-    setAlertSeverity,
-    setIsAlertOpen,
-  } = useStore();
+  const currentTab = useStore((state) => state.currentTab);
+  const alertMessage = useStore((state) => state.alertMessage);
+  const alertSeverity = useStore((state) => state.alertSeverity);
+  const isAlertOpen = useStore((state) => state.isAlertOpen);
+  const setAlertMessage = useStore((state) => state.setAlertMessage);
+  const setAlertSeverity = useStore((state) => state.setAlertSeverity);
+  const setIsAlertOpen = useStore((state) => state.setIsAlertOpen);
 
   console.log("currentTab", currentTab);
 
@@ -114,7 +127,7 @@ export default function Tahap3() {
   // Adjust totalData to reflect the data for the selected tab
   const totalData = dataByTab[currentTab]?.length || 0;
 
-  console.log('initialValue', initialValues)
+  console.log("initialValue", initialValues);
 
   return (
     <div className="p-8">

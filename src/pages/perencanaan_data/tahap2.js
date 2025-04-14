@@ -1,7 +1,7 @@
 import { Field, FieldArray, Form, Formik } from "formik";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useStore from "./tahap2/tahap2store";
+import useStore from "../../store/tahap2/tahap2store";
 import Navbar from "../../components/navigationbar";
 import Stepper from "../../components/stepper";
 // import Tabs from "../../components/Tabs";
@@ -9,7 +9,7 @@ import Button from "../../components/button";
 import Pagination from "../../components/pagination";
 import TextInput from "../../components/input";
 import Dropdown from "../../components/dropdown";
-// import DropdownAPI from "../../components/DropdownAPI";
+import { useCallback } from "react";
 import SearchBox from "../../components/searchbox";
 import AddRowModal from "../../components/addrowmodal";
 import { useRouter } from "next/router";
@@ -147,6 +147,26 @@ export default function Tahap2() {
     );
   };
 
+  const fetchIdentifikasiKebutuhan = useCallback(
+    async (id) => {
+      console.log("Isi balaiOptions:", id);
+      try {
+        const response = await axios.get(
+          `https://api-ecatalogue-staging.online/api/perencanaan-data/get-identifikasi-kebutuhan/${id}`
+        );
+        const resultMaterial = response.data.data.material;
+        const resultPeralatans = response.data.data.peralatan;
+        setInitialValues({
+          materials: resultMaterial,
+          peralatans: resultPeralatans,
+        });
+      } catch (error) {
+        console.error("Gagal memuat data Informasi Umum:", error);
+      }
+    },
+    [setInitialValues]
+  );
+
   useEffect(() => {
     const fetchProvincesOptions = async () => {
       try {
@@ -164,7 +184,6 @@ export default function Tahap2() {
         );
         setProvincesOptions(transformedData);
 
-        // Setelah data provinsi selesai, lanjutkan proses berikutnya
         const params = new URLSearchParams(window.location.search);
         const fromTahap3 = params.get("fromTahap3");
 
@@ -184,24 +203,7 @@ export default function Tahap2() {
     };
 
     fetchProvincesOptions();
-  }, [setProvincesOptions]);
-
-  const fetchIdentifikasiKebutuhan = async (id) => {
-    console.log("Isi balaiOptions:", id);
-    try {
-      const response = await axios.get(
-        `https://api-ecatalogue-staging.online/api/perencanaan-data/get-identifikasi-kebutuhan/${id}`
-      );
-      const resultMaterial = response.data.data.material;
-      const resultPeralatans = response.data.data.peralatan;
-      setInitialValues({
-        materials: resultMaterial,
-        peralatans: resultPeralatans,
-      });
-    } catch (error) {
-      console.error("Gagal memuat data Informasi Umum:", error);
-    }
-  };
+  }, [setProvincesOptions, fetchIdentifikasiKebutuhan]);
 
   console.log("initialValues", initialValues);
 

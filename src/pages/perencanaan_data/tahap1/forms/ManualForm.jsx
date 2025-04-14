@@ -2,7 +2,7 @@ import { Field, Form, Formik } from "formik";
 import SimpleTabs from "../../../../components/SimpleTabs";
 import TextInput from "../../../../components/input";
 import DropdownAPI from "../../../../components/dropdownapi";
-import tahap1Store from "./store/tahap1store";
+import tahap1Store from "../../../../store/tahap_1_store/tahap1store";
 import Button from "../../../../components/button";
 import { useRouter } from "next/router";
 

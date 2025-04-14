@@ -1,43 +1,49 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../../../components/navigationbar";
-import Pagination from "../../../components/pagination";
-import informasi_tahap_pengumpulanStore from "./informasi_tahap_pengumpulan/informasi_tahap_pengumpulan";
+import Navbar from "../../components/navigationbar";
+import Pagination from "../../components/pagination";
+import informasi_tahap_pemeriksaan_data_store from "./informasi_pemeriksaan_data_store/informasi_tahap_pemeriksaan_data";
 import { More, ClipboardText } from "iconsax-react";
-import colors from "../../../styles/colors";
+import colors from "../../styles/colors";
 import Link from "next/link";
-import Modal from "../../../components/modal";
+import Modal from "../../components/modal";
 import { CloseCircle } from "iconsax-react";
-import SearchBox from "../../../components/searchbox";
-import TextInput from "../../../components/input";
-import Button from "../../../components/button";
+import SearchBox from "../../components/searchbox";
+import TextInput from "../../components/input";
+import Button from "../../components/button";
+import { useRouter } from "next/router";
 
-export default function informasi_tahap_pengumpulan() {
+export default function InformasiTahapPemeriksaan() {
   const [activeVendorMenu, setActiveVendorMenu] = useState(null);
   const [activeFilters, setActiveFilters] = useState({});
-  const [dateExpired, setDateExpired] = useState(null);
-  const { vendor = [] } = informasi_tahap_pengumpulanStore(
+  const { vendor = [] } = informasi_tahap_pemeriksaan_data_store(
     (state) => state.initialValues
   );
-  const fetchPDF = informasi_tahap_pengumpulanStore((state) => state.fetchPDF);
-  const { fetchVendor, fetchGenerateLink } = informasi_tahap_pengumpulanStore();
+  const fetchPDF = informasi_tahap_pemeriksaan_data_store(
+    (state) => state.fetchPDF
+  );
+  const { fetchVendor, fetchGenerateLink } =
+    informasi_tahap_pemeriksaan_data_store();
   const [currentPage, setCurrentPage] = useState(1);
   const [currentModal, setCurrentModal] = useState(1);
   const itemsPerPage = 10;
   const itemsPerPageModal = 5;
   const {
     initialValues,
-    fetchStatusProgres,
+    fetchStatusPemeriksaanData,
     urlKuisionerResult,
     setUrlKuisionerResult,
     resetUrlKuisionerResult,
-  } = informasi_tahap_pengumpulanStore();
-  const { status_progres } = initialValues;
+  } = informasi_tahap_pemeriksaan_data_store();
+  const { status_pemeriksaan_data } = initialValues;
   const [activeMenu, setActiveMenu] = useState(null);
   const [menuPosition, setMenuPosition] = useState({
     top: 0,
     left: 0,
     alignRight: false,
   });
+
+  const router = useRouter();
+  const { id } = router.query;
 
   const handleFilterClick = (filters) => {
     const updatedFilters = { ...activeFilters };
@@ -48,35 +54,30 @@ export default function informasi_tahap_pengumpulan() {
     applySearchAndFilter(searchQuery, updatedFilters);
   };
 
-  const applySearchAndFilter = React.useCallback(
-    (query, filters) => {
-      if (!Array.isArray(vendor)) {
-        return [];
+  const applySearchAndFilter = (query, filters) => {
+    const lowerQuery = query.toLowerCase();
+    const isFilterActive = Object.values(filters).some((value) => value);
+
+    const result = vendor.filter((item) => {
+      const matchesSearch =
+        item.nama_vendor?.toLowerCase().includes(lowerQuery) ||
+        item.pemilik_vendor?.toLowerCase().includes(lowerQuery) ||
+        item.alamat?.toLowerCase().includes(lowerQuery) ||
+        item.kontak?.toLowerCase().includes(lowerQuery);
+
+      if (!isFilterActive) {
+        return matchesSearch;
       }
 
-      const lowerQuery = query.toLowerCase();
-      const isFilterActive = Object.values(filters).some((value) => value);
-
-      return vendor.filter((item) => {
-        const matchesSearch =
-          item.nama_vendor?.toLowerCase().includes(lowerQuery) ||
-          item.pemilik_vendor?.toLowerCase().includes(lowerQuery) ||
-          item.alamat?.toLowerCase().includes(lowerQuery) ||
-          item.kontak?.toLowerCase().includes(lowerQuery);
-
-        if (!isFilterActive) {
-          return matchesSearch;
-        }
-
-        const matchesFilter = Object.keys(filters).some((key) => {
-          return filters[key] && item[key]?.toLowerCase().includes(lowerQuery);
-        });
-
-        return matchesSearch && matchesFilter;
+      const matchesFilter = Object.keys(filters).some((key) => {
+        return filters[key] && item[key]?.toLowerCase().includes(lowerQuery);
       });
-    },
-    [vendor]
-  );
+
+      return matchesSearch && matchesFilter;
+    });
+
+    setFilteredVendor(result);
+  };
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerateLinkModalOpen, setIsGenerateLinkModalOpen] = useState(false);
@@ -92,84 +93,8 @@ export default function informasi_tahap_pengumpulan() {
     { label: "Kontak", accessor: "kontak", checked: false },
   ];
 
-  const CountdownTimer = () => {
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
-
-    const targetTime = React.useMemo(() => {
-      const tenDaysFromNow = new Date();
-      tenDaysFromNow.setDate(tenDaysFromNow.getDate() + 10);
-      return tenDaysFromNow;
-    }, []);
-
-    useEffect(() => {
-      const getLinkAndDate = async () => {
-        try {
-          console.log("Fetching data..."); // Debug #1
-          const response = await fetchGenerateLink("shortlist_id_example");
-          console.log("API Response:", response); // Debug #2
-
-          if (response) {
-            console.log("Date Expired:", response.dateExpired); // Debug #3
-            setDateExpired(response.dateExpired);
-            console.log("State di-update ke:", response.dateExpired); // Simpen langsung string
-          } else {
-            console.warn("Response kosong atau invalid");
-          }
-        } catch (error) {
-          console.error("Error saat fetch data:", error);
-        }
-      };
-
-      getLinkAndDate();
-    }, []);
-
-    useEffect(() => {
-      console.log("State berubah:", dateExpired);
-    }, [dateExpired]);
-
-    useEffect(() => {
-      const timer = setInterval(() => {
-        setTimeLeft(calculateTimeLeft(targetTime));
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }, [targetTime]);
-
-    function calculateTimeLeft(target) {
-      const difference = target - new Date();
-
-      if (difference > 0) {
-        return {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / (1000 * 60)) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        };
-      }
-      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-
-    useEffect(() => {
-      console.log("Waktu tersisa:", timeLeft);
-    }, [timeLeft]);
-
-    return (
-      <div>
-        Link akan kadaluarsa pada:{" "}
-        {`${timeLeft.days.toString().padStart(2, "0")} hari 
-        ${timeLeft.hours.toString().padStart(2, "0")} jam 
-        ${timeLeft.minutes.toString().padStart(2, "0")} menit 
-        ${timeLeft.seconds.toString().padStart(2, "0")} detik`}
-      </div>
-    );
-  };
-
   useEffect(() => {
-    if (Array.isArray(vendor)) {
-      setFilteredVendor(vendor);
-    } else {
-      setFilteredVendor([]);
-    }
+    setFilteredVendor(vendor);
   }, [vendor]);
 
   const handleLinkClick = async (shortlist_id) => {
@@ -188,10 +113,7 @@ export default function informasi_tahap_pengumpulan() {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    const newFilteredVendor = applySearchAndFilter(query, activeFilters);
-    if (JSON.stringify(filteredVendor) !== JSON.stringify(newFilteredVendor)) {
-      setFilteredVendor(newFilteredVendor);
-    }
+    applySearchAndFilter(query, activeFilters);
   };
 
   const handleToggleMenu = (rowId, event) => {
@@ -245,36 +167,25 @@ export default function informasi_tahap_pengumpulan() {
     }
   };
 
-  // useEffect(() => {
-  //   console.log("Filtered Vendor:", filteredVendor);
-  // }, [filteredVendor]);
-
   useEffect(() => {
-    fetchStatusProgres();
-  }, [fetchStatusProgres]);
+    fetchStatusPemeriksaanData();
+  }, [fetchStatusPemeriksaanData]);
 
-  const paginatedData = status_progres.slice(
+  const paginatedData = status_pemeriksaan_data.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
   const paginatedVendor = Array.isArray(filteredVendor)
     ? filteredVendor.slice(
         (currentModal - 1) * itemsPerPageModal,
         currentModal * itemsPerPageModal
       )
     : [];
-
-  const openModal = React.useCallback(
-    (id_paket) => {
-      console.log("Membuka modal untuk ID Paket:", id_paket);
-      if (!isModalOpen) {
-        fetchVendor(id_paket);
-        setIsModalOpen(true);
-      }
-    },
-    [fetchVendor, isModalOpen]
-  );
+  const openModal = (id_paket) => {
+    console.log("Membuka modal untuk ID Paket:", id_paket);
+    fetchVendor(id_paket);
+    setIsModalOpen(true);
+  };
 
   const openGenerateLinkModal = async (shortlist_id) => {
     console.log("Vendor data received:", shortlist_id);
@@ -337,7 +248,6 @@ export default function informasi_tahap_pengumpulan() {
                 <tr className="bg-custom-blue-100 text-left text-emphasis-on_surface-high uppercase tracking-wider">
                   <th className="px-3 py-6 text-sm text-center w-[52px]">No</th>
                   <th className="px-3 py-6 text-sm w-[280px]">Nama Paket</th>
-                  <th className="px-3 py-6 text-sm w-[280px]">Nama Balai</th>
                   <th className="px-3 py-6 text-sm w-[200px]">Nama PPK</th>
                   <th className="px-3 py-6 text-sm w-[200px]">Jabatan PPK</th>
                   <th className="px-3 py-6 text-sm w-[140px]">Kode Rup</th>
@@ -360,7 +270,6 @@ export default function informasi_tahap_pengumpulan() {
                       {(currentPage - 1) * itemsPerPage + index + 1}
                     </td>
                     <td className="px-3 py-6 text-sm">{item.nama_paket}</td>
-                    <td className="px-3 py-6 text-sm">{item.nama_balai}</td>
                     <td className="px-3 py-6 text-sm">{item.nama_ppk}</td>
                     <td className="px-3 py-6 text-sm">{item.jabatan_ppk}</td>
                     <td className="px-3 py-6 text-sm">{item.kode_rup}</td>
@@ -388,9 +297,10 @@ export default function informasi_tahap_pengumpulan() {
       <Pagination
         currentPage={currentPage}
         itemsPerPage={itemsPerPage}
-        totalData={status_progres.length}
+        totalData={status_pemeriksaan_data.length}
         onPageChange={setCurrentPage}
       />
+
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="p-4">
           <div className="flex justify-between items-center mb-4 content-center">
@@ -467,56 +377,29 @@ export default function informasi_tahap_pengumpulan() {
                                   boxShadow:
                                     "0px 4px 16px 0px rgba(165, 163, 174, 0.45)",
                                 }}>
-                                {(() => {
-                                  const role = localStorage.getItem("role");
-
-                                  return (
-                                    <>
-                                      {(role === "superadmin" ||
-                                        role === "Pengawas" ||
-                                        role === "Pengolah Data" ||
-                                        role === "Petugas Lapangan") && (
-                                        <Link
-                                          href="#"
-                                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
-                                          onClick={() =>
-                                            handleLinkClick(item.shortlist_id)
-                                          }>
-                                          Lihat PDF
-                                        </Link>
-                                      )}
-                                      {(role === "superadmin" ||
-                                        role === "Pengolah Data") && (
-                                        <Link
-                                          href={`/pengumpulan_data/pengolah_data/entri_data/${item.shortlist_id}`}
-                                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
-                                          Entri Data
-                                        </Link>
-                                      )}
-                                      {(role === "superadmin" ||
-                                        role === "Pengawas") && (
-                                        <Link
-                                          href={`/pengumpulan_data/pengawas/pemeriksaan_data/${item.shortlist_id}`}
-                                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
-                                          Pemeriksaan
-                                        </Link>
-                                      )}
-                                      {(role === "superadmin" ||
-                                        role === "Pengawas") && (
-                                        <Link
-                                          href="#"
-                                          className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
-                                          onClick={() =>
-                                            openGenerateLinkModal(
-                                              item.shortlist_id
-                                            )
-                                          }>
-                                          Generate Link Kuesioner
-                                        </Link>
-                                      )}
-                                    </>
-                                  );
-                                })()}
+                                <Link
+                                  href="#"
+                                  className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200"
+                                  onClick={() =>
+                                    handleLinkClick(item.shortlist_id)
+                                  }>
+                                  Lihat PDF Kuesioner
+                                </Link>
+                                <Link
+                                  href={`/pemeriksaan_data/data_detail/${item.shortlist_id}`}
+                                  onClick={() => {
+                                    localStorage.setItem(
+                                      "shortlist_id",
+                                      item.shortlist_id
+                                    );
+                                    console.log(
+                                      "shortlist_id disimpan:",
+                                      item.shortlist_id
+                                    );
+                                  }}
+                                  className="block px-4 py-2 text-sm text-emphasis-on_surface-high hover:bg-custom-blue-50 rounded-[12px] transition-all duration-200">
+                                  Periksa Data
+                                </Link>
                               </div>
                             )}
                           </td>
@@ -546,6 +429,7 @@ export default function informasi_tahap_pengumpulan() {
           </div>
         </div>
       </Modal>
+
       {/* Modal Baru */}
       <Modal isOpen={isGenerateLinkModalOpen} onClose={closeGenerateLinkModal}>
         <div className="p-3 space-y-3">
@@ -568,7 +452,7 @@ export default function informasi_tahap_pengumpulan() {
             />
             <button
               className={`w-[52px] h-[52px] rounded-full flex items-center justify-center transition-colors 
-         hover:bg-custom-blue-50 cursor-pointer border-2 border-surface-light-outline outline-none focus:outline-custom-blue-500`}
+      hover:bg-custom-blue-50 cursor-pointer border-2 border-surface-light-outline outline-none focus:outline-custom-blue-500`}
               onClick={() => {
                 navigator.clipboard
                   .writeText(urlKuisionerResult)
@@ -585,15 +469,6 @@ export default function informasi_tahap_pengumpulan() {
               />
             </button>
           </div>
-          {/* Timestamp and Countdown Timer Section */}
-          <div className="text-small text-custom-red-500 mt-2">
-            <div>
-              {console.log("Rendering dengan dateExpired:", dateExpired)}
-              {dateExpired
-                ? `Link berlaku hingga: ${dateExpired}`
-                : "Sedang memuat tanggal expired..."}
-            </div>
-          </div>
           <div className="flex justify-end gap-4">
             <Button
               variant="solid_blue"
@@ -604,7 +479,7 @@ export default function informasi_tahap_pengumpulan() {
           </div>
         </div>
       </Modal>
-      ;
+
       {activeMenu && (
         <div
           className="absolute bg-white rounded-[12px] mr-[12px] shadow-lg p-2 w-56"

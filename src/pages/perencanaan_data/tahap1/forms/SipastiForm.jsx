@@ -2,7 +2,7 @@ import { Field, Form, Formik } from "formik";
 import SimpleTabs from "../../../../components/SimpleTabs";
 import TextInput from "../../../../components/input";
 import Button from "../../../../components/button";
-import tahap1Store from "./store/tahap1store";
+import tahap1Store from "../../../../store/tahap_1_store/tahap1store";
 
 const SipastiForm = ({
   initialValues = {
@@ -30,8 +30,7 @@ const SipastiForm = ({
         <Formik
           initialValues={initialValues}
           onSubmit={(values) => console.log(values)}
-          enableReinitialize={true}
-        >
+          enableReinitialize={true}>
           <Form>
             <div className="mt-3 bg-neutral-100 px-6 py-8 rounded-[16px] space-y-8">
               <Field name="kodeRup" type="input">
@@ -116,16 +115,14 @@ const SipastiForm = ({
           type="button"
           variant="outlined_yellow"
           size="Medium"
-          onClick={() => {}}
-        >
+          onClick={() => {}}>
           Kembali
         </Button>
         <Button
           type="submit"
           variant="solid_blue"
           size="Medium"
-          onClick={() => {}}
-        >
+          onClick={() => {}}>
           Lanjut
         </Button>
       </div>

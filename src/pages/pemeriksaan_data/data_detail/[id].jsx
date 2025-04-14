@@ -3,7 +3,7 @@ import { Field, FieldArray, Form, Formik } from "formik";
 import Navbar from "../../../components/navigationbar";
 import Button from "../../../components/button";
 import Dropdown from "../../../components/dropdown";
-import { datadetail_store } from "../data_detail_store/data_detail";
+import { datadetail_store } from "../../../store/data_detail_store/data_detail";
 import { submitDataVerifikasiValidasi } from "../../../api/api";
 import FileInput from "../../../components/FileInput";
 import TextInput from "../../../components/input";
@@ -18,7 +18,7 @@ import "dayjs/locale/id";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers";
-import { filterDataDetailStore } from "../data_detail_store/filter_data_detail_store";
+import { filterDataDetailStore } from "../../../store/data_detail_store/filter_data_detail_store";
 
 dayjs.locale("id");
 

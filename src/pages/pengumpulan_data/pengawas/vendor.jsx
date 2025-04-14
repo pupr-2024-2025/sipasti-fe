@@ -6,7 +6,7 @@ import { More } from "iconsax-react";
 import colors from "../../../styles/colors";
 import Link from "next/link";
 
-export default function vendor() {
+export default function Vendor() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const { initialValues, fetchStatusProgres } = useStore();
